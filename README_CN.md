@@ -144,7 +144,7 @@ set -g fish_history_max_size 10000
 
 ```bash
 # 克隆仓库
-git clone https://github.com/yourusername/ViscmdTE.git
+git clone https://github.com/YELineee/ViscmdTE.git
 cd ViscmdTE
 
 # 安装依赖

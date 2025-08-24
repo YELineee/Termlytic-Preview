@@ -150,7 +150,7 @@ set -g fish_history_max_size 10000
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/ViscmdTE.git
+git clone https://github.com/YELineee/ViscmdTE.git
 cd ViscmdTE
 
 # Install dependencies
