@@ -12,9 +12,9 @@
       <div class="text-xs text-gray-500">{{ formatMainValue(craziestDay.count) }}</div>
     </div>
 
-    <!-- 紧凑Statistics网格 -->
+    <!-- Compact statistics grid -->
     <div class="flex-1 grid grid-cols-2 gap-2 min-h-0">
-      <!-- 最疯狂的一天 -->
+      <!-- Craziest day -->
       <div
         class="bg-gray-800 border border-gray-700 rounded p-2 flex justify-center items-center min-h-0 compact-stat-item"
       >
@@ -29,7 +29,7 @@
         </div>
       </div>
 
-      <!-- 最懒的一天 -->
+            <!-- Laziest day -->
       <div
         class="bg-gray-800 border border-gray-700 rounded p-2 flex justify-center items-center min-h-0 compact-stat-item"
       >
@@ -44,7 +44,7 @@
         </div>
       </div>
 
-      <!-- 连续活跃 -->
+      <!-- Consecutive active days -->
       <div
         class="bg-gray-800 border border-gray-700 rounded p-2 flex justify-center items-center min-h-0 compact-stat-item"
       >
@@ -59,7 +59,7 @@
         </div>
       </div>
 
-      <!-- 平均每天 -->
+      <!-- Average per day -->
       <div
         class="bg-gray-800 border border-gray-700 rounded p-2 flex justify-center items-center min-h-0 compact-stat-item"
       >
@@ -86,17 +86,17 @@ const dailyStats = ref({})
 const containerRef = ref(null)
 const isCompactMode = ref(false)
 
-// 检测容器高度
+// Detect container height
 const checkContainerHeight = () => {
   nextTick(() => {
     if (containerRef.value) {
       const height = containerRef.value.offsetHeight
-      const shouldUseCompactMode = height < 100 // 调整阈值
+      const shouldUseCompactMode = height < 100 // Adjust threshold
 
       if (shouldUseCompactMode !== isCompactMode.value) {
         isCompactMode.value = shouldUseCompactMode
 
-        // 添加或移除compact-mode类
+        // Add or remove compact-mode class
         if (isCompactMode.value) {
           containerRef.value.classList.add('compact-mode')
         } else {
@@ -107,7 +107,7 @@ const checkContainerHeight = () => {
   })
 }
 
-// 使用ResizeObserver监听容器尺寸变化
+// Use ResizeObserver to monitor container size changes
 let resizeObserver = null
 
 onMounted(() => {
@@ -119,7 +119,7 @@ onMounted(() => {
         checkContainerHeight()
       })
       resizeObserver.observe(containerRef.value)
-      checkContainerHeight() // 初始检查
+      checkContainerHeight() // Initial check
     }
   })
 })
@@ -130,7 +130,7 @@ onUnmounted(() => {
   }
 })
 
-// 计算极值
+// Calculate extreme values
 const laziestDay = computed(() => {
   const days = Object.entries(dailyStats.value)
   if (days.length === 0) return { count: 0, date: '--' }
@@ -190,7 +190,7 @@ const longestStreak = computed(() => {
   return Math.max(maxStreak, currentStreak)
 })
 
-// 计算平均每日
+// Calculate daily average
 const averageDaily = computed(() => {
   const days = Object.entries(dailyStats.value)
   if (days.length === 0) return 0
@@ -199,7 +199,7 @@ const averageDaily = computed(() => {
   return total / days.length
 })
 
-// 格式化数字
+// Format numbers
 const formatNumber = (num) => {
   if (num >= 1000000) {
     return (num / 1000000).toFixed(1) + 'M'
@@ -209,7 +209,7 @@ const formatNumber = (num) => {
   return num.toLocaleString()
 }
 
-// 格式化主要数值
+// Format main values
 const formatMainValue = (num) => {
   if (num >= 1000000) {
     return (num / 1000000).toFixed(1)
@@ -219,7 +219,7 @@ const formatMainValue = (num) => {
   return num.toString()
 }
 
-// Get主要单位
+// Get main unit
 const getMainUnit = (num) => {
   if (num >= 1000000) {
     return 'M'
@@ -229,7 +229,7 @@ const getMainUnit = (num) => {
   return 'MAX'
 }
 
-// Load每日StatisticsData
+// Load daily statistics data
 const loadExtremeStats = async () => {
   try {
     const result = await getDailyStats()
@@ -247,12 +247,12 @@ onMounted(() => {
 </script>
 
 <style scoped>
-/* 响应式Statistics项布局 */
+/* Responsive statistics item layout */
 .compact-stat-item {
   position: relative;
 }
 
-/* 默认显示普通布局 */
+/* Default to normal layout */
 .normal-layout {
   display: flex;
 }
@@ -264,7 +264,7 @@ onMounted(() => {
   white-space: nowrap;
 }
 
-/* 当父容器高度很小时，切换到紧凑布局 */
+/* Switch to compact layout when parent container height is small */
 @media (max-height: 600px) {
   .compact-stat-item .normal-layout {
     display: none;
@@ -275,7 +275,7 @@ onMounted(() => {
   }
 }
 
-/* 更加激进的小屏幕适配 */
+/* More aggressive small screen adaptation */
 @media (max-height: 500px) {
   .compact-layout span {
     font-size: 0.625rem !important;
@@ -286,7 +286,7 @@ onMounted(() => {
   }
 }
 
-/* 使用CSS容器查询（如果支持） */
+/* Use CSS container queries (if supported) */
 @supports (container-type: inline-size) {
   .compact-stat-item {
     container-type: size;
@@ -303,7 +303,7 @@ onMounted(() => {
   }
 }
 
-/* 使用变量控制布局模式 */
+/* Use variables to control layout mode */
 .compact-mode .normal-layout {
   display: none !important;
 }

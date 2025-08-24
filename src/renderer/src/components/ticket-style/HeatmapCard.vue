@@ -1,8 +1,8 @@
 <template>
   <div class="heatmap-card">
-    <!-- 卡片容器 -->
+    <!-- Card Container -->
     <div class="bg-gray-900 border border-gray-700 rounded-2xl p-8 shadow-2xl max-w-4xl mx-auto">
-      <!-- 卡片头部 -->
+      <!-- Card Header -->
       <div class="flex items-center justify-between mb-8">
         <div class="flex items-center space-x-4">
           <div class="w-12 h-12 bg-gradient-to-r from-green-400 to-blue-500 rounded-xl flex items-center justify-center">
@@ -19,14 +19,14 @@
         </div>
       </div>
 
-      <!-- 热力图区域 -->
+      <!-- Heatmap Area -->
       <div class="bg-gray-800 rounded-xl p-6 mb-6">
         <div class="mb-4">
           <h3 class="text-lg font-semibold text-white mb-2">Command Activity Heatmap</h3>
           <p class="text-gray-400 text-sm">{{ activeDays }} active days out of {{ daysInYear }} days ({{ year }})</p>
         </div>
         
-        <!-- 热力图组件 -->
+        <!-- Heatmap Component -->
         <div class="flex justify-center">
           <HeatmapWrapper
             :data="heatmapData"
@@ -42,9 +42,9 @@
         </div>
       </div>
 
-      <!-- Statistics信息栏 -->
+      <!-- Statistics Information Bar -->
       <div class="grid grid-cols-3 gap-6">
-        <!-- 活跃天数 -->
+        <!-- Active Days -->
         <div class="bg-gray-800 rounded-xl p-6 text-center">
           <div class="text-2xl font-bold text-blue-400 mb-2">{{ activeDays }}</div>
           <div class="text-gray-400 text-sm">Active Days</div>
@@ -53,14 +53,14 @@
           </div>
         </div>
 
-        <!-- 平均每日Command -->
+        <!-- Average Daily Commands -->
         <div class="bg-gray-800 rounded-xl p-6 text-center">
           <div class="text-2xl font-bold text-yellow-400 mb-2">{{ avgDailyCommands }}</div>
           <div class="text-gray-400 text-sm">Avg Daily</div>
           <div class="text-xs text-gray-500 mt-1">commands per day</div>
         </div>
 
-        <!-- 最大单日Command -->
+        <!-- Maximum Daily Commands -->
         <div class="bg-gray-800 rounded-xl p-6 text-center">
           <div class="text-2xl font-bold text-red-400 mb-2">{{ maxDailyCommands }}</div>
           <div class="text-gray-400 text-sm">Peak Day</div>
@@ -68,7 +68,7 @@
         </div>
       </div>
 
-      <!-- 卡片底部信息 -->
+      <!-- Card Footer Information -->
       <div class="mt-8 pt-6 border-t border-gray-700 flex items-center justify-between">
         <div class="flex items-center space-x-4">
           <div class="text-gray-400 text-sm">
@@ -88,7 +88,7 @@
 import { computed } from 'vue'
 import HeatmapWrapper from '../wrapper/HeatmapWrapper.vue'
 
-// Props 定义
+// Props definition
 const props = defineProps({
   ticketNumber: {
     type: String,
@@ -116,20 +116,20 @@ const props = defineProps({
   }
 })
 
-// 计算年份日期范围 - 根据选择的年份动态计算
-const startDate = computed(() => new Date(props.year, 0, 1)) // 选择年份的1月1日
-const endDate = computed(() => new Date(props.year, 11, 31)) // 选择年份的12月31日
+// Calculate year date range - dynamically calculate based on selected year
+const startDate = computed(() => new Date(props.year, 0, 1)) // January 1st of selected year
+const endDate = computed(() => new Date(props.year, 11, 31)) // December 31st of selected year
 
-// 颜色方案 - 绿色主题
+// Color scheme - green theme
 const colorScheme = ['#161b22', '#0e4429', '#006d32', '#26a641', '#39d353']
 
-// 计算该年份的总天数（考虑闰年）
+// Calculate total days in the year (considering leap years)
 const daysInYear = computed(() => {
   const year = props.year
   return ((year % 4 === 0 && year % 100 !== 0) || year % 400 === 0) ? 366 : 365
 })
 
-// 计算StatisticsData
+// Calculate statistical data
 const avgDailyCommands = computed(() => {
   if (props.activeDays === 0) return 0
   return Math.round(props.totalCommands / props.activeDays)
@@ -151,7 +151,7 @@ const maxDailyCommands = computed(() => {
   align-items: center;
 }
 
-/* 热力图样式覆盖 */
+/* Heatmap style overrides */
 :deep(.intensity-0) {
   background-color: #161b22;
 }
@@ -172,7 +172,7 @@ const maxDailyCommands = computed(() => {
   background-color: #39d353;
 }
 
-/* 响应式设计 */
+/* Responsive design */
 @media (max-width: 768px) {
   .heatmap-card {
     padding: 1rem;

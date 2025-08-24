@@ -2,7 +2,7 @@
   <div
     class="w-full h-full bg-gray-900 rounded-lg p-4 flex flex-col justify-between border border-gray-800"
   >
-    <!-- 标题和指标 -->
+    <!-- Title and Metrics -->
     <div class="flex items-center justify-between">
       <div class="text-xs text-gray-400 uppercase tracking-wider font-medium">TODAY'S FOCUS</div>
       <div class="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
@@ -19,7 +19,7 @@
       </div>
     </div>
 
-    <!-- 底部信息 -->
+    <!-- Bottom Information -->
     <div class="flex items-center justify-between text-xs">
       <span class="text-gray-500">{{ formatDate(today) }}</span>
       <div class="flex items-center space-x-1">
@@ -34,21 +34,21 @@
 import { ref, computed, onMounted } from 'vue'
 import { useShellData } from '@renderer/composables/useShellData.js'
 
-// 使用全局Data存储
+// Use global data store
 const { getShellHistory, isLoading } = useShellData()
 
 // Reactive data
 const todayCommands = ref(0)
 const today = new Date()
 
-// 格式化日期
+// Format date
 const formatDate = (date) => {
   const month = String(date.getMonth() + 1).padStart(2, '0')
   const day = String(date.getDate()).padStart(2, '0')
   return `${month}/${day}`
 }
 
-// 格式化数字
+// Format numbers
 const formatNumber = (num) => {
   if (num >= 1000) {
     return (num / 1000).toFixed(1) + 'K'
@@ -56,7 +56,7 @@ const formatNumber = (num) => {
   return num.toString()
 }
 
-// Get今日CommandData
+// Get today's command data
 const loadTodayStats = async () => {
   try {
     const result = await getShellHistory()
@@ -68,7 +68,7 @@ const loadTodayStats = async () => {
       const todayEnd = new Date()
       todayEnd.setHours(23, 59, 59, 999)
 
-      // 筛选今日的Command
+      // Filter today's commands
       const todayEntries = result.entries.filter((entry) => {
         if (!entry.timestamp) return false
 
@@ -84,14 +84,14 @@ const loadTodayStats = async () => {
   }
 }
 
-// 组件挂载时LoadData
+// Load data when component mounts
 onMounted(() => {
   loadTodayStats()
 })
 </script>
 
 <style scoped>
-/* 确保字体清晰度 */
+/* Ensure font clarity */
 .font-mono {
   font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
 }

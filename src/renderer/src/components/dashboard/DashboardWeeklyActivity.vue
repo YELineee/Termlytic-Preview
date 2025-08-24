@@ -11,7 +11,7 @@
       <div class="text-xs text-gray-400">Last 7 days</div>
     </div>
 
-    <!-- Activity热度图 -->
+    <!-- Activity Heatmap -->
     <div class="bg-gray-800 border border-gray-700 rounded-lg p-3 mb-4 flex-shrink-0">
       <div class="text-xs text-gray-400 mb-3">Activity Heatmap</div>
       <div class="grid grid-cols-7 gap-1">
@@ -55,7 +55,7 @@
       </div>
     </div>
 
-    <!-- Statistics信息 -->
+    <!-- Statistics Information -->
     <div class="mt-auto pt-3 border-t border-gray-700 flex-shrink-0">
       <div class="grid grid-cols-2 gap-4 text-xs">
         <div class="flex justify-between">
@@ -75,11 +75,11 @@
 import { ref, computed, onMounted } from 'vue'
 import { useShellData } from '@renderer/composables/useShellData.js'
 
-// 使用全局Data存储
+// Use global data store
 const { getWeeklyActivity, isLoading } = useShellData()
 
 const weekData = ref(Array(7).fill(0))
-const selectedDayIndex = ref(0) // 默认选择第一天
+const selectedDayIndex = ref(0) // Default to select first day
 
 const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
 const dayShorts = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
@@ -95,7 +95,7 @@ const weekStats = computed(() => {
     name,
     short: dayShorts[index],
     count: weekData.value[index],
-    // 相对于最高活跃天的百分比（用于颜色强度）
+    // Percentage relative to the most active day (for color intensity)
     intensityPercentage: (weekData.value[index] / maxCount) * 100,
     // Percentage in the whole week (for display)
     weekPercentage: (weekData.value[index] / totalWeekCommands) * 100
@@ -115,12 +115,12 @@ const mostActiveDay = computed(() => {
   return dayNames[maxIndex]
 })
 
-// 选择日期函数
+// Select date function
 const selectDay = (index) => {
   selectedDayIndex.value = index
 }
 
-// Get星期颜色
+// Get day color
 const getDayColor = (index) => {
   const colors = [
     '#ef4444', // Sunday - red-500
@@ -134,7 +134,7 @@ const getDayColor = (index) => {
   return colors[index]
 }
 
-// Load星期DistributionData
+// Load weekly distribution data
 const loadWeekStats = async () => {
   try {
     const weekCounts = await getWeeklyActivity()
@@ -150,5 +150,5 @@ onMounted(() => {
 </script>
 
 <style scoped>
-/* 保持简洁 */
+/* Keep it simple */
 </style>

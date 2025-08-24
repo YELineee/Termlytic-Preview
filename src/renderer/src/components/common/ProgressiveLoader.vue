@@ -1,7 +1,7 @@
-<!-- 渐进式组件Load包装器 -->
+<!-- Progressive component loader wrapper -->
 <template>
   <div class="relative w-full h-full">
-    <!-- Load状态占位符 -->
+    <!-- Loading state placeholder -->
     <div v-if="!isVisible" class="w-full h-full bg-gray-900 rounded-lg border border-gray-800 flex items-center justify-center">
       <div class="text-center">
         <div class="inline-block animate-pulse rounded-full h-4 w-4 bg-gray-700 mb-2"></div>
@@ -9,7 +9,7 @@
       </div>
     </div>
 
-    <!-- 实际组件 - 使用transition实现平滑过渡 -->
+    <!-- Actual component - use transition for smooth animation -->
     <transition 
       name="fade-slide" 
       @enter="onEnter" 
@@ -42,28 +42,28 @@ const props = defineProps({
   }
 })
 
-// 状态
+// State
 const isVisible = ref(false)
 
-// 渐进式Load逻辑
+// Progressive loading logic
 onMounted(async () => {
-  // 根据优先级计算实际延迟
-  const priorityDelay = (props.priority - 1) * 100 // 高优先级组件更早Load
+  // Calculate actual delay based on priority
+  const priorityDelay = (props.priority - 1) * 100 // High priority components load earlier
   const totalDelay = props.delay + priorityDelay
   
-  // 等待指定延迟时间
+  // Wait for specified delay time
   if (totalDelay > 0) {
     await new Promise(resolve => setTimeout(resolve, totalDelay))
   }
   
-  // 等待DOM更新
+  // Wait for DOM update
   await nextTick()
   
-  // 显示组件
+  // Show component
   isVisible.value = true
 })
 
-// 动画事件处理
+// Animation event handlers
 const onEnter = (el) => {
   console.log(`Component ${props.loadingText} rendered`)
 }
@@ -74,7 +74,7 @@ const onLeave = (el) => {
 </script>
 
 <style scoped>
-/* 渐入动画 */
+/* Fade-in animation */
 .fade-slide-enter-active {
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -93,7 +93,7 @@ const onLeave = (el) => {
   transform: translateY(-5px) scale(1.02);
 }
 
-/* 脉冲动画优化 */
+/* Pulse animation optimization */
 @keyframes subtle-pulse {
   0%, 100% {
     opacity: 0.4;

@@ -303,7 +303,7 @@ const getHourIntensityClass = (count, max) => {
 </script>
 
 <style scoped>
-/* 隐藏滚动条但保留滚动功能 */
+/* Hide scrollbar but keep scroll functionality */
 .overflow-y-auto::-webkit-scrollbar {
   width: 4px;
 }

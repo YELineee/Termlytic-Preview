@@ -21,7 +21,7 @@
       </div>
     </div>
 
-    <!-- 次要指标 -->
+    <!-- Secondary Metrics -->
     <div class="space-y-1">
       <div class="flex items-center justify-between text-xs">
         <span class="text-gray-500">Active Days</span>
@@ -39,7 +39,7 @@
 import { ref, onMounted } from 'vue'
 import { useShellData } from '@renderer/composables/useShellData.js'
 
-// 使用全局Data存储
+// Use global data store
 const { getStats, isLoading } = useShellData()
 
 // Reactive data
@@ -59,7 +59,7 @@ const formatNumber = (num) => {
   return num.toLocaleString()
 }
 
-// 格式化主要数字（更突出的显示）
+// Format main numbers (more prominent display)
 const formatMainNumber = (num) => {
   if (num >= 1000000) {
     return (num / 1000000).toFixed(1)
@@ -69,7 +69,7 @@ const formatMainNumber = (num) => {
   return num.toString()
 }
 
-// Get主要单位
+// Get main unit
 const getMainUnit = (num) => {
   if (num >= 1000000) {
     return 'M'
@@ -88,7 +88,7 @@ const loadStats = async () => {
   }
 }
 
-// 组件挂载时LoadData
+// Load data when component mounts
 onMounted(() => {
   loadStats()
 })

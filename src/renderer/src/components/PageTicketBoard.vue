@@ -32,7 +32,7 @@
           @click="generateTicket"
           :disabled="loading"
           class="bg-gray-700 hover:bg-gray-600 text-white p-2 rounded transition-colors duration-200"
-          title="重新生成"
+          title="Regenerate"
         >
           <i :class="['fas fa-sync-alt', { 'animate-spin': loading }]"></i>
         </button>
@@ -46,38 +46,38 @@
         <div
           class="inline-block animate-spin rounded-full h-16 w-16 border-4 border-amber-500 border-t-transparent mb-4"
         ></div>
-        <p class="text-gray-400">正在生成您的 Command Ticket...</p>
+        <p class="text-gray-400">Generating your Command Ticket...</p>
       </div>
 
       <!-- Error state -->
       <div v-else-if="error" class="text-center max-w-md">
         <i class="fas fa-exclamation-triangle text-6xl text-red-400 mb-4"></i>
-        <h3 class="text-xl font-bold text-white mb-2">生成Failed</h3>
+        <h3 class="text-xl font-bold text-white mb-2">Generation Failed</h3>
         <p class="text-gray-400 mb-4">{{ error }}</p>
         <button
           @click="generateTicket"
           class="bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded transition-colors"
         >
-          重试
+          Retry
         </button>
       </div>
 
-      <!-- Ticket 展示 -->
+      <!-- Ticket Display -->
       <div v-else-if="ticketData" class="ticket-container">
-        <!-- 左侧按钮 - 切换样式 -->
+        <!-- Left Button - Switch Style -->
         <button
           @click="previousStyle"
           :disabled="!canGoPreviousStyle"
           class="nav-button left-button"
           :class="{ 'opacity-50': !canGoPreviousStyle }"
           :title="
-            canGoPreviousStyle ? `切换到 ${ticketStyles[currentStyleIndex - 1].description}` : ''
+            canGoPreviousStyle ? `Switch to ${ticketStyles[currentStyleIndex - 1].description}` : ''
           "
         >
           <i class="fas fa-chevron-left"></i>
         </button>
 
-        <!-- 动态组件渲染 -->
+        <!-- Dynamic Component Rendering -->
         <div ref="ticketElement">
           <component
             :is="currentStyle.component"
@@ -91,13 +91,13 @@
           />
         </div>
 
-        <!-- 右侧按钮 - 切换样式 -->
+        <!-- Right Button - Switch Style -->
         <button
           @click="nextStyle"
           :disabled="!canGoNextStyle"
           class="nav-button right-button"
           :class="{ 'opacity-50': !canGoNextStyle }"
-          :title="canGoNextStyle ? `切换到 ${ticketStyles[currentStyleIndex + 1].description}` : ''"
+          :title="canGoNextStyle ? `Switch to ${ticketStyles[currentStyleIndex + 1].description}` : ''"
         >
           <i class="fas fa-chevron-right"></i>
         </button>
@@ -106,13 +106,13 @@
       <!-- No data state -->
       <div v-else class="text-center max-w-md">
         <i class="fas fa-inbox text-6xl text-gray-500 mb-4"></i>
-        <h3 class="text-xl font-bold text-white mb-2">暂无Data</h3>
+        <h3 class="text-xl font-bold text-white mb-2">No Data Available</h3>
         <p class="text-gray-400 mb-4">{{ selectedYear }}Year: No command usage records</p>
         <button
           @click="generateTicket"
           class="bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded transition-colors"
         >
-          重新检查
+          Check Again
         </button>
       </div>
     </div>
@@ -126,7 +126,7 @@ import TerminalCard from './ticket-style/TerminalCard.vue'
 import HeatmapCard from './ticket-style/HeatmapCard.vue'
 import { useDataService } from '@renderer/services/dataService.js'
 
-// 使用统一Data服务
+// Use unified data service
 const { dataService, isLoading: globalLoading, error: globalError } = useDataService()
 
 // Reactive data
@@ -136,20 +136,20 @@ const error = ref('')
 const selectedYear = ref(new Date().getFullYear())
 const availableYears = ref([])
 const ticketData = ref(null)
-const currentStyleIndex = ref(0) // 当前样式索引
-const ticketElement = ref(null) // Ticket 元素引用
+const currentStyleIndex = ref(0) // Current style index
+const ticketElement = ref(null) // Ticket element reference
 
-// 样式配置
+// Style configuration
 const ticketStyles = [
   {
     name: 'Terminal',
     component: TerminalCard,
-    description: '终端风格样式'
+    description: 'Terminal style'
   },
   {
     name: 'Heatmap',
     component: HeatmapCard,
-    description: '热力图样式'
+    description: 'Heatmap style'
   }
 ]
 
@@ -158,12 +158,12 @@ const currentStyle = computed(() => ticketStyles[currentStyleIndex.value])
 const canGoPreviousStyle = computed(() => currentStyleIndex.value > 0)
 const canGoNextStyle = computed(() => currentStyleIndex.value < ticketStyles.length - 1)
 
-// Load可用年份
+// Load available years
 const loadAvailableYears = async () => {
   try {
     console.log('Loading available years...')
     
-    // 使用统一Data服务
+    // Use unified data service
     const years = await dataService.getAvailableYears()
     
     availableYears.value = years
@@ -176,11 +176,11 @@ const loadAvailableYears = async () => {
     console.log('Available years loaded:', years)
   } catch (err) {
     console.error('Failed to load available years:', err)
-    error.value = `Load年份Failed: ${err.message}`
+    error.value = `Load years failed: ${err.message}`
   }
 }
 
-// 生成 Ticket Data
+// Generate ticket data
 const generateTicket = async () => {
   try {
     loading.value = true
@@ -188,38 +188,38 @@ const generateTicket = async () => {
 
     console.log(`Generating ticket for year ${selectedYear.value}`)
 
-    // 使用统一Data服务
+    // Use unified data service
     const result = await dataService.generateCommandTicket(selectedYear.value)
     
     ticketData.value = result
     console.log('Ticket generated successfully:', ticketData.value)
   } catch (err) {
     console.error('Failed to generate ticket:', err)
-    error.value = `生成Failed: ${err.message}`
+    error.value = `Generation failed: ${err.message}`
   } finally {
     loading.value = false
   }
 }
 
-// 保存 Ticket
+// Save ticket
 const saveTicket = async () => {
   if (!ticketData.value || !ticketElement.value) return
 
   try {
     saving.value = true
-    console.log('开始保存 Ticket 为图片...')
+    console.log('Starting to save ticket as image...')
 
-    // 等待动态内容完全Load并渲染
+    // Wait for dynamic content to fully load and render
     await new Promise((resolve) => {
-      // 等待下一个渲染周期确保所有内容都已渲染
+      // Wait for next render cycle to ensure all content is rendered
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
-          setTimeout(resolve, 1000) // 额外等待1秒确保所有样式生效
+          setTimeout(resolve, 1000) // Additional 1 second wait to ensure all styles take effect
         })
       })
     })
 
-    // 使用简化的 html2canvas-pro 配置
+    // Use simplified html2canvas-pro configuration
     const canvas = await html2canvas(ticketElement.value, {
       backgroundColor: '#000000',
       scale: 4,
@@ -228,15 +228,15 @@ const saveTicket = async () => {
       logging: true
     })
 
-    console.log('Canvas 生成Success，尺寸:', canvas.width, 'x', canvas.height)
+    console.log('Canvas generated successfully, size:', canvas.width, 'x', canvas.height)
 
-    // 将 canvas 转换为 blob
+    // Convert canvas to blob
     const blob = await new Promise((resolve) => {
       canvas.toBlob(resolve, 'image/png', 0.95)
     })
 
     if (blob) {
-      // 创建下载链接
+      // Create download link
       const url = URL.createObjectURL(blob)
       const link = document.createElement('a')
       const fileName = `command-ticket-${
@@ -246,23 +246,23 @@ const saveTicket = async () => {
       link.href = url
       link.download = fileName
 
-      // 触发下载
+      // Trigger download
       document.body.appendChild(link)
       link.click()
       document.body.removeChild(link)
 
-      // 清理 URL
+      // Clean up URL
       URL.revokeObjectURL(url)
 
-      console.log(`Ticket 图片保存Success: ${fileName}`)
+      console.log(`Ticket image saved successfully: ${fileName}`)
     } else {
-      throw new Error('无法生成图片 blob')
+      throw new Error('Unable to generate image blob')
     }
   } catch (err) {
-    console.error('保存 Ticket Failed:', err)
-    error.value = `保存Failed: ${err.message}`
+    console.error('Failed to save ticket:', err)
+    error.value = `Save failed: ${err.message}`
 
-    // 5秒后清除Error消息
+    // Clear error message after 5 seconds
     setTimeout(() => {
       error.value = ''
     }, 5000)
@@ -271,7 +271,7 @@ const saveTicket = async () => {
   }
 }
 
-// 样式导航方法
+// Style navigation methods
 const previousStyle = () => {
   if (canGoPreviousStyle.value) {
     currentStyleIndex.value--
@@ -284,7 +284,7 @@ const nextStyle = () => {
   }
 }
 
-// 组件挂载
+// Component mounting
 onMounted(async () => {
   console.log('TicketBoard component mounted')
   await loadAvailableYears()
@@ -343,7 +343,7 @@ onMounted(async () => {
   right: -80px;
 }
 
-/* 响应式设计 */
+/* Responsive design */
 @media (max-width: 768px) {
   .nav-button {
     display: none;

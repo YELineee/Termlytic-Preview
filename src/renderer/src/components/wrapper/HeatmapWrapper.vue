@@ -1,8 +1,9 @@
 <template>
-  <div class="font-sans text-gray-400 text-xs overflow-visible" ref="containerRef">
-    <!-- 热力图主体容器 -->
+  <!-- Heatmap content area -->
+<div class="font-sans text-gray-400 text-xs overflow-visible" ref="containerRef">
+    <!-- Heatmap main container -->
     <div class="flex flex-col gap-1">
-      <!-- 月份标签行 -->
+      <!-- Month label row -->
       <div v-if="showMonthLabels" class="flex items-center h-4">
         <div class="w-8 flex-shrink-0"></div>
         <div class="grid items-center flex-1" :style="monthLabelsStyle">
@@ -20,9 +21,9 @@
         </div>
       </div>
 
-      <!-- 热力图内容区 -->
+      <!-- Heatmap content area -->
       <div class="flex items-start gap-1">
-        <!-- 星期标签列 -->
+        <!-- Weekday label column -->
         <div v-if="showWeekLabels" class="flex flex-col w-8 flex-shrink-0">
           <div
             class="flex items-center justify-center text-xs text-gray-400 font-normal mb-1"
@@ -60,7 +61,7 @@
           ></div>
         </div>
 
-        <!-- 热力图网格 -->
+        <!-- Heatmap grid -->
         <div class="grid grid-flow-col content-start" ref="gridRef" :style="gridStyle">
           <div
             v-for="(day, index) in heatmapData"
@@ -83,7 +84,7 @@
       </div>
     </div>
 
-    <!-- 强度图例 -->
+    <!-- Intensity legend -->
     <div v-if="showLegend" class="flex items-center mt-4 ml-9 gap-1 text-xs">
       <span class="text-gray-400 text-xs">Less</span>
       <div class="flex gap-0.5 mx-1.5">
@@ -119,72 +120,72 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted, nextTick, watch } from 'vue'
+import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
 
-// Props 定义
+// Props definition
 const props = defineProps({
-  // Data源 - 数组格式: [{ date: '2024-01-01', count: 5 }]
+  // Data source - array format: [{ date: '2024-01-01', count: 5 }]
   data: {
     type: Array,
     default: () => []
   },
-  // 开始日期
+  // Start date
   startDate: {
     type: [String, Date],
     default: () => {
       const date = new Date()
-      date.setMonth(date.getMonth() - 12) // 默认显示过去一年
+      date.setMonth(date.getMonth() - 12) // Default to show past year
       return date
     }
   },
-  // 结束日期
+  // End date
   endDate: {
     type: [String, Date],
     default: () => new Date()
   },
-  // 颜色方案 - 5个级别的颜色
+  // Color scheme - 5 levels of colors
   colorScheme: {
     type: Array,
     default: () => ['#161b22', '#0e4429', '#006d32', '#26a641', '#39d353']
   },
-  // 单元格尺寸
+  // Cell size
   cellSize: {
     type: Number,
     default: 11
   },
-  // 单元格间距
+  // Cell spacing
   cellGap: {
     type: Number,
     default: 3
   },
-  // 最大强度值（用于计算强度等级）
+  // Maximum intensity value (used to calculate intensity levels)
   maxIntensity: {
     type: Number,
     default: null
   },
-  // Data单位
+  // Data unit
   unit: {
     type: String,
     default: 'contributions'
   },
-  // 是否显示月份标签
+  // Whether to show month labels
   showMonthLabels: {
     type: Boolean,
     default: true
   },
-  // 是否显示星期标签
+  // Whether to show weekday labels
   showWeekLabels: {
     type: Boolean,
     default: true
   },
-  // 是否显示强度图例
+  // Whether to show intensity legend
   showLegend: {
     type: Boolean,
     default: true
   }
 })
 
-// Emits 定义
+// Emits definition
 const emit = defineEmits(['cell-click', 'cell-hover', 'cell-leave'])
 
 // Reactive data
@@ -200,13 +201,13 @@ const tooltip = ref({
   unit: props.unit
 })
 
-// Computed properties - 热力图Data
+// Computed properties - heatmap data
 const heatmapData = computed(() => {
   const result = []
   const start = new Date(props.startDate)
   const end = new Date(props.endDate)
 
-  // 创建Data映射
+  // Create data mapping
   const dataMap = new Map()
   props.data.forEach((item) => {
     const dateKey =
@@ -214,28 +215,28 @@ const heatmapData = computed(() => {
     dataMap.set(dateKey, item.count || 0)
   })
 
-  // 计算最大值用于强度等级
+  // Calculate maximum value for intensity levels
   const maxValue = props.maxIntensity || Math.max(...props.data.map((d) => d.count || 0), 1)
 
-  // 找到开始日期所在周的星期日
+  // Find the Sunday of the week containing the start date
   const startOfWeek = new Date(start)
   const dayOfWeek = startOfWeek.getDay()
   startOfWeek.setDate(startOfWeek.getDate() - dayOfWeek)
 
-  // 生成热力图Data
+  // Generate heatmap data
   const current = new Date(startOfWeek)
   while (current <= end || current.getDay() !== 0) {
-    // 确保最后一周完整
+    // Ensure the last week is complete
     const dateKey = current.toISOString().split('T')[0]
     const count = dataMap.get(dateKey) || 0
 
-    // 改进强度计算：确保有Data的日期至少有强度1
+    // Improved intensity calculation: ensure dates with data have at least intensity 1
     let intensity = 0
     if (count > 0) {
       if (maxValue === 1) {
-        intensity = 4 // 如果只有1条Command的Data，给最高强度
+        intensity = 4 // If only 1 command data, give highest intensity
       } else {
-        // 使用更合理的强度分级，确保有Data时至少为1
+        // Use more reasonable intensity grading, ensure data has at least intensity 1
         intensity = Math.min(4, Math.max(1, Math.ceil((count / maxValue) * 4)))
       }
     }
@@ -255,7 +256,7 @@ const heatmapData = computed(() => {
     current.setDate(current.getDate() + 1)
   }
 
-  // Debug 信息
+  // Debug information
   console.log('HeatmapWrapper Debug:', {
     inputData: props.data.length,
     dateRange: `${start.toISOString().split('T')[0]} - ${end.toISOString().split('T')[0]}`,
@@ -275,7 +276,7 @@ const heatmapData = computed(() => {
   return result
 })
 
-// Computed properties - 月份标签
+// Computed properties - month labels
 const monthLabels = computed(() => {
   if (!props.showMonthLabels) return []
 
@@ -287,13 +288,13 @@ const monthLabels = computed(() => {
     const weekStart = new Date(start)
     weekStart.setDate(start.getDate() + week * 7)
 
-    // 只在月份的第一周显示标签
+    // Only show labels in the first week of the month
     if (week === 0 || weekStart.getDate() <= 7) {
       labels.push({
         index: week,
         name: weekStart.toLocaleDateString('en-US', { month: 'short' }),
         startWeek: week,
-        weekSpan: Math.min(4, weeks - week) // 每个月标签最多跨4周
+        weekSpan: Math.min(4, weeks - week) // Each month label spans at most 4 weeks
       })
     }
   }
@@ -301,7 +302,7 @@ const monthLabels = computed(() => {
   return labels
 })
 
-// Computed properties - 网格样式
+// Computed properties - grid style
 const gridStyle = computed(() => {
   const weeks = Math.ceil(heatmapData.value.length / 7)
   return {
@@ -311,7 +312,7 @@ const gridStyle = computed(() => {
   }
 })
 
-// Computed properties - 月份标签样式
+// Computed properties - month label style
 const monthLabelsStyle = computed(() => {
   const weeks = Math.ceil(heatmapData.value.length / 7)
   return {
@@ -320,7 +321,7 @@ const monthLabelsStyle = computed(() => {
   }
 })
 
-// Methods - 格式化日期
+// Methods - format date
 const formatDate = (date) => {
   return date.toLocaleDateString('en-US', {
     weekday: 'short',
@@ -330,7 +331,7 @@ const formatDate = (date) => {
   })
 }
 
-// Methods - Get单元格样式
+// Methods - get cell style
 const getCellStyle = (day) => {
   const color = props.colorScheme[day.intensity] || props.colorScheme[0]
   return {
@@ -341,7 +342,7 @@ const getCellStyle = (day) => {
   }
 }
 
-// Methods - 处理单元格悬停
+// Methods - handle cell hover
 const handleCellHover = (day, index, event) => {
   if (day.isEmpty) return
 
@@ -361,31 +362,30 @@ const handleCellHover = (day, index, event) => {
   emit('cell-hover', { day, index, event })
 }
 
-// Methods - 处理单元格离开
+// Methods - handle cell leave
 const handleCellLeave = () => {
   hoveredIndex.value = -1
   tooltip.value.visible = false
   emit('cell-leave')
 }
 
-// Methods - 处理单元格点击
+// Methods - handle cell click
 const handleCellClick = (day, index) => {
   if (day.isEmpty) return
   emit('cell-click', { day, index })
 }
 
-// Methods - 更新 Tooltip 位置
+// Methods - update tooltip position
 const updateTooltipPosition = (event) => {
   if (!tooltipRef.value) return
 
   const tooltipRect = tooltipRef.value.getBoundingClientRect()
   const viewportWidth = window.innerWidth
-  const viewportHeight = window.innerHeight
 
   let left = event.clientX + 10
   let top = event.clientY - tooltipRect.height - 10
 
-  // 边界检测
+  // Boundary detection
   if (left + tooltipRect.width > viewportWidth) {
     left = event.clientX - tooltipRect.width - 10
   }
@@ -401,14 +401,14 @@ const updateTooltipPosition = (event) => {
   }
 }
 
-// 监听鼠标移动以更新 Tooltip 位置
+// Listen for mouse movement to update tooltip position
 const handleMouseMove = (event) => {
   if (tooltip.value.visible) {
     updateTooltipPosition(event)
   }
 }
 
-// 生命周期
+// Lifecycle
 onMounted(() => {
   document.addEventListener('mousemove', handleMouseMove)
 })
@@ -419,7 +419,7 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-/* 自定义强度等级颜色样式 */
+/* Custom intensity level color styles */
 .intensity-0 {
   background-color: #161b22 !important;
 }
@@ -440,7 +440,7 @@ onUnmounted(() => {
   background-color: #39d353 !important;
 }
 
-/* 悬停和空单元格状态 */
+/* Hover and empty cell states */
 .cell-empty {
   cursor: default;
   opacity: 0.4 !important;
@@ -451,13 +451,13 @@ onUnmounted(() => {
   z-index: 10;
 }
 
-/* 单元格悬停效果 */
+/* Cell hover effects */
 .grid > div:hover:not(.cell-empty) {
   border-color: rgba(255, 255, 255, 0.4);
   transform: scale(1.1);
 }
 
-/* 暗色主题适配 */
+/* Dark theme adaptation */
 @media (prefers-color-scheme: dark) {
   .grid > div {
     border-color: rgba(255, 255, 255, 0.1);

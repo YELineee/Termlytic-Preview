@@ -26,9 +26,9 @@
       <div>{{ !selectedDate ? 'Please click on the heat map to select the date' : 'No command records for this date' }}</div>
     </div>
 
-    <!-- Command列表 - 可滚动内容 -->
+    <!-- Command List - Scrollable Content -->
     <div v-else class="flex-1 min-h-0 flex flex-col">
-      <!-- Statistics信息 - 固定不滚动 -->
+      <!-- Statistics Information - Fixed, No Scroll -->
       <div class="bg-gray-700 rounded p-3 mb-3 shrink-0">
         <div class="grid grid-cols-2 gap-4 text-sm">
           <div class="text-center">
@@ -42,7 +42,7 @@
         </div>
       </div>
 
-      <!-- Command项列表 - 仅此部分滚动 -->
+      <!-- Command Item List - Only This Section Scrolls -->
       <div class="flex-1 min-h-0 overflow-y-auto">
         <div class="space-y-1">
           <div
@@ -86,7 +86,7 @@
               </div>
             </div>
 
-            <!-- Command类型标识 -->
+            <!-- Command Type Indicator -->
             <div class="text-right">
               <span
                 class="inline-block w-2 h-2 rounded-full"
@@ -121,7 +121,7 @@ const uniqueCommands = computed(() => {
 const displayCommands = computed(() => {
   if (!props.selectedDate?.commands) return []
 
-  // 按Command分组并Statistics次数
+  // Group commands and count occurrences
   const commandMap = new Map()
   props.selectedDate.commands.forEach((cmd) => {
     const key = cmd.command
@@ -134,21 +134,21 @@ const displayCommands = computed(() => {
         shell: cmd.shell,
         count: 1,
         times: [cmd.time],
-        time: cmd.time // 显示最新的时间
+        time: cmd.time // Show latest time
       })
     }
   })
 
-  return Array.from(commandMap.values()).sort((a, b) => b.count - a.count) // 按使用频率排序
+  return Array.from(commandMap.values()).sort((a, b) => b.count - a.count) // Sort by usage frequency
 })
 
 // Methods
 const getCommandTypeColor = (command) => {
   const mainCommand = command.split(' ')[0].toLowerCase()
 
-  // 根据Command类型返回不同颜色
+  // Return different colors based on command type
   const commandTypes = {
-    // 文件操作
+    // File operations
     ls: 'bg-blue-500',
     cd: 'bg-blue-500',
     mkdir: 'bg-blue-500',
@@ -156,10 +156,10 @@ const getCommandTypeColor = (command) => {
     cp: 'bg-blue-500',
     mv: 'bg-blue-500',
 
-    // GitCommand
+    // Git commands
     git: 'bg-green-500',
 
-    // 开发工具
+    // Development tools
     npm: 'bg-yellow-500',
     yarn: 'bg-yellow-500',
     node: 'bg-green-600',
@@ -167,18 +167,18 @@ const getCommandTypeColor = (command) => {
     vim: 'bg-green-600',
     nano: 'bg-green-600',
 
-    // 系统Command
+    // System commands
     ps: 'bg-gray-500',
     top: 'bg-gray-500',
     kill: 'bg-red-500',
     sudo: 'bg-red-600',
 
-    // 网络
+    // Network
     curl: 'bg-orange-500',
     wget: 'bg-orange-500',
     ping: 'bg-orange-500',
 
-    // 默认
+    // Default
     default: 'bg-gray-400'
   }
 
@@ -187,7 +187,7 @@ const getCommandTypeColor = (command) => {
 </script>
 
 <style scoped>
-/* 自定义滚动条 */
+/* Custom scrollbar */
 .overflow-y-auto::-webkit-scrollbar {
   width: 6px;
 }

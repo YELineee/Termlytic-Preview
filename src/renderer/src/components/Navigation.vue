@@ -46,7 +46,7 @@ const emit = defineEmits(['page-change', 'refresh-data'])
 // Reactive data
 const currentPage = ref('dashboard')
 
-// 导航项配置
+// Navigation item configuration
 const navigationItems = [
   {
     name: 'dashboard',
@@ -74,17 +74,17 @@ const navigationItems = [
 const switchPage = (pageName) => {
   if (pageName !== currentPage.value) {
     currentPage.value = pageName
-    // 发送页面切换事件
+    // Send page change event
     emit('page-change', pageName)
   }
 }
 
 const refreshData = () => {
-  // 直接发送RefreshData事件，不显示Load状态
+  // Send refresh data event directly, without showing loading state
   emit('refresh-data')
 }
 
-// 暴露当前页面给父组件
+// Expose current page to parent component
 defineExpose({
   currentPage,
   setPage: (pageName) => {
@@ -93,7 +93,7 @@ defineExpose({
 })
 
 onMounted(() => {
-  // 初始化时发送默认页面
+  // Send default page on initialization
   emit('page-change', currentPage.value)
 })
 </script>
@@ -113,7 +113,7 @@ button {
   user-select: none;
 }
 
-/* 添加一些动画效果 */
+/* Add some animation effects */
 .animate-spin {
   animation: spin 1s linear infinite;
 }

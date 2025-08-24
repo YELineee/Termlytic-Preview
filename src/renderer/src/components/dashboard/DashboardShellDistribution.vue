@@ -11,7 +11,7 @@
       <div class="text-xs text-gray-400">{{ totalCommands }} commands</div>
     </div>
 
-    <!-- 终端类型Statistics -->
+    <!-- Shell Type Statistics -->
     <div class="flex-1 space-y-3 min-h-0 overflow-y-auto">
       <div
         v-for="(shell, index) in shellStats"
@@ -43,7 +43,7 @@
           </div>
         </div>
 
-        <!-- 进度条 -->
+        <!-- Progress Bar -->
         <div class="bg-gray-700 h-1.5 rounded-full overflow-hidden">
           <div
             class="h-full transition-all duration-500 ease-out rounded-full"
@@ -56,7 +56,7 @@
       </div>
     </div>
 
-    <!-- Statistics信息 -->
+    <!-- Statistics Information -->
     <div class="mt-4 pt-3 border-t border-gray-700 flex-shrink-0">
       <div class="flex justify-between text-xs">
         <span class="text-gray-400">Total Sessions</span>
@@ -70,7 +70,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { useShellData } from '@renderer/composables/useShellData.js'
 
-// 使用全局Data存储
+// Use global data store
 const { getShellDistribution, isLoading } = useShellData()
 
 const shellData = ref({})
@@ -91,7 +91,7 @@ const shellStats = computed(() => {
     .sort((a, b) => b.count - a.count)
 })
 
-// Get终端图标
+// Get terminal icon
 const getShellIcon = (shellName) => {
   switch (shellName?.toLowerCase()) {
     case 'bash':
@@ -110,7 +110,7 @@ const getShellIcon = (shellName) => {
   }
 }
 
-// Get终端颜色
+// Get terminal color
 const getShellColor = (shellName) => {
   switch (shellName?.toLowerCase()) {
     case 'bash':
@@ -129,7 +129,7 @@ const getShellColor = (shellName) => {
   }
 }
 
-// Load终端DistributionData
+// Load terminal distribution data
 const loadShellStats = async () => {
   try {
     const result = await getShellDistribution()
@@ -146,5 +146,5 @@ onMounted(() => {
 </script>
 
 <style scoped>
-/* 保持简洁 */
+/* Keep it simple */
 </style>

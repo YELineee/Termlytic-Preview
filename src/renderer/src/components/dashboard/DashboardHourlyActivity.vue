@@ -14,7 +14,7 @@
       </div>
     </div>
 
-    <!-- 图表容器 -->
+    <!-- Chart container -->
     <div class="flex-1 flex flex-col">
       <!-- Main Values -->
       <div class="mb-4">
@@ -27,7 +27,7 @@
         </div>
       </div>
 
-      <!-- EChart 图表区域 -->
+      <!-- EChart chart area -->
       <div class="flex-1 min-h-0">
         <EChartWrapper v-if="!loading" :option="chartOption" width="100%" height="100%" />
         <div v-else class="flex items-center justify-center h-full">
@@ -36,7 +36,7 @@
       </div>
     </div>
 
-    <!-- Statistics信息 -->
+    <!-- Statistics information -->
     <div class="flex items-center justify-between text-xs mt-4 pt-3 border-t border-gray-800">
       <span class="text-gray-500">Peak: {{ mostActiveHour }}:00</span>
       <span class="text-gray-300">{{ averagePerHour }}/H</span>
@@ -63,7 +63,7 @@ const maxCommands = computed(() => {
 })
 const averagePerHour = computed(() => Math.round(totalCommands.value / 24))
 
-// EChart 配置
+// EChart configuration
 const chartOption = computed(() => {
   const hours = Array.from({ length: 24 }, (_, i) => `${i.toString().padStart(2, '0')}:00`)
 
@@ -99,7 +99,7 @@ const chartOption = computed(() => {
       axisLabel: {
         fontSize: 9,
         color: '#6B7280',
-        interval: 3, // 只显示每4个小时的标签 (0, 6, 12, 18)
+        interval: 3, // Only show labels for every 4 hours (0, 6, 12, 18)
         rotate: 0
       },
       axisLine: {
@@ -132,7 +132,7 @@ const chartOption = computed(() => {
             const max = maxCommands.value || 1
             const intensity = value / max
 
-            // 根据强度返回不同的蓝色渐变
+            // Return different blue gradients based on intensity
             if (intensity === 0) return '#374151' // gray-700
             if (intensity < 0.2) return '#1E3A8A' // blue-800
             if (intensity < 0.4) return '#1D4ED8' // blue-700
@@ -150,7 +150,7 @@ const chartOption = computed(() => {
           }
         },
         animationDelay: function (idx) {
-          return idx * 20 // 每个柱子延迟20ms动画
+          return idx * 20 // Each bar delayed by 20ms animation
         }
       }
     ],
@@ -160,7 +160,7 @@ const chartOption = computed(() => {
   }
 })
 
-// 格式化主要数值
+// Format main values
 const formatMainValue = (num) => {
   if (num >= 1000) {
     return (num / 1000).toFixed(1)
@@ -168,7 +168,7 @@ const formatMainValue = (num) => {
   return num.toString()
 }
 
-// Get时间单位
+// Get time unit
 const getTimeUnit = () => {
   const max = maxCommands.value || 0
   if (max >= 1000) {
@@ -184,21 +184,21 @@ const loadHourlyStats = async () => {
 
     const hourlyStats = await dataCenter.getSpecificStats('hourly')
     
-    // 验证返回Data的格式
+    // Validate return data format
     if (hourlyStats && Array.isArray(hourlyStats.data)) {
       commands.value = hourlyStats.data
       mostActiveHour.value = hourlyStats.mostActive || 0
       totalCommands.value = hourlyStats.total || 0
     } else {
       console.warn('Invalid hourly stats format:', hourlyStats)
-      // 使用默认值
+      // Use default value
       commands.value = Array(24).fill(0)
       mostActiveHour.value = 0
       totalCommands.value = 0
     }
   } catch (err) {
     console.error('Failed to load hourly stats:', err)
-    // 确保有默认值
+    // Ensure default value
     commands.value = Array(24).fill(0)
     mostActiveHour.value = 0
     totalCommands.value = 0
@@ -213,5 +213,5 @@ onMounted(() => {
 </script>
 
 <style scoped>
-/* 保持简洁 */
+/* Keep it simple */
 </style>

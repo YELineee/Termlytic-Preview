@@ -1,7 +1,7 @@
 <template>
   <div class="flex-1 items-center justify-center w-full h-full bg-gray-950 min-h-0">
     <div class="grid grid-cols-4 grid-rows-5 gap-3 w-full h-full p-4 min-h-0 overflow-hidden">
-      <!-- 左上：总体Statistics和今日Statistics - 高优先级，立即显示 -->
+      <!-- Top Left: Overall Statistics and Daily Statistics - High Priority, Show Immediately -->
       <div class="grid grid-cols-1 grid-rows-2 gap-3 col-span-1 row-span-2 min-h-0">
         <div class="col-span-1 row-span-1 min-h-0">
           <ProgressiveLoader :delay="0" :priority="1" loading-text="Total Stats">
@@ -22,7 +22,7 @@
         </ProgressiveLoader>
       </div>
 
-      <!-- 主要报告区域 - 高优先级 -->
+      <!-- Main Report Area - High Priority -->
       <div class="col-span-2 row-span-2 min-h-0">
         <ProgressiveLoader :delay="150" :priority="1" loading-text="Main Report">
           <DashboardRepor />
@@ -43,7 +43,7 @@
         </ProgressiveLoader>
       </div>
 
-      <!-- Top CommandStatistics - 高优先级 -->
+      <!-- Top Command Statistics - High Priority -->
       <div class="col-span-1 row-span-2 min-h-0">
         <ProgressiveLoader :delay="50" :priority="1" loading-text="Top Commands">
           <DashboardTopCommands />
@@ -57,14 +57,14 @@
         </ProgressiveLoader>
       </div>
 
-      <!-- 星期活跃Distribution - 低优先级 -->
+      <!-- Weekly Activity Distribution - Low Priority -->
       <div class="col-span-1 row-span-2 min-h-0">
         <ProgressiveLoader :delay="400" :priority="3" loading-text="Weekly Activity">
           <DashboardWeeklyActivity />
         </ProgressiveLoader>
       </div>
 
-      <!-- 预留扩展区域 - 静态内容，立即显示 -->
+      <!-- Reserved Extension Area - Static Content, Show Immediately -->
       <div
         class="bg-gray-900 rounded-lg col-span-2 row-span-1 flex items-center justify-center border border-gray-800 min-h-0"
       >
@@ -93,15 +93,15 @@ import DashboardWeeklyActivity from './dashboard/DashboardWeeklyActivity.vue'
 import { useLoadingState } from '@renderer/composables/useLoadingState.js'
 import { onMounted, onUnmounted } from 'vue'
 
-// 使用全局Load状态管理
+// Use global loading state management
 const { setGlobalLoading } = useLoadingState()
 
-// 页面生命周期管理
+// Page lifecycle management
 onMounted(() => {
   console.log('📊 Dashboard page mounted')
   setGlobalLoading('dashboard', true)
   
-  // 3秒后自动清除仪表板Load状态
+  // Automatically clear dashboard loading state after 3 seconds
   setTimeout(() => {
     setGlobalLoading('dashboard', false)
     console.log('✅ Dashboard loading completed')
@@ -115,5 +115,5 @@ onUnmounted(() => {
 </script>
 
 <style>
-/* Tailwind 已经处理大部分样式 */
+/* Tailwind handles most styles */
 </style>

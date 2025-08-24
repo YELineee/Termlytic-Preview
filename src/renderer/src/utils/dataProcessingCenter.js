@@ -1,7 +1,7 @@
 /**
  * Data Processing Center - Optimize data aggregation and computation workflow
- * 避免重复数据处理，一次计算多用途结果
- * 现已集成全局数据管理，消除重复IPC调用
+ * Avoid duplicate data processing, calculate multi-purpose results in one pass
+ * Now integrated with global data management, eliminating duplicate IPC calls
  */
 import { useShellData } from '../composables/useShellData.js'
 
@@ -9,14 +9,14 @@ class DataProcessingCenter {
   constructor() {
     this.cache = new Map()
     this.cacheTimestamp = 0
-    this.cacheExpiry = 5 * 60 * 1000 // 5分钟缓存
+    this.cacheExpiry = 5 * 60 * 1000 // 5 minute cache
     
-    // 使用全局数据管理
+    // Use global data management
     this.shellDataManager = null
   }
 
   /**
-   * 初始化数据管理器
+   * Initialize data manager
    */
   initializeDataManager() {
     if (!this.shellDataManager) {
@@ -26,12 +26,12 @@ class DataProcessingCenter {
   }
 
   /**
-   * 获取处理过的数据，使用全局缓存机制
+   * Get processed data using global cache mechanism
    */
   async getProcessedData(forceRefresh = false) {
     const now = Date.now()
 
-    // 检查本地缓存是否有效
+    // Check if local cache is valid
     if (
       !forceRefresh &&
       this.cache.has('processedData') &&
@@ -42,7 +42,7 @@ class DataProcessingCenter {
     }
 
     try {
-      // 使用全局数据管理器，避免重复IPC调用
+      // Use global data manager to avoid duplicate IPC calls
       const dataManager = this.initializeDataManager()
       const result = await dataManager.getShellHistory(forceRefresh)
 
@@ -50,10 +50,10 @@ class DataProcessingCenter {
         throw new Error('Failed to fetch shell history from global manager')
       }
 
-      // 一次性处理所有统计数据
+      // Process all statistics data in one pass
       const processedData = this.processAllStats(result.entries)
 
-      // 更新缓存
+      // Update cache
       this.cache.set('processedData', processedData)
       this.cacheTimestamp = now
 
@@ -66,7 +66,7 @@ class DataProcessingCenter {
   }
 
   /**
-   * 一次性处理所有统计数据
+   * Process all statistics data in one pass
    */
   processAllStats(entries) {
     const stats = {
@@ -79,7 +79,7 @@ class DataProcessingCenter {
       timeline: []
     }
 
-    // 单次遍历处理所有统计
+    // Process all statistics in a single traversal
     entries.forEach((entry) => {
       if (!entry.timestamp) return
 
@@ -88,27 +88,27 @@ class DataProcessingCenter {
       const dayOfWeek = date.getDay()
       const dateKey = date.toISOString().split('T')[0]
 
-      // 小时统计
+      // Hour statistics
       stats.hourly[hour]++
 
-      // 星期统计
+      // Day of week statistics
       stats.weekly[dayOfWeek]++
 
-      // 每日统计
+      // Daily statistics
       stats.daily[dateKey] = (stats.daily[dateKey] || 0) + 1
 
-      // 命令统计
+      // Command statistics
       if (entry.command) {
         const mainCommand = entry.command.split(' ')[0]
         stats.commands[mainCommand] = (stats.commands[mainCommand] || 0) + 1
       }
 
-      // 终端统计
+      // Terminal statistics
       if (entry.shell) {
         stats.shells[entry.shell] = (stats.shells[entry.shell] || 0) + 1
       }
 
-      // 时间线数据（用于趋势分析）
+      // Timeline data (for trend analysis)
       stats.timeline.push({
         date: dateKey,
         timestamp: entry.timestamp,
@@ -117,19 +117,19 @@ class DataProcessingCenter {
       })
     })
 
-    // 计算衍生统计
+    // Calculate derived statistics
     return this.calculateDerivedStats(stats)
   }
 
   /**
-   * 计算衍生统计数据
+   * Calculate derived statistics data
    */
   calculateDerivedStats(stats) {
-    // 今日统计
+    // Today's statistics
     const today = new Date().toISOString().split('T')[0]
     const todayCommands = stats.daily[today] || 0
 
-    // 极值统计
+    // Extreme value statistics
     const dailyValues = Object.values(stats.daily)
     const maxDailyCommands = Math.max(...dailyValues, 0)
     const minDailyCommands = Math.min(...dailyValues, 0)
@@ -144,16 +144,16 @@ class DataProcessingCenter {
       { count: 0, date: '' }
     )
 
-    // 连续活跃天数
+    // Consecutive active days
     const longestStreak = this.calculateLongestStreak(Object.keys(stats.daily))
 
-    // Top 命令
+    // Top commands
     const topCommands = Object.entries(stats.commands)
       .map(([command, count]) => ({ command, count }))
       .sort((a, b) => b.count - a.count)
       .slice(0, 10)
 
-    // 终端分布
+    // Terminal distribution
     const totalShellCommands = Object.values(stats.shells).reduce((sum, count) => sum + count, 0)
     const shellDistribution = Object.entries(stats.shells).map(([shell, count]) => ({
       shell,
@@ -161,24 +161,24 @@ class DataProcessingCenter {
       percentage: (count / totalShellCommands) * 100
     }))
 
-    // 活跃天数
+    // Active days
     const activeDays = Object.keys(stats.daily).length
 
-    // 平均每日命令数
+    // Average daily commands
     const averageDaily = activeDays > 0 ? Math.round(stats.total / activeDays) : 0
 
-    // 最活跃小时
+    // Most active hour
     const mostActiveHour = stats.hourly.indexOf(Math.max(...stats.hourly))
 
-    // 最活跃星期
-    const dayNames = ['周日', '周一', '周二', '周三', '周四', '周五', '周六']
+    // Most active day of week
+    const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
     const mostActiveDay = dayNames[stats.weekly.indexOf(Math.max(...stats.weekly))]
 
     return {
-      // 原始统计
+      // Raw statistics
       ...stats,
 
-      // 衍生统计
+      // Derived statistics
       today: {
         commands: todayCommands,
         date: today
@@ -211,7 +211,7 @@ class DataProcessingCenter {
   }
 
   /**
-   * 计算最长连续活跃天数
+   * Calculate longest consecutive active days
    */
   calculateLongestStreak(dates) {
     const sortedDates = dates.sort()
@@ -243,7 +243,7 @@ class DataProcessingCenter {
   }
 
   /**
-   * 清除缓存
+   * Clear cache
    */
   clearCache() {
     this.cache.clear()
@@ -251,12 +251,12 @@ class DataProcessingCenter {
   }
 
   /**
-   * 获取特定类型的统计数据 - 优化版本，优先使用轻量级数据
+   * Get specific type of statistics data - optimized version, prioritizing lightweight data
    */
   async getSpecificStats(type, forceRefresh = false) {
     const dataManager = this.initializeDataManager()
 
-    // 对于统计类数据，优先尝试轻量级接口
+    // For statistical data, prioritize lightweight interface
     if (['hourly', 'daily', 'commands', 'shells', 'summary'].includes(type)) {
       try {
         const statsOnlyData = await dataManager.getStatsOnly(forceRefresh)
@@ -267,15 +267,15 @@ class DataProcessingCenter {
           switch (type) {
             case 'hourly':
               const hourlyData = analysis.timeAnalysis?.hourlyDistribution || analysis.timeAnalysis?.hourlyActivity || {}
-              // 转换为组件期望的格式
+              // Convert to component expected format
               let hourlyArray = Array(24).fill(0)
               
               if (Array.isArray(hourlyData)) {
-                // 如果已经是数组格式
+                // If already in array format
                 hourlyArray = hourlyData.slice(0, 24)
                 while (hourlyArray.length < 24) hourlyArray.push(0)
               } else if (typeof hourlyData === 'object') {
-                // 如果是对象格式，转换为数组
+                // If in object format, convert to array
                 Object.entries(hourlyData).forEach(([hour, count]) => {
                   const hourIndex = parseInt(hour)
                   if (hourIndex >= 0 && hourIndex < 24) {
@@ -284,7 +284,7 @@ class DataProcessingCenter {
                 })
               }
               
-              // 计算最活跃的小时
+              // Calculate most active hour
               const maxCount = Math.max(...hourlyArray)
               const mostActiveHour = hourlyArray.indexOf(maxCount)
               
@@ -320,7 +320,7 @@ class DataProcessingCenter {
       }
     }
 
-    // 回退到完整数据处理
+    // Fall back to full data processing
     const data = await this.getProcessedData(forceRefresh)
 
     switch (type) {
@@ -363,7 +363,7 @@ class DataProcessingCenter {
   }
 }
 
-// 创建单例实例
+// Create singleton instance
 const dataCenter = new DataProcessingCenter()
 
 export default dataCenter

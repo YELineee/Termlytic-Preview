@@ -21,7 +21,7 @@ import {
 } from 'echarts/components'
 import { CanvasRenderer } from 'echarts/renderers'
 
-// 注册必要的组件
+// Register necessary components
 import { use } from 'echarts/core'
 use([
   BarChart,
@@ -63,7 +63,7 @@ const chartContainer = ref(null)
 let chartInstance = null
 let resizeObserver = null
 
-// 初始化图表
+// Initialize chart
 const initChart = () => {
   if (chartContainer.value && props.option) {
     console.log('Initializing chart with option:', props.option)
@@ -78,26 +78,26 @@ const initChart = () => {
   }
 }
 
-// 处理图表大小调整
+// Handle chart resize
 const handleResize = () => {
   if (chartInstance) {
     chartInstance.resize()
   }
 }
 
-// 监听配置变化
+// Watch configuration changes
 watch(
   () => props.option,
   (newVal) => {
     if (chartInstance && newVal) {
       console.log('Updating chart with new option:', newVal)
-      chartInstance.setOption(newVal, true) // true 表示不合并，完全替换
+      chartInstance.setOption(newVal, true) // true means not merge, completely replace
     }
   },
   { deep: true }
 )
 
-// 监听容器尺寸变化
+// Watch container size changes
 const setupResizeObserver = () => {
   if (chartContainer.value && window.ResizeObserver) {
     resizeObserver = new ResizeObserver(handleResize)
@@ -105,24 +105,24 @@ const setupResizeObserver = () => {
   }
 }
 
-// 在组件挂载后初始化
+// Initialize after component mounting
 onMounted(() => {
   console.log('EChartWrapper mounted')
   setTimeout(() => {
     initChart()
     setupResizeObserver()
-  }, 100) // 延迟初始化确保DOM已准备好
+  }, 100) // Delayed initialization to ensure DOM is ready
 
-  // 添加窗口大小变化监听作为备用
+  // Add window resize listener as backup
   window.addEventListener('resize', handleResize)
 })
 
-// 生命周期
+// Lifecycle
 onBeforeUnmount(() => {
-  // 清理图表实例
+  // Clean up chart instance
   chartInstance?.dispose()
 
-  // 清理监听器
+  // Clean up listeners
   resizeObserver?.disconnect()
   window.removeEventListener('resize', handleResize)
 })

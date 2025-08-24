@@ -344,7 +344,7 @@ export const useShellData = () => {
         return true
       } catch (error) {
         console.error('❌ Core data preload failed:', error)
-        // 预加载失败不应该阻塞应用启动
+        // Preload failure should not block application startup
         return false
       }
     })()
@@ -352,22 +352,22 @@ export const useShellData = () => {
     return preloadPromise
   }
 
-  // 手动刷新数据
+  // Manual data refresh
   const refreshData = async () => {
     return await getShellHistory(true)
   }
 
   return {
-    // 数据状态
+    // Data state
     isLoading: computed(() => globalData.value.loading),
     hasError: computed(() => !!globalData.value.error),
     lastUpdate: computed(() => globalData.value.lastUpdate),
     isPreloaded: computed(() => globalData.value.preloaded),
     
-    // 缓存状态
+    // Cache state
     isStatsCacheValid,
     
-    // 数据获取方法
+    // Data fetching methods
     getShellHistory,
     getStatsOnly,
     getStats,
@@ -379,7 +379,7 @@ export const useShellData = () => {
     getTimePatterns,
     refreshData,
     
-    // 预加载方法
+    // Preload methods
     preloadCoreData
   }
 }

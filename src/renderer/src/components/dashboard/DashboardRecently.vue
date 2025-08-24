@@ -251,7 +251,7 @@ onMounted(() => {
   }
 }
 
-/* 自定义Scrollbar styles */
+/* Custom scrollbar styles */
 .overflow-y-auto {
   scrollbar-width: thin;
   scrollbar-color: rgba(107, 114, 128, 0.8) rgba(55, 65, 81, 0.3);

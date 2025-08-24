@@ -1,38 +1,38 @@
 /**
- * 统一数据服务模块
- * 提供标准化的数据获取接口，统一处理所有组件的数据需求
- * 解决数据结构不一致和重复请求的问题
+ * Unified data service module
+ * Provides standardized data retrieval interfaces, handles all component data needs uniformly
+ * Solves issues with inconsistent data structures and duplicate requests
  */
 
 import { ref, computed } from 'vue'
 
-// 全局数据缓存
+// Global data cache
 const dataCache = ref({
   shellHistory: null,
   statsOnly: null,
-  timeRangeStats: new Map(), // 按时间范围缓存统计数据
-  yearlyData: new Map(), // 按年份缓存数据
-  heatmapData: new Map(), // 按年份缓存热力图数据
+  timeRangeStats: new Map(), // Cache statistics data by time range
+  yearlyData: new Map(), // Cache data by year
+  heatmapData: new Map(), // Cache heatmap data by year
   availableYears: null,
   lastUpdate: null,
   loading: false,
   error: null
 })
 
-// 缓存时间配置（毫秒）
+// Cache time configuration (milliseconds)
 const CACHE_CONFIG = {
-  stats: 10 * 60 * 1000, // 统计数据：10分钟
-  timeRange: 5 * 60 * 1000, // 时间范围数据：5分钟
-  yearly: 15 * 60 * 1000, // 年度数据：15分钟
-  heatmap: 10 * 60 * 1000, // 热力图数据：10分钟
-  years: 30 * 60 * 1000 // 可用年份：30分钟
+  stats: 10 * 60 * 1000, // Statistics data: 10 minutes
+  timeRange: 5 * 60 * 1000, // Time range data: 5 minutes
+  yearly: 15 * 60 * 1000, // Yearly data: 15 minutes
+  heatmap: 10 * 60 * 1000, // Heatmap data: 10 minutes
+  years: 30 * 60 * 1000 // Available years: 30 minutes
 }
 
 /**
- * 检查缓存是否有效
- * @param {number} timestamp - 缓存时间戳
- * @param {number} duration - 缓存持续时间
- * @returns {boolean} 缓存是否有效
+ * Check if cache is valid
+ * @param {number} timestamp - Cache timestamp
+ * @param {number} duration - Cache duration
+ * @returns {boolean} Whether cache is valid
  */
 function isCacheValid(timestamp, duration) {
   if (!timestamp) return false
@@ -40,7 +40,7 @@ function isCacheValid(timestamp, duration) {
 }
 
 /**
- * 统一数据服务类
+ * Unified data service class
  */
 export class DataService {
   constructor() {
@@ -49,9 +49,9 @@ export class DataService {
   }
 
   /**
-   * 获取基础统计数据
-   * @param {boolean} forceRefresh - 是否强制刷新
-   * @returns {Promise<Object>} 统计数据
+   * Get basic statistics data
+   * @param {boolean} forceRefresh - Whether to force refresh
+   * @returns {Promise<Object>} Statistics data
    */
   async getBasicStats(forceRefresh = false) {
     const cacheKey = 'statsOnly'
@@ -89,10 +89,10 @@ export class DataService {
   }
 
   /**
-   * 获取时间范围统计数据
-   * @param {string} timeRange - 时间范围 ('day', 'week', 'month', 'year')
-   * @param {boolean} forceRefresh - 是否强制刷新
-   * @returns {Promise<Object>} 时间范围统计数据
+   * Get time range statistics data
+   * @param {string} timeRange - Time range ('day', 'week', 'month', 'year')
+   * @param {boolean} forceRefresh - Whether to force refresh
+   * @returns {Promise<Object>} Time range statistics data
    */
   async getTimeRangeStats(timeRange, forceRefresh = false) {
     const cacheKey = `timeRange_${timeRange}`
@@ -130,9 +130,9 @@ export class DataService {
   }
 
   /**
-   * 获取可用年份列表
-   * @param {boolean} forceRefresh - 是否强制刷新
-   * @returns {Promise<Array>} 可用年份数组
+   * Get available years list
+   * @param {boolean} forceRefresh - Whether to force refresh
+   * @returns {Promise<Array>} Available years array
    */
   async getAvailableYears(forceRefresh = false) {
     const cached = dataCache.value.availableYears
@@ -170,11 +170,11 @@ export class DataService {
   }
 
   /**
-   * 获取年度热力图数据
-   * @param {number} year - 年份
-   * @param {string} shellTypes - Shell类型
-   * @param {boolean} forceRefresh - 是否强制刷新
-   * @returns {Promise<Object>} 热力图数据
+   * Get yearly heatmap data
+   * @param {number} year - Year
+   * @param {string} shellTypes - Shell types
+   * @param {boolean} forceRefresh - Whether to force refresh
+   * @returns {Promise<Object>} Heatmap data
    */
   async getYearlyHeatmapData(year, shellTypes = 'all', forceRefresh = false) {
     const cacheKey = `heatmap_${year}_${shellTypes}`
@@ -211,10 +211,10 @@ export class DataService {
   }
 
   /**
-   * 生成命令票据数据
-   * @param {number} year - 年份
-   * @param {boolean} forceRefresh - 是否强制刷新
-   * @returns {Promise<Object>} 票据数据
+   * Generate command ticket data
+   * @param {number} year - Year
+   * @param {boolean} forceRefresh - Whether to force refresh
+   * @returns {Promise<Object>} Ticket data
    */
   async generateCommandTicket(year, forceRefresh = false) {
     const cacheKey = `ticket_${year}`
@@ -251,9 +251,9 @@ export class DataService {
   }
 
   /**
-   * 处理基础统计数据
-   * @param {Object} rawData - 原始数据
-   * @returns {Object} 处理后的数据
+   * Process basic statistics data
+   * @param {Object} rawData - Raw data
+   * @returns {Object} Processed data
    */
   processBasicStats(rawData) {
     const analysis = rawData.analysis || {}
@@ -270,9 +270,9 @@ export class DataService {
   }
 
   /**
-   * 处理时间范围统计数据
-   * @param {Object} rawData - 原始数据
-   * @returns {Object} 处理后的数据
+   * Process time range statistics data
+   * @param {Object} rawData - Raw data
+   * @returns {Object} Processed data
    */
   processTimeRangeStats(rawData) {
     return {
@@ -291,8 +291,8 @@ export class DataService {
   }
 
   /**
-   * 清除缓存
-   * @param {string} type - 缓存类型 ('all', 'stats', 'timeRange', 'yearly', 'heatmap')
+   * Clear cache
+   * @param {string} type - Cache type ('all', 'stats', 'timeRange', 'yearly', 'heatmap')
    */
   clearCache(type = 'all') {
     console.log(`Clearing cache: ${type}`)
@@ -321,7 +321,7 @@ export class DataService {
   }
 
   /**
-   * 强制刷新所有数据
+   * Force refresh all data
    * @returns {Promise<void>}
    */
   async refreshAll() {
@@ -329,7 +329,7 @@ export class DataService {
     this.clearCache('all')
     
     try {
-      // 强制刷新后端缓存
+      // Force refresh backend cache
       await window.electron.ipcRenderer.invoke('refresh-shell-history')
       console.log('All data refreshed successfully')
     } catch (error) {
@@ -339,10 +339,10 @@ export class DataService {
   }
 }
 
-// 创建单例实例
+// Create singleton instance
 export const dataService = new DataService()
 
-// 导出便捷方法
+// Export convenience methods
 export const useDataService = () => {
   return {
     dataService,
