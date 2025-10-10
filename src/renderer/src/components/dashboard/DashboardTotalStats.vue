@@ -1,17 +1,24 @@
 <template>
   <div
     class="w-full h-full rounded-lg p-4 flex flex-col justify-between"
-    :style="{ 
-      backgroundColor: 'var(--bgSecondary)', 
-      border: '1px solid var(--borderPrimary)' 
+    :style="{
+      backgroundColor: 'var(--bgSecondary)',
+      border: '1px solid var(--borderPrimary)'
     }"
   >
     <!-- Title -->
     <div class="flex items-center justify-between">
       <div class="flex items-center space-x-2">
-        <div class="w-2 h-2 rounded-full" :style="{ backgroundColor: 'var(--textSecondary)' }"></div>
-        <div class="text-xs uppercase tracking-wider font-medium" 
-             :style="{ color: 'var(--textTertiary)' }">COMPLETED TASKS</div>
+        <div
+          class="w-2 h-2 rounded-full"
+          :style="{ backgroundColor: 'var(--textSecondary)' }"
+        ></div>
+        <div
+          class="text-xs uppercase tracking-wider font-medium"
+          :style="{ color: 'var(--textTertiary)' }"
+        >
+          COMPLETED TASKS
+        </div>
       </div>
       <div class="text-xs" :style="{ color: 'var(--textMuted)' }">∞</div>
     </div>
@@ -37,7 +44,9 @@
       </div>
       <div class="flex items-center justify-between text-xs">
         <span :style="{ color: 'var(--textTertiary)' }">Unique Cmds</span>
-        <span :style="{ color: 'var(--textSecondary)' }">{{ formatNumber(stats.uniqueCommands) }}</span>
+        <span :style="{ color: 'var(--textSecondary)' }">{{
+          formatNumber(stats.uniqueCommands)
+        }}</span>
       </div>
     </div>
   </div>

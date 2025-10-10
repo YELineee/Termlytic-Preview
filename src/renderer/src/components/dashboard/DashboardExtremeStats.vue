@@ -2,19 +2,28 @@
   <div
     ref="containerRef"
     class="w-full h-full rounded-lg p-3 flex flex-col min-h-0"
-    :style="{ 
-      backgroundColor: 'var(--bgSecondary)', 
-      border: '1px solid var(--borderPrimary)' 
+    :style="{
+      backgroundColor: 'var(--bgSecondary)',
+      border: '1px solid var(--borderPrimary)'
     }"
   >
     <!-- Title -->
     <div class="flex items-center justify-between mb-3 flex-shrink-0">
       <div class="flex items-center space-x-2">
-        <div class="w-2 h-2 rounded-full" :style="{ backgroundColor: 'var(--textSecondary)' }"></div>
-        <h3 class="text-xs uppercase tracking-wider font-medium" 
-            :style="{ color: 'var(--textTertiary)' }">PAID INVOICES</h3>
+        <div
+          class="w-2 h-2 rounded-full"
+          :style="{ backgroundColor: 'var(--textSecondary)' }"
+        ></div>
+        <h3
+          class="text-xs uppercase tracking-wider font-medium"
+          :style="{ color: 'var(--textTertiary)' }"
+        >
+          PAID INVOICES
+        </h3>
       </div>
-      <div class="text-xs" :style="{ color: 'var(--textMuted)' }">{{ formatMainValue(craziestDay.count) }}</div>
+      <div class="text-xs" :style="{ color: 'var(--textMuted)' }">
+        {{ formatMainValue(craziestDay.count) }}
+      </div>
     </div>
 
     <!-- Compact statistics grid -->
@@ -22,76 +31,92 @@
       <!-- Craziest day -->
       <div
         class="rounded p-2 flex justify-center items-center min-h-0 compact-stat-item"
-        :style="{ 
-          backgroundColor: 'var(--bgTertiary)', 
-          border: '1px solid var(--borderSecondary)' 
+        :style="{
+          backgroundColor: 'var(--bgTertiary)',
+          border: '1px solid var(--borderSecondary)'
         }"
       >
         <div class="compact-layout hidden">
-          <span class="text-sm font-bold" :style="{ color: 'var(--textPrimary)' }">{{ craziestDay.count }}</span>
+          <span class="text-sm font-bold" :style="{ color: 'var(--textPrimary)' }">{{
+            craziestDay.count
+          }}</span>
           <span class="mx-1" :style="{ color: 'var(--textSecondary)' }">/</span>
           <span class="text-xs" :style="{ color: 'var(--textSecondary)' }">Peak</span>
         </div>
         <div class="normal-layout flex flex-col text-center">
           <div class="text-xs mb-1 truncate" :style="{ color: 'var(--textSecondary)' }">Peak</div>
-          <div class="text-sm font-bold truncate" :style="{ color: 'var(--textPrimary)' }">{{ craziestDay.count }}</div>
+          <div class="text-sm font-bold truncate" :style="{ color: 'var(--textPrimary)' }">
+            {{ craziestDay.count }}
+          </div>
         </div>
       </div>
 
-            <!-- Laziest day -->
+      <!-- Laziest day -->
       <div
         class="rounded p-2 flex justify-center items-center min-h-0 compact-stat-item"
-        :style="{ 
-          backgroundColor: 'var(--bgTertiary)', 
-          border: '1px solid var(--borderSecondary)' 
+        :style="{
+          backgroundColor: 'var(--bgTertiary)',
+          border: '1px solid var(--borderSecondary)'
         }"
       >
         <div class="compact-layout hidden">
-          <span class="text-sm font-bold" :style="{ color: 'var(--textPrimary)' }">{{ laziestDay.count }}</span>
+          <span class="text-sm font-bold" :style="{ color: 'var(--textPrimary)' }">{{
+            laziestDay.count
+          }}</span>
           <span class="mx-1" :style="{ color: 'var(--textSecondary)' }">/</span>
           <span class="text-xs" :style="{ color: 'var(--textSecondary)' }">Low</span>
         </div>
         <div class="normal-layout flex flex-col text-center">
           <div class="text-xs mb-1 truncate" :style="{ color: 'var(--textSecondary)' }">Low</div>
-          <div class="text-sm font-bold truncate" :style="{ color: 'var(--textPrimary)' }">{{ laziestDay.count }}</div>
+          <div class="text-sm font-bold truncate" :style="{ color: 'var(--textPrimary)' }">
+            {{ laziestDay.count }}
+          </div>
         </div>
       </div>
 
       <!-- Consecutive active days -->
       <div
         class="rounded p-2 flex justify-center items-center min-h-0 compact-stat-item"
-        :style="{ 
-          backgroundColor: 'var(--bgTertiary)', 
-          border: '1px solid var(--borderSecondary)' 
+        :style="{
+          backgroundColor: 'var(--bgTertiary)',
+          border: '1px solid var(--borderSecondary)'
         }"
       >
         <div class="compact-layout hidden">
-          <span class="text-sm font-bold" :style="{ color: 'var(--textPrimary)' }">{{ longestStreak }}d</span>
+          <span class="text-sm font-bold" :style="{ color: 'var(--textPrimary)' }"
+            >{{ longestStreak }}d</span
+          >
           <span class="mx-1" :style="{ color: 'var(--textSecondary)' }">/</span>
           <span class="text-xs" :style="{ color: 'var(--textSecondary)' }">Streak</span>
         </div>
         <div class="normal-layout flex flex-col text-center">
           <div class="text-xs mb-1 truncate" :style="{ color: 'var(--textSecondary)' }">Streak</div>
-          <div class="text-sm font-bold truncate" :style="{ color: 'var(--textPrimary)' }">{{ longestStreak }}d</div>
+          <div class="text-sm font-bold truncate" :style="{ color: 'var(--textPrimary)' }">
+            {{ longestStreak }}d
+          </div>
         </div>
       </div>
 
       <!-- Average per day -->
       <div
         class="rounded p-2 flex justify-center items-center min-h-0 compact-stat-item"
-        :style="{ 
-          backgroundColor: 'var(--bgTertiary)', 
-          border: '1px solid var(--borderSecondary)' 
+        :style="{
+          backgroundColor: 'var(--bgTertiary)',
+          border: '1px solid var(--borderSecondary)'
         }"
       >
         <div class="compact-layout hidden">
-          <span class="text-sm font-bold" :style="{ color: 'var(--textPrimary)' }">{{ averageDaily.toFixed(0) }}</span>
+          <span class="text-sm font-bold" :style="{ color: 'var(--textPrimary)' }">{{
+            averageDaily.toFixed(0)
+          }}</span>
           <span class="mx-1" :style="{ color: 'var(--textSecondary)' }">/</span>
           <span class="text-xs" :style="{ color: 'var(--textSecondary)' }">Avg</span>
         </div>
         <div class="normal-layout flex flex-col text-center">
           <div class="text-xs mb-1 truncate" :style="{ color: 'var(--textSecondary)' }">Avg</div>
-          <div class="text-sm font-bold truncate" :style="{ color: 'var(--textPrimary)' }">{{ averageDaily.toFixed(0) }}</div>
+          <div class="text-sm font-bold truncate" :style="{ color: 'var(--textPrimary)' }">
+            {{ averageDaily.toFixed(0) }}
+          </div>
         </div>
       </div>
     </div>

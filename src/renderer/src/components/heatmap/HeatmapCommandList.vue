@@ -1,8 +1,14 @@
 <template>
   <div class="card h-full flex-col">
     <!-- Title - fixed, no scroll -->
-    <h4 class="text-md font-medium mb-4 flex items-center shrink-0" :style="{ color: 'var(--textPrimary)' }">
-      <div class="w-2 h-2 rounded-full mr-2" :style="{ backgroundColor: 'var(--textSecondary)' }"></div>
+    <h4
+      class="text-md font-medium mb-4 flex items-center shrink-0"
+      :style="{ color: 'var(--textPrimary)' }"
+    >
+      <div
+        class="w-2 h-2 rounded-full mr-2"
+        :style="{ backgroundColor: 'var(--textSecondary)' }"
+      ></div>
       Command Execution History
       <span v-if="selectedDate" class="ml-2 text-sm" :style="{ color: 'var(--textTertiary)' }">
         {{ selectedDate.formattedDate }}
@@ -28,14 +34,24 @@
     <!-- Command List - Scrollable Content -->
     <div v-else class="flex-1 min-h-0 flex flex-col">
       <!-- Statistics Information - Fixed, No Scroll -->
-      <div class="rounded-lg p-4 mb-3 shrink-0" :style="{ backgroundColor: 'var(--bgTertiary)', border: '1px solid var(--borderSecondary)' }">
+      <div
+        class="rounded-lg p-4 mb-3 shrink-0"
+        :style="{
+          backgroundColor: 'var(--bgTertiary)',
+          border: '1px solid var(--borderSecondary)'
+        }"
+      >
         <div class="grid grid-cols-2 gap-4 text-sm">
           <div class="text-center">
-            <div class="text-2xl font-bold mb-1" :style="{ color: 'var(--textPrimary)' }">{{ selectedDate.totalCommands }}</div>
+            <div class="text-2xl font-bold mb-1" :style="{ color: 'var(--textPrimary)' }">
+              {{ selectedDate.totalCommands }}
+            </div>
             <div class="text-xs" :style="{ color: 'var(--textTertiary)' }">Total Commands</div>
           </div>
           <div class="text-center">
-            <div class="text-2xl font-bold mb-1" :style="{ color: 'var(--textPrimary)' }">{{ uniqueCommands }}</div>
+            <div class="text-2xl font-bold mb-1" :style="{ color: 'var(--textPrimary)' }">
+              {{ uniqueCommands }}
+            </div>
             <div class="text-xs" :style="{ color: 'var(--textTertiary)' }">Unique Commands</div>
           </div>
         </div>
@@ -51,9 +67,7 @@
           >
             <div class="flex-1 min-w-0 mr-3">
               <div class="flex items-center mb-1">
-                <code class="success-text font-mono text-sm break-all mr-2">{{
-                  cmd.command
-                }}</code>
+                <code class="success-text font-mono text-sm break-all mr-2">{{ cmd.command }}</code>
                 <span
                   v-if="cmd.count > 1"
                   class="accent-text bg-secondary text-xs px-2 py-0.5 rounded-full border border-divider"

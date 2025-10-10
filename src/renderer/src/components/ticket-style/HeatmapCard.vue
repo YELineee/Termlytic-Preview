@@ -23,9 +23,11 @@
       <div class="bg-tertiary rounded-xl p-6 mb-6">
         <div class="mb-4">
           <h3 class="text-lg font-semibold text-primary mb-2">Command Activity Heatmap</h3>
-          <p class="text-secondary text-sm">{{ activeDays }} active days out of {{ daysInYear }} days ({{ year }})</p>
+          <p class="text-secondary text-sm">
+            {{ activeDays }} active days out of {{ daysInYear }} days ({{ year }})
+          </p>
         </div>
-        
+
         <!-- Heatmap Component -->
         <div class="flex justify-center">
           <HeatmapWrapper
@@ -76,9 +78,7 @@
             Generated on {{ new Date().toLocaleDateString() }}
           </div>
         </div>
-        <div class="text-tertiary text-xs font-mono">
-          HEATMAP-{{ ticketNumber }}
-        </div>
+        <div class="text-tertiary text-xs font-mono">HEATMAP-{{ ticketNumber }}</div>
       </div>
     </div>
   </div>
@@ -126,7 +126,7 @@ const colorScheme = ['#1F2937', '#4B5563', '#6B7280', '#9CA3AF', '#D1D5DB']
 // Calculate total days in the year (considering leap years)
 const daysInYear = computed(() => {
   const year = props.year
-  return ((year % 4 === 0 && year % 100 !== 0) || year % 400 === 0) ? 366 : 365
+  return (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0 ? 366 : 365
 })
 
 // Calculate statistical data
@@ -137,13 +137,16 @@ const avgDailyCommands = computed(() => {
 
 const maxDailyCommands = computed(() => {
   if (!props.heatmapData || props.heatmapData.length === 0) return 0
-  return Math.max(...props.heatmapData.map(day => day.count || 0))
+  return Math.max(...props.heatmapData.map((day) => day.count || 0))
 })
 </script>
 
 <style scoped>
 .heatmap-card {
-  font-family: system-ui, -apple-system, sans-serif;
+  font-family:
+    system-ui,
+    -apple-system,
+    sans-serif;
   width: 100%;
   height: auto;
   display: flex;
@@ -153,23 +156,23 @@ const maxDailyCommands = computed(() => {
 
 /* Heatmap style overrides */
 :deep(.intensity-0) {
-  background-color: #1F2937;
+  background-color: #1f2937;
 }
 
 :deep(.intensity-1) {
-  background-color: #4B5563;
+  background-color: #4b5563;
 }
 
 :deep(.intensity-2) {
-  background-color: #6B7280;
+  background-color: #6b7280;
 }
 
 :deep(.intensity-3) {
-  background-color: #9CA3AF;
+  background-color: #9ca3af;
 }
 
 :deep(.intensity-4) {
-  background-color: #D1D5DB;
+  background-color: #d1d5db;
 }
 
 /* Responsive design */
@@ -177,7 +180,7 @@ const maxDailyCommands = computed(() => {
   .heatmap-card {
     padding: 1rem;
   }
-  
+
   .grid-cols-3 {
     grid-template-columns: 1fr;
     gap: 1rem;

@@ -1,9 +1,9 @@
 <template>
   <div
     class="w-full h-full rounded-lg p-4 sm:p-3 xs:p-2 flex flex-col min-h-0 overflow-hidden"
-    :style="{ 
-      backgroundColor: 'var(--bgSecondary)', 
-      border: '1px solid var(--borderPrimary)' 
+    :style="{
+      backgroundColor: 'var(--bgSecondary)',
+      border: '1px solid var(--borderPrimary)'
     }"
   >
     <!-- Title -->
@@ -21,16 +21,21 @@
 
     <!-- Main Values -->
     <div class="mb-4 sm:mb-3 xs:mb-2 flex-shrink-0">
-      <div class="text-3xl sm:text-2xl xs:text-xl font-bold mb-1 sm:mb-0.5"
-           :style="{ color: 'var(--textPrimary)' }">
+      <div
+        class="text-3xl sm:text-2xl xs:text-xl font-bold mb-1 sm:mb-0.5"
+        :style="{ color: 'var(--textPrimary)' }"
+      >
         {{ formatMainValue(topCommands[0]?.count || 0) }}
       </div>
       <div class="flex items-center space-x-2 sm:space-x-1">
-        <span class="text-sm sm:text-xs xs:text-2xs" :style="{ color: 'var(--textSecondary)' }">×</span>
-        <span class="text-xs sm:text-2xs uppercase tracking-wider" 
-              :style="{ color: 'var(--textSecondary)' }">{{
-          topCommands[0]?.command || 'N/A'
-        }}</span>
+        <span class="text-sm sm:text-xs xs:text-2xs" :style="{ color: 'var(--textSecondary)' }"
+          >×</span
+        >
+        <span
+          class="text-xs sm:text-2xs uppercase tracking-wider"
+          :style="{ color: 'var(--textSecondary)' }"
+          >{{ topCommands[0]?.command || 'N/A' }}</span
+        >
       </div>
     </div>
 
@@ -45,25 +50,31 @@
         :style="{ '--hover-bg': 'var(--bgHover)' }"
       >
         <div class="flex items-center space-x-3 sm:space-x-2 flex-1 min-w-0">
-          <div class="text-xs sm:text-2xs w-5 sm:w-4 flex-shrink-0 text-center"
-               :style="{ color: 'var(--textTertiary)' }">
+          <div
+            class="text-xs sm:text-2xs w-5 sm:w-4 flex-shrink-0 text-center"
+            :style="{ color: 'var(--textTertiary)' }"
+          >
             {{ index + 1 }}
           </div>
-          <div class="text-sm sm:text-xs xs:text-2xs font-mono truncate min-w-0"
-               :style="{ color: 'var(--textPrimary)' }">
+          <div
+            class="text-sm sm:text-xs xs:text-2xs font-mono truncate min-w-0"
+            :style="{ color: 'var(--textPrimary)' }"
+          >
             {{ cmd.command }}
           </div>
         </div>
         <div class="flex items-center space-x-3 sm:space-x-2 flex-shrink-0">
           <div
             class="h-1.5 rounded-full transition-all duration-300"
-            :style="{ 
+            :style="{
               width: `${Math.max(8, (cmd.count / maxCount) * 40)}px`,
               backgroundColor: 'var(--textPrimary)'
             }"
           ></div>
-          <div class="text-xs sm:text-2xs font-bold w-10 sm:w-8 text-right"
-               :style="{ color: 'var(--textPrimary)' }">
+          <div
+            class="text-xs sm:text-2xs font-bold w-10 sm:w-8 text-right"
+            :style="{ color: 'var(--textPrimary)' }"
+          >
             {{ formatCount(cmd.count) }}
           </div>
         </div>
@@ -76,7 +87,9 @@
       :style="{ borderTop: '1px solid var(--borderPrimary)' }"
     >
       <span :style="{ color: 'var(--textTertiary)' }">TOTAL EXECUTIONS</span>
-      <span class="font-mono" :style="{ color: 'var(--textSecondary)' }">{{ formatNumber(totalExecutions) }}</span>
+      <span class="font-mono" :style="{ color: 'var(--textSecondary)' }">{{
+        formatNumber(totalExecutions)
+      }}</span>
     </div>
   </div>
 </template>

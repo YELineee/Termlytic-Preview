@@ -2,25 +2,27 @@
 <template>
   <div class="relative w-full h-full">
     <!-- Loading state placeholder -->
-    <div v-if="!isVisible" class="w-full h-full rounded-lg flex items-center justify-center"
-         :style="{ 
-           backgroundColor: 'var(--bgSecondary)', 
-           border: '1px solid var(--borderPrimary)' 
-         }">
+    <div
+      v-if="!isVisible"
+      class="w-full h-full rounded-lg flex items-center justify-center"
+      :style="{
+        backgroundColor: 'var(--bgSecondary)',
+        border: '1px solid var(--borderPrimary)'
+      }"
+    >
       <div class="text-center">
-        <div class="inline-block animate-pulse rounded-full h-4 w-4 mb-2"
-             :style="{ backgroundColor: 'var(--bgTertiary)' }"></div>
-        <div class="text-xs" :style="{ color: 'var(--textMuted)' }">{{ loadingText || 'Loading...' }}</div>
+        <div
+          class="inline-block animate-pulse rounded-full h-4 w-4 mb-2"
+          :style="{ backgroundColor: 'var(--bgTertiary)' }"
+        ></div>
+        <div class="text-xs" :style="{ color: 'var(--textMuted)' }">
+          {{ loadingText || 'Loading...' }}
+        </div>
       </div>
     </div>
 
     <!-- Actual component - use transition for smooth animation -->
-    <transition 
-      name="fade-slide" 
-      @enter="onEnter" 
-      @leave="onLeave"
-      :duration="300"
-    >
+    <transition name="fade-slide" @enter="onEnter" @leave="onLeave" :duration="300">
       <div v-if="isVisible" class="w-full h-full">
         <slot />
       </div>
@@ -55,15 +57,15 @@ onMounted(async () => {
   // Calculate actual delay based on priority
   const priorityDelay = (props.priority - 1) * 100 // High priority components load earlier
   const totalDelay = props.delay + priorityDelay
-  
+
   // Wait for specified delay time
   if (totalDelay > 0) {
-    await new Promise(resolve => setTimeout(resolve, totalDelay))
+    await new Promise((resolve) => setTimeout(resolve, totalDelay))
   }
-  
+
   // Wait for DOM update
   await nextTick()
-  
+
   // Show component
   isVisible.value = true
 })
@@ -100,7 +102,8 @@ const onLeave = (el) => {
 
 /* Pulse animation optimization */
 @keyframes subtle-pulse {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 0.4;
   }
   50% {

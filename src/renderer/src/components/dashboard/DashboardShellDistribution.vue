@@ -3,8 +3,13 @@
     <!-- Title -->
     <div class="flex items-center justify-between mb-4 flex-shrink-0">
       <div class="flex items-center space-x-2">
-        <div class="w-2 h-2 rounded-full" :style="{ backgroundColor: 'var(--textSecondary)' }"></div>
-        <h3 class="text-sm font-medium uppercase tracking-wider text-primary">SHELL DISTRIBUTION</h3>
+        <div
+          class="w-2 h-2 rounded-full"
+          :style="{ backgroundColor: 'var(--textSecondary)' }"
+        ></div>
+        <h3 class="text-sm font-medium uppercase tracking-wider text-primary">
+          SHELL DISTRIBUTION
+        </h3>
       </div>
       <div class="text-xs text-tertiary">{{ totalCommands }} commands</div>
     </div>
@@ -113,44 +118,44 @@ const getShellIcon = (shellName) => {
 // Get terminal color - supports colorful theme
 const getShellColor = (shellName) => {
   const theme = currentThemeMode.value
-  
+
   // Colorful theme - different colors for each shell
   if (theme === 'colorful') {
     const colorfulColors = {
-      'bash': '#00D9FF',      // 青色
-      'zsh': '#7B68EE',       // 紫色
-      'fish': '#FF6B9D',      // 粉色
-      'powershell': '#4ECDC4', // 绿松石色
-      'pwsh': '#FFD93D',      // 金黄色
-      'cmd': '#6BCF7F',       // 薄荷绿
-      'default': '#00A8CC'    // 默认青色
+      bash: '#00D9FF', // 青色
+      zsh: '#7B68EE', // 紫色
+      fish: '#FF6B9D', // 粉色
+      powershell: '#4ECDC4', // 绿松石色
+      pwsh: '#FFD93D', // 金黄色
+      cmd: '#6BCF7F', // 薄荷绿
+      default: '#00A8CC' // 默认青色
     }
     return colorfulColors[shellName?.toLowerCase()] || colorfulColors.default
   }
-  
+
   // Dark theme - grayscale
   if (theme === 'dark') {
     const darkColors = {
-      'bash': '#F3F4F6',    // gray-100
-      'zsh': '#D1D5DB',     // gray-300
-      'fish': '#9CA3AF',    // gray-400
-      'powershell': '#6B7280', // gray-500
-      'pwsh': '#6B7280',    // gray-500
-      'cmd': '#4B5563',     // gray-600
-      'default': '#9CA3AF'  // gray-400
+      bash: '#F3F4F6', // gray-100
+      zsh: '#D1D5DB', // gray-300
+      fish: '#9CA3AF', // gray-400
+      powershell: '#6B7280', // gray-500
+      pwsh: '#6B7280', // gray-500
+      cmd: '#4B5563', // gray-600
+      default: '#9CA3AF' // gray-400
     }
     return darkColors[shellName?.toLowerCase()] || darkColors.default
   }
-  
+
   // Light theme - grayscale
   const lightColors = {
-    'bash': '#111827',    // gray-900
-    'zsh': '#374151',     // gray-700
-    'fish': '#4B5563',    // gray-600
-    'powershell': '#6B7280', // gray-500
-    'pwsh': '#6B7280',    // gray-500
-    'cmd': '#9CA3AF',     // gray-400
-    'default': '#6B7280'  // gray-500
+    bash: '#111827', // gray-900
+    zsh: '#374151', // gray-700
+    fish: '#4B5563', // gray-600
+    powershell: '#6B7280', // gray-500
+    pwsh: '#6B7280', // gray-500
+    cmd: '#9CA3AF', // gray-400
+    default: '#6B7280' // gray-500
   }
   return lightColors[shellName?.toLowerCase()] || lightColors.default
 }

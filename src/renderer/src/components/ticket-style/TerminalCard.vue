@@ -1,5 +1,7 @@
 <template>
-  <div class="w-full max-w-lg bg-primary rounded-lg shadow-2xl overflow-hidden border border-divider">
+  <div
+    class="w-full max-w-lg bg-primary rounded-lg shadow-2xl overflow-hidden border border-divider"
+  >
     <!-- Terminal Title Bar -->
     <div class="bg-secondary px-4 py-2 flex items-center justify-between border-b border-divider">
       <div class="flex items-center space-x-2">
@@ -9,7 +11,9 @@
           <div class="w-3 h-3 bg-gray-500 rounded-full"></div>
           <div class="w-3 h-3 bg-gray-400 rounded-full"></div>
         </div>
-        <span class="text-primary text-sm font-mono ml-2">Command Summary {{ new Date().getFullYear() }}</span>
+        <span class="text-primary text-sm font-mono ml-2"
+          >Command Summary {{ new Date().getFullYear() }}</span
+        >
       </div>
     </div>
 
@@ -37,7 +41,9 @@
         </div>
         <div class="flex justify-between items-center">
           <span class="text-secondary">Avg Commands/Day:</span>
-          <span class="accent-text font-bold">{{ Math.round(totalCommands / Math.max(activeDays, 1)) }}</span>
+          <span class="accent-text font-bold">{{
+            Math.round(totalCommands / Math.max(activeDays, 1))
+          }}</span>
         </div>
         <div class="flex justify-between items-center">
           <span class="text-secondary">Productivity Score:</span>
@@ -81,7 +87,9 @@
         </div>
         <div class="flex justify-between">
           <span class="text-tertiary">Peak Day Commands:</span>
-          <span class="success-text">{{ Math.max(...chartData.map(v => Math.ceil(v * totalCommands / 100 / 12))) }}</span>
+          <span class="success-text">{{
+            Math.max(...chartData.map((v) => Math.ceil((v * totalCommands) / 100 / 12)))
+          }}</span>
         </div>
         <div class="flex justify-between">
           <span class="text-tertiary">Efficiency Rating:</span>
@@ -93,7 +101,9 @@
       <div class="border-t border-divider pt-4 mt-4">
         <div class="flex items-center space-x-2">
           <span class="success-text">user@terminal:~$</span>
-          <span class="text-secondary">echo "Year {{ new Date().getFullYear() }} Summary Complete"</span>
+          <span class="text-secondary"
+            >echo "Year {{ new Date().getFullYear() }} Summary Complete"</span
+          >
           <span class="animate-pulse success-text">_</span>
         </div>
         <div class="text-tertiary text-xs mt-1">
@@ -146,8 +156,20 @@ const formatNumber = (num) => {
 }
 
 const getMonthName = (index) => {
-  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
-                  'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+  const months = [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec'
+  ]
   return months[index] || ''
 }
 
@@ -177,8 +199,14 @@ const getEfficiencyRating = () => {
 
 /* Cursor blink animation */
 @keyframes blink {
-  0%, 50% { opacity: 1; }
-  51%, 100% { opacity: 0; }
+  0%,
+  50% {
+    opacity: 1;
+  }
+  51%,
+  100% {
+    opacity: 0;
+  }
 }
 
 .animate-pulse {

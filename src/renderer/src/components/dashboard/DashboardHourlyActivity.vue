@@ -3,7 +3,10 @@
     <!-- Title -->
     <div class="flex items-center justify-between mb-4">
       <div class="flex items-center space-x-2">
-        <div class="w-2 h-2 rounded-full" :style="{ backgroundColor: 'var(--textSecondary)' }"></div>
+        <div
+          class="w-2 h-2 rounded-full"
+          :style="{ backgroundColor: 'var(--textSecondary)' }"
+        ></div>
         <h3
           class="text-xs text-secondary uppercase tracking-wider font-medium dashboard-truncate-responsive"
         >
@@ -71,18 +74,18 @@ const averagePerHour = computed(() => Math.round(totalCommands.value / 24))
 const chartOption = computed(() => {
   const hours = Array.from({ length: 24 }, (_, i) => `${i.toString().padStart(2, '0')}:00`)
   const isDark = currentTheme.value === 'dark'
-  
+
   // Pre-calculate colors for use in callbacks
   const textColor = isDark ? '#9CA3AF' : '#6B7280'
   const labelColor = isDark ? '#D1D5DB' : '#374151'
   const tooltipBg = isDark ? '#1F2937' : '#FFFFFF'
   const tooltipBorder = isDark ? '#374151' : '#E5E7EB'
   const axisColor = isDark ? '#374151' : '#E5E7EB'
-  
+
   // Pre-calculate max value for color intensity
   const maxValue = maxCommands.value || 1
   const dataArray = Array.isArray(commands.value) ? commands.value : Array(24).fill(0)
-  
+
   // Dynamic font size - smaller for compact display
   const xAxisFontSize = 8
   const tooltipFontSize = 11
@@ -99,7 +102,9 @@ const chartOption = computed(() => {
         fontSize: tooltipFontSize
       },
       extraCssText: `
-        box-shadow: ${isDark ? '0 4px 6px -1px rgba(0, 0, 0, 0.3)' : '0 4px 6px -1px rgba(0, 0, 0, 0.1)'};
+        box-shadow: ${
+          isDark ? '0 4px 6px -1px rgba(0, 0, 0, 0.3)' : '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+        };
         border-radius: 6px;
         padding: 6px 10px;
       `,
@@ -201,7 +206,7 @@ const loadHourlyStats = async () => {
     loading.value = true
 
     const hourlyStats = await dataCenter.getSpecificStats('hourly')
-    
+
     // Validate return data format
     if (hourlyStats && Array.isArray(hourlyStats.data)) {
       commands.value = hourlyStats.data

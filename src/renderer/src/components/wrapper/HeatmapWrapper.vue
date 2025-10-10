@@ -1,6 +1,6 @@
 <template>
   <!-- Heatmap content area -->
-<div class="font-sans text-secondary text-xs overflow-visible" ref="containerRef">
+  <div class="font-sans text-secondary text-xs overflow-visible" ref="containerRef">
     <!-- Heatmap main container -->
     <div class="flex flex-col gap-1">
       <!-- Month label row -->
@@ -131,18 +131,22 @@ const { currentTheme } = useTheme()
 const containerRef = ref(null)
 
 // Update CSS variables when theme changes
-watch([heatmapTheme, containerRef], ([theme, container]) => {
-  if (!container) return
-  
-  // Set heatmap color CSS variables
-  theme.cellColors.forEach((color, index) => {
-    container.style.setProperty(`--heatmap-color-${index}`, color)
-  })
-  
-  // Set border colors
-  container.style.setProperty('--heatmap-border-default', theme.border.default)
-  container.style.setProperty('--heatmap-border-hover', theme.border.hover)
-}, { immediate: true })
+watch(
+  [heatmapTheme, containerRef],
+  ([theme, container]) => {
+    if (!container) return
+
+    // Set heatmap color CSS variables
+    theme.cellColors.forEach((color, index) => {
+      container.style.setProperty(`--heatmap-color-${index}`, color)
+    })
+
+    // Set border colors
+    container.style.setProperty('--heatmap-border-default', theme.border.default)
+    container.style.setProperty('--heatmap-border-hover', theme.border.hover)
+  },
+  { immediate: true }
+)
 
 // Props definition
 const props = defineProps({

@@ -1,25 +1,32 @@
 <template>
   <div
     class="w-full h-full rounded-lg p-4 flex flex-col min-h-0 overflow-hidden"
-    :style="{ 
-      backgroundColor: 'var(--bgSecondary)', 
-      border: '1px solid var(--borderPrimary)' 
+    :style="{
+      backgroundColor: 'var(--bgSecondary)',
+      border: '1px solid var(--borderPrimary)'
     }"
   >
     <!-- Title bar -->
     <div class="flex items-center justify-between mb-4 flex-shrink-0">
       <div class="flex items-center space-x-2">
-        <div class="w-2 h-2 rounded-full" :style="{ backgroundColor: 'var(--textSecondary)' }"></div>
-        <h3 class="text-sm font-medium uppercase tracking-wider" 
-            :style="{ color: 'var(--textPrimary)' }">RECENT COMMANDS</h3>
+        <div
+          class="w-2 h-2 rounded-full"
+          :style="{ backgroundColor: 'var(--textSecondary)' }"
+        ></div>
+        <h3
+          class="text-sm font-medium uppercase tracking-wider"
+          :style="{ color: 'var(--textPrimary)' }"
+        >
+          RECENT COMMANDS
+        </h3>
       </div>
       <div class="flex items-center space-x-2">
         <select
           v-model="selectedShell"
           @change="loadRecentCommands"
           class="px-2 py-1 rounded text-xs focus:outline-none"
-          :style="{ 
-            backgroundColor: 'var(--bgTertiary)', 
+          :style="{
+            backgroundColor: 'var(--bgTertiary)',
             color: 'var(--textPrimary)',
             border: '1px solid var(--borderSecondary)'
           }"
@@ -44,15 +51,17 @@
     <div class="flex-1 overflow-hidden flex flex-col min-h-0">
       <!-- Loading state -->
       <div v-if="loading" class="flex items-center justify-center h-32">
-        <div class="text-sm" :style="{ color: 'var(--textSecondary)' }">Loading recent commands...</div>
+        <div class="text-sm" :style="{ color: 'var(--textSecondary)' }">
+          Loading recent commands...
+        </div>
       </div>
 
       <!-- Error state -->
       <div
         v-else-if="error"
         class="text-sm p-3 rounded flex-shrink-0"
-        :style="{ 
-          color: 'var(--error)', 
+        :style="{
+          color: 'var(--error)',
           backgroundColor: 'var(--bgTertiary)',
           border: '1px solid var(--error)'
         }"
@@ -69,7 +78,9 @@
 
       <!-- No data state -->
       <div v-else-if="recentCommands.length === 0" class="flex items-center justify-center h-32">
-        <div class="text-sm" :style="{ color: 'var(--textSecondary)' }">No recent commands found</div>
+        <div class="text-sm" :style="{ color: 'var(--textSecondary)' }">
+          No recent commands found
+        </div>
       </div>
 
       <!-- Command list - scrollable area -->
@@ -78,9 +89,9 @@
           v-for="(command, index) in recentCommands"
           :key="index"
           class="rounded-lg p-3 transition-all cursor-pointer group hover-item"
-          :style="{ 
-            backgroundColor: 'var(--bgTertiary)', 
-            border: '1px solid var(--borderSecondary)' 
+          :style="{
+            backgroundColor: 'var(--bgTertiary)',
+            border: '1px solid var(--borderSecondary)'
           }"
           @click="copyCommand(command.command)"
         >
@@ -88,10 +99,11 @@
             <!-- Command information -->
             <div class="flex-1 min-w-0">
               <div class="flex items-center space-x-2 mb-2">
-                <code class="font-mono text-sm break-all flex-1" 
-                      :style="{ color: 'var(--textPrimary)' }">{{
-                  command.command
-                }}</code>
+                <code
+                  class="font-mono text-sm break-all flex-1"
+                  :style="{ color: 'var(--textPrimary)' }"
+                  >{{ command.command }}</code
+                >
                 <span
                   class="px-2 py-1 rounded text-xs font-medium flex-shrink-0"
                   :style="getShellColor(command.shell)"
@@ -99,7 +111,10 @@
                   {{ command.shell }}
                 </span>
               </div>
-              <div class="text-xs flex items-center space-x-2" :style="{ color: 'var(--textTertiary)' }">
+              <div
+                class="text-xs flex items-center space-x-2"
+                :style="{ color: 'var(--textTertiary)' }"
+              >
                 <i class="fas fa-clock"></i>
                 <span>{{ formatTimestamp(command.timestamp) }}</span>
               </div>
@@ -112,7 +127,7 @@
               <button
                 @click.stop="copyCommand(command.command)"
                 class="p-1.5 rounded transition-colors hover-copy-button"
-                :style="{ 
+                :style="{
                   color: 'var(--textSecondary)',
                   border: '1px solid var(--borderSecondary)'
                 }"
@@ -160,13 +175,13 @@ const loadRecentCommands = async () => {
   try {
     error.value = ''
     const result = await getRecentCommands(20)
-    
+
     // Filter by terminal type
     let filteredCommands = result
     if (selectedShell.value !== 'all') {
       filteredCommands = result.filter((entry) => entry.shell === selectedShell.value)
     }
-    
+
     recentCommands.value = filteredCommands
 
     console.log(`Loaded ${recentCommands.value.length} recent commands`)
@@ -216,16 +231,36 @@ const getShellStyle = (shell) => {
 const getShellColor = (shell) => {
   switch (shell?.toLowerCase()) {
     case 'bash':
-      return { backgroundColor: 'var(--bgTertiary)', color: 'var(--success)', border: '1px solid var(--success)' }
+      return {
+        backgroundColor: 'var(--bgTertiary)',
+        color: 'var(--success)',
+        border: '1px solid var(--success)'
+      }
     case 'zsh':
-      return { backgroundColor: 'var(--bgTertiary)', color: 'var(--textPrimary)', border: '1px solid var(--textPrimary)' }
+      return {
+        backgroundColor: 'var(--bgTertiary)',
+        color: 'var(--textPrimary)',
+        border: '1px solid var(--textPrimary)'
+      }
     case 'fish':
-      return { backgroundColor: 'var(--bgTertiary)', color: 'var(--warning)', border: '1px solid var(--warning)' }
+      return {
+        backgroundColor: 'var(--bgTertiary)',
+        color: 'var(--warning)',
+        border: '1px solid var(--warning)'
+      }
     case 'powershell':
     case 'pwsh':
-      return { backgroundColor: 'var(--bgTertiary)', color: 'var(--textSecondary)', border: '1px solid var(--textSecondary)' }
+      return {
+        backgroundColor: 'var(--bgTertiary)',
+        color: 'var(--textSecondary)',
+        border: '1px solid var(--textSecondary)'
+      }
     default:
-      return { backgroundColor: 'var(--bgTertiary)', color: 'var(--textSecondary)', border: '1px solid var(--borderSecondary)' }
+      return {
+        backgroundColor: 'var(--bgTertiary)',
+        color: 'var(--textSecondary)',
+        border: '1px solid var(--borderSecondary)'
+      }
   }
 }
 

@@ -40,7 +40,8 @@
         <div v-if="loading">Loading...</div>
         <div v-else-if="currentYearStats.totalCommands > 0">
           {{ selectedYear }}Year ({{ getShellTypeLabel() }}):
-          {{ currentYearStats.totalCommands }}  commands，{{ currentYearStats.activeDays }} active days
+          {{ currentYearStats.totalCommands }} commands，{{ currentYearStats.activeDays }} active
+          days
         </div>
       </div>
     </div>
@@ -77,12 +78,16 @@
                 {{ selectedDateInfo.formattedDate }}
               </h3>
               <p class="text-sm text-secondary">
-                Total execution: {{ selectedDateInfo.totalCommands }}  commands
+                Total execution: {{ selectedDateInfo.totalCommands }} commands
               </p>
             </div>
             <div v-else class="text-center">
-              <h3 class="text-lg font-semibold text-secondary">Click on heatmap to select a date</h3>
-              <p class="text-sm text-tertiary">View daily command execution details and statistics</p>
+              <h3 class="text-lg font-semibold text-secondary">
+                Click on heatmap to select a date
+              </h3>
+              <p class="text-sm text-tertiary">
+                View daily command execution details and statistics
+              </p>
             </div>
           </div>
 
@@ -111,16 +116,16 @@
         v-if="!loading && !error && currentYearStats.totalCommands === 0"
         class="flex items-center justify-center h-full"
       >
-        <div class="text-secondary">{{ selectedYear }}Year ({{ getShellTypeLabel() }}) No data available</div>
+        <div class="text-secondary">
+          {{ selectedYear }}Year ({{ getShellTypeLabel() }}) No data available
+        </div>
       </div>
     </div>
 
     <!-- Error Prompt -->
     <div v-if="error" class="text-red-400 text-sm mt-2 bg-red-900 bg-opacity-20 p-2 rounded">
       {{ error }}
-      <button @click="retryLoad" class="ml-2 accent-text hover:opacity-80 underline">
-        Retry
-      </button>
+      <button @click="retryLoad" class="ml-2 accent-text hover:opacity-80 underline">Retry</button>
     </div>
   </div>
 </template>
@@ -211,7 +216,7 @@ const loadAvailableYears = async () => {
 
     // Use unified data service
     const years = await dataService.getAvailableYears()
-    
+
     availableYears.value = years
     console.log('Available years loaded:', years)
 
@@ -238,15 +243,11 @@ const loadHeatmapData = async (year, shellType = 'all') => {
 
     // Use unified data service
     const result = await dataService.getYearlyHeatmapData(year, shellType)
-    
+
     console.log(`Raw heatmap result:`, result)
-    
+
     heatmapData.value = result || []
-    console.log(
-      `Loaded heatmap data for ${year} (${shellType}):`,
-      result?.length || 0,
-      'days'
-    )
+    console.log(`Loaded heatmap data for ${year} (${shellType}):`, result?.length || 0, 'days')
   } catch (err) {
     console.error(`Failed to load ${year} data:`, err)
     error.value = `Failed to load ${year} data: ${err.message}`

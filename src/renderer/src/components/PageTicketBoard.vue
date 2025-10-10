@@ -54,10 +54,7 @@
         <i class="fas fa-exclamation-triangle text-6xl text-red-400 mb-4"></i>
         <h3 class="text-xl font-bold text-primary mb-2">Generation Failed</h3>
         <p class="text-secondary mb-4">{{ error }}</p>
-        <button
-          @click="generateTicket"
-          class="btn-primary px-4 py-2 rounded transition-colors"
-        >
+        <button @click="generateTicket" class="btn-primary px-4 py-2 rounded transition-colors">
           Retry
         </button>
       </div>
@@ -97,7 +94,9 @@
           :disabled="!canGoNextStyle"
           class="nav-button right-button"
           :class="{ 'opacity-50': !canGoNextStyle }"
-          :title="canGoNextStyle ? `Switch to ${ticketStyles[currentStyleIndex + 1].description}` : ''"
+          :title="
+            canGoNextStyle ? `Switch to ${ticketStyles[currentStyleIndex + 1].description}` : ''
+          "
         >
           <i class="fas fa-chevron-right"></i>
         </button>
@@ -108,10 +107,7 @@
         <i class="fas fa-inbox text-6xl text-tertiary mb-4"></i>
         <h3 class="text-xl font-bold text-primary mb-2">No Data Available</h3>
         <p class="text-secondary mb-4">{{ selectedYear }}Year: No command usage records</p>
-        <button
-          @click="generateTicket"
-          class="btn-primary px-4 py-2 rounded transition-colors"
-        >
+        <button @click="generateTicket" class="btn-primary px-4 py-2 rounded transition-colors">
           Check Again
         </button>
       </div>
@@ -162,17 +158,17 @@ const canGoNextStyle = computed(() => currentStyleIndex.value < ticketStyles.len
 const loadAvailableYears = async () => {
   try {
     console.log('Loading available years...')
-    
+
     // Use unified data service
     const years = await dataService.getAvailableYears()
-    
+
     availableYears.value = years
 
     // If the currently selected year is not in available years, select the latest year
     if (years.length > 0 && !years.includes(selectedYear.value)) {
       selectedYear.value = years[0]
     }
-    
+
     console.log('Available years loaded:', years)
   } catch (err) {
     console.error('Failed to load available years:', err)
@@ -190,7 +186,7 @@ const generateTicket = async () => {
 
     // Use unified data service
     const result = await dataService.generateCommandTicket(selectedYear.value)
-    
+
     ticketData.value = result
     console.log('Ticket generated successfully:', ticketData.value)
   } catch (err) {

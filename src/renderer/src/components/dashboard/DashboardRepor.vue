@@ -3,7 +3,10 @@
     <!-- Title and time range selection -->
     <div class="flex items-center justify-between p-4 border-b border-divider">
       <div class="flex items-center space-x-2">
-        <div class="w-2 h-2 rounded-full" :style="{ backgroundColor: 'var(--textSecondary)' }"></div>
+        <div
+          class="w-2 h-2 rounded-full"
+          :style="{ backgroundColor: 'var(--textSecondary)' }"
+        ></div>
         <h3 class="text-sm font-medium text-primary uppercase tracking-wider">COMMAND ANALYTICS</h3>
       </div>
 
@@ -144,7 +147,7 @@ const currentStats = computed(() => {
 const chartOption = computed(() => {
   const data = statsData.value[selectedTimeRange.value]
   const isDark = currentTheme.value === 'dark'
-  
+
   // Pre-calculate colors for use in callbacks
   const textColor = isDark ? '#9CA3AF' : '#6B7280'
   const labelColor = isDark ? '#D1D5DB' : '#374151'
@@ -172,7 +175,7 @@ const chartOption = computed(() => {
   }
 
   const { chartData } = data
-  
+
   // Dynamic font size based on label count
   const labelCount = chartData.labels.length
   const fontSize = labelCount > 12 ? 8 : labelCount > 8 ? 9 : 10
@@ -192,7 +195,9 @@ const chartOption = computed(() => {
         fontSize: 12
       },
       extraCssText: `
-        box-shadow: ${isDark ? '0 4px 6px -1px rgba(0, 0, 0, 0.3)' : '0 4px 6px -1px rgba(0, 0, 0, 0.1)'};
+        box-shadow: ${
+          isDark ? '0 4px 6px -1px rgba(0, 0, 0, 0.3)' : '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+        };
         border-radius: 6px;
         padding: 8px 12px;
       `,
@@ -220,7 +225,7 @@ const chartOption = computed(() => {
         interval: labelCount > 20 ? Math.floor(labelCount / 12) : 'auto',
         rotate: rotateAngle,
         margin: 8,
-        formatter: function(value) {
+        formatter: function (value) {
           // Adaptive truncation based on label count
           const maxLength = labelCount > 15 ? 6 : labelCount > 10 ? 8 : 10
           return value.length > maxLength ? value.substring(0, maxLength - 2) + '..' : value
@@ -242,7 +247,7 @@ const chartOption = computed(() => {
       axisLabel: {
         fontSize: yAxisFontSize,
         color: isDark ? '#9CA3AF' : '#6B7280',
-        formatter: function(value) {
+        formatter: function (value) {
           // Format large numbers
           if (value >= 1000) {
             return (value / 1000).toFixed(1) + 'k'
@@ -332,7 +337,7 @@ const loadTimeRangeData = async (timeRange, forceRefresh = false) => {
 
     // Use DataService to get time range stats
     const result = await dataService.getTimeRangeStats(timeRange, forceRefresh)
-    
+
     statsData.value[timeRange] = result
     console.log(`Data loaded for ${timeRange}:`, result)
   } catch (err) {

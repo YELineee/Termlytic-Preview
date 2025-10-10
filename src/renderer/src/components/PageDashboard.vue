@@ -1,6 +1,8 @@
 <template>
-  <div class="flex-1 items-center justify-center w-full h-full min-h-0" 
-       :style="{ backgroundColor: 'var(--bgPrimary)' }">
+  <div
+    class="flex-1 items-center justify-center w-full h-full min-h-0"
+    :style="{ backgroundColor: 'var(--bgPrimary)' }"
+  >
     <div class="grid grid-cols-4 grid-rows-5 gap-3 w-full h-full p-4 min-h-0 overflow-hidden">
       <!-- Top Left: Overall Statistics and Daily Statistics - High Priority, Show Immediately -->
       <div class="grid grid-cols-1 grid-rows-2 gap-3 col-span-1 row-span-2 min-h-0">
@@ -68,14 +70,16 @@
       <!-- Reserved Extension Area - Static Content, Show Immediately -->
       <div
         class="rounded-lg col-span-2 row-span-1 flex items-center justify-center min-h-0"
-        :style="{ 
-          backgroundColor: 'var(--bgSecondary)', 
-          border: '1px solid var(--borderPrimary)' 
+        :style="{
+          backgroundColor: 'var(--bgSecondary)',
+          border: '1px solid var(--borderPrimary)'
         }"
       >
         <div class="text-center">
-          <div class="text-xs uppercase tracking-wider font-medium mb-2"
-               :style="{ color: 'var(--textTertiary)' }">
+          <div
+            class="text-xs uppercase tracking-wider font-medium mb-2"
+            :style="{ color: 'var(--textTertiary)' }"
+          >
             CUSTOM DASHBOARD
           </div>
           <div class="text-2xl" :style="{ color: 'var(--textMuted)' }">+</div>
@@ -106,7 +110,7 @@ const { setGlobalLoading } = useLoadingState()
 onMounted(() => {
   console.log('📊 Dashboard page mounted')
   setGlobalLoading('dashboard', true)
-  
+
   // Automatically clear dashboard loading state after 3 seconds
   setTimeout(() => {
     setGlobalLoading('dashboard', false)

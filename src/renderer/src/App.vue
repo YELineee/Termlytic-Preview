@@ -1,12 +1,21 @@
 <template>
   <!-- Global loading overlay -->
-  <div v-if="isAppLoading" class="fixed inset-0 z-50 flex items-center justify-center" 
-       :style="{ backgroundColor: 'var(--bgPrimary)' }">
+  <div
+    v-if="isAppLoading"
+    class="fixed inset-0 z-50 flex items-center justify-center"
+    :style="{ backgroundColor: 'var(--bgPrimary)' }"
+  >
     <div class="text-center">
-      <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 mb-4" 
-           :style="{ borderColor: 'var(--textPrimary)' }"></div>
-      <div class="text-lg font-medium" :style="{ color: 'var(--textPrimary)' }">Initializing Termlytic...</div>
-      <div class="text-sm mt-2" :style="{ color: 'var(--textSecondary)' }">Loading core data...</div>
+      <div
+        class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 mb-4"
+        :style="{ borderColor: 'var(--textPrimary)' }"
+      ></div>
+      <div class="text-lg font-medium" :style="{ color: 'var(--textPrimary)' }">
+        Initializing Termlytic...
+      </div>
+      <div class="text-sm mt-2" :style="{ color: 'var(--textSecondary)' }">
+        Loading core data...
+      </div>
     </div>
   </div>
 
@@ -20,14 +29,15 @@
 
     <!-- Main content area -->
     <div class="flex-1 overflow-hidden relative">
-
       <!-- Drag region for window movement -->
-      <div class="absolute w-full h-6 z-10 drag-region"/> 
-      
+      <div class="absolute w-full h-6 z-10 drag-region" />
+
       <!-- Page loading indicator -->
       <div v-if="isAnyLoading && !isAppLoading" class="absolute top-0 left-0 right-0 z-10">
-        <div class="h-1 transition-all duration-300" 
-             :style="{ width: `${loadingProgress}%`, backgroundColor: 'var(--textPrimary)' }"></div>
+        <div
+          class="h-1 transition-all duration-300"
+          :style="{ width: `${loadingProgress}%`, backgroundColor: 'var(--textPrimary)' }"
+        ></div>
       </div>
 
       <!-- Dashboard page -->
@@ -49,8 +59,8 @@
           <button
             @click="goToDashboard"
             class="px-4 py-2 rounded transition-colors"
-            :style="{ 
-              backgroundColor: 'var(--bgTertiary)', 
+            :style="{
+              backgroundColor: 'var(--bgTertiary)',
               color: 'var(--textPrimary)',
               border: '1px solid var(--borderPrimary)'
             }"
@@ -84,11 +94,11 @@ const navigationRef = ref(null)
 // Page switching with loading state management
 const handlePageChange = async (pageName) => {
   console.log(`Switching to page: ${pageName}`)
-  
+
   try {
     // Set page switching loading state
     setGlobalLoading(pageName, true)
-    
+
     currentPage.value = pageName
 
     switch (pageName) {

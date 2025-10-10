@@ -1,14 +1,15 @@
 <template>
   <div
     class="w-18 h-full navibar flex flex-col items-center py-4"
-    :style="{ 
-      backgroundColor: 'var(--bgSecondary)', 
-      borderRight: '1px solid var(--borderPrimary)' 
+    :style="{
+      backgroundColor: 'var(--bgSecondary)',
+      borderRight: '1px solid var(--borderPrimary)'
     }"
   >
     <!-- Top: App icon -->
-    <div class="font-bold text-xl select-none mb-6 mt-12" 
-         :style="{ color: 'var(--textPrimary)' }">T</div>
+    <div class="font-bold text-xl select-none mb-6 mt-12" :style="{ color: 'var(--textPrimary)' }">
+      T
+    </div>
 
     <!-- Middle: Navigation menu -->
     <div class="flex flex-col items-center space-y-2 flex-1">
@@ -40,19 +41,17 @@
         >
           <i :class="getThemeIcon()"></i>
         </button>
-        
+
         <!-- Theme Selector Bubbles -->
-        <div 
-          v-if="showThemeSelector" 
-          class="theme-bubbles-wrapper"
-        >
+        <div v-if="showThemeSelector" class="theme-bubbles-wrapper">
           <!-- Dark Theme -->
           <button
             @click.stop="handleBubbleClick('dark')"
             class="theme-bubble"
-            :class="{ 'active': currentThemeMode === 'dark' }"
-            :style="{ 
-              backgroundColor: currentThemeMode === 'dark' ? 'var(--textPrimary)' : 'var(--bgTertiary)',
+            :class="{ active: currentThemeMode === 'dark' }"
+            :style="{
+              backgroundColor:
+                currentThemeMode === 'dark' ? 'var(--textPrimary)' : 'var(--bgTertiary)',
               color: currentThemeMode === 'dark' ? 'var(--bgPrimary)' : 'var(--textPrimary)',
               border: '2px solid var(--borderPrimary)'
             }"
@@ -60,14 +59,15 @@
           >
             <i class="fas fa-moon"></i>
           </button>
-          
+
           <!-- Light Theme -->
           <button
             @click.stop="handleBubbleClick('light')"
             class="theme-bubble"
-            :class="{ 'active': currentThemeMode === 'light' }"
-            :style="{ 
-              backgroundColor: currentThemeMode === 'light' ? 'var(--textPrimary)' : 'var(--bgTertiary)',
+            :class="{ active: currentThemeMode === 'light' }"
+            :style="{
+              backgroundColor:
+                currentThemeMode === 'light' ? 'var(--textPrimary)' : 'var(--bgTertiary)',
               color: currentThemeMode === 'light' ? 'var(--bgPrimary)' : 'var(--textPrimary)',
               border: '2px solid var(--borderPrimary)'
             }"
@@ -75,13 +75,13 @@
           >
             <i class="fas fa-sun"></i>
           </button>
-          
+
           <!-- Colorful Theme -->
           <button
             @click.stop="handleBubbleClick('colorful')"
             class="theme-bubble"
-            :class="{ 'active': currentThemeMode === 'colorful' }"
-            :style="{ 
+            :class="{ active: currentThemeMode === 'colorful' }"
+            :style="{
               backgroundColor: currentThemeMode === 'colorful' ? '#00D9FF' : 'var(--bgTertiary)',
               color: currentThemeMode === 'colorful' ? '#1A1A2E' : 'var(--textPrimary)',
               border: '2px solid var(--borderPrimary)'
@@ -92,7 +92,7 @@
           </button>
         </div>
       </div>
-      
+
       <!-- Refresh Button -->
       <button
         @click="refreshData"
@@ -127,11 +127,11 @@ const clickCount = ref(0)
 const handleThemeButtonClick = (e) => {
   e.stopPropagation()
   clickCount.value++
-  
+
   if (clickTimer.value) {
     clearTimeout(clickTimer.value)
   }
-  
+
   clickTimer.value = setTimeout(() => {
     if (clickCount.value === 1) {
       // Single click - toggle theme
@@ -164,8 +164,12 @@ const getThemeIcon = () => {
 }
 
 const getThemeTitle = () => {
-  const currentName = currentThemeMode.value === 'dark' ? 'Dark' : 
-                      currentThemeMode.value === 'light' ? 'Light' : 'Colorful'
+  const currentName =
+    currentThemeMode.value === 'dark'
+      ? 'Dark'
+      : currentThemeMode.value === 'light'
+      ? 'Light'
+      : 'Colorful'
   return `${currentName} Theme (Click: toggle, Double-click: all options)`
 }
 
@@ -211,18 +215,18 @@ const getButtonStyle = (pageName) => {
   if (currentPage.value === pageName) {
     return {
       backgroundColor: 'var(--textPrimary)',
-      color: 'var(--bgPrimary)',
+      color: 'var(--bgPrimary)'
     }
   }
   return {
-    color: 'var(--textSecondary)',
+    color: 'var(--textSecondary)'
   }
 }
 
 // Get hover button style
 const getHoverButtonStyle = () => {
   return {
-    color: 'var(--textSecondary)',
+    color: 'var(--textSecondary)'
   }
 }
 
@@ -335,7 +339,9 @@ button:not(.hover-button):hover {
 
 .theme-bubble:hover {
   transform: scale(1.15);
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
+  box-shadow:
+    0 10px 15px -3px rgba(0, 0, 0, 0.4),
+    0 4px 6px -2px rgba(0, 0, 0, 0.3);
 }
 
 .theme-bubble:active {
@@ -343,8 +349,9 @@ button:not(.hover-button):hover {
 }
 
 .theme-bubble.active {
-  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.3),
-              0 10px 15px -3px rgba(0, 0, 0, 0.4);
+  box-shadow:
+    0 0 0 3px rgba(255, 255, 255, 0.3),
+    0 10px 15px -3px rgba(0, 0, 0, 0.4);
 }
 
 /* Bubble appear animation */
