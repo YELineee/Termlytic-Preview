@@ -1,6 +1,6 @@
 <template>
   <!-- Heatmap content area -->
-<div class="font-sans text-gray-400 text-xs overflow-visible" ref="containerRef">
+<div class="font-sans text-secondary text-xs overflow-visible" ref="containerRef">
     <!-- Heatmap main container -->
     <div class="flex flex-col gap-1">
       <!-- Month label row -->
@@ -10,7 +10,7 @@
           <div
             v-for="month in monthLabels"
             :key="month.index"
-            class="text-xs text-gray-400 font-normal leading-4"
+            class="text-xs text-secondary font-normal leading-4"
             :style="{
               gridColumn: `${month.startWeek + 1} / span ${month.weekSpan}`,
               textAlign: 'left'
@@ -26,37 +26,37 @@
         <!-- Weekday label column -->
         <div v-if="showWeekLabels" class="flex flex-col w-8 flex-shrink-0">
           <div
-            class="flex items-center justify-center text-xs text-gray-400 font-normal mb-1"
+            class="flex items-center justify-center text-xs text-secondary font-normal mb-1"
             :style="{ height: `${props.cellSize}px` }"
           >
             Mon
           </div>
           <div
-            class="flex items-center justify-center text-xs text-gray-400 font-normal mb-1"
+            class="flex items-center justify-center text-xs text-secondary font-normal mb-1"
             :style="{ height: `${props.cellSize}px` }"
           ></div>
           <div
-            class="flex items-center justify-center text-xs text-gray-400 font-normal mb-1"
+            class="flex items-center justify-center text-xs text-secondary font-normal mb-1"
             :style="{ height: `${props.cellSize}px` }"
           >
             Wed
           </div>
           <div
-            class="flex items-center justify-center text-xs text-gray-400 font-normal mb-1"
+            class="flex items-center justify-center text-xs text-secondary font-normal mb-1"
             :style="{ height: `${props.cellSize}px` }"
           ></div>
           <div
-            class="flex items-center justify-center text-xs text-gray-400 font-normal mb-1"
+            class="flex items-center justify-center text-xs text-secondary font-normal mb-1"
             :style="{ height: `${props.cellSize}px` }"
           >
             Fri
           </div>
           <div
-            class="flex items-center justify-center text-xs text-gray-400 font-normal mb-1"
+            class="flex items-center justify-center text-xs text-secondary font-normal mb-1"
             :style="{ height: `${props.cellSize}px` }"
           ></div>
           <div
-            class="flex items-center justify-center text-xs text-gray-400 font-normal"
+            class="flex items-center justify-center text-xs text-secondary font-normal"
             :style="{ height: `${props.cellSize}px` }"
           ></div>
         </div>
@@ -66,7 +66,7 @@
           <div
             v-for="(day, index) in heatmapData"
             :key="`day-${day.date}`"
-            class="rounded-sm cursor-pointer transition-all duration-150 relative border border-gray-800 border-opacity-20"
+            class="rounded-sm cursor-pointer transition-all duration-150 relative border border-divider border-opacity-20"
             :class="[
               `intensity-${day.intensity}`,
               { 'cell-empty': day.isEmpty },
@@ -86,16 +86,16 @@
 
     <!-- Intensity legend -->
     <div v-if="showLegend" class="flex items-center mt-4 ml-9 gap-1 text-xs">
-      <span class="text-gray-400 text-xs">Less</span>
+      <span class="text-secondary text-xs">Less</span>
       <div class="flex gap-0.5 mx-1.5">
         <div
           v-for="level in 5"
           :key="level"
-          class="w-2.5 h-2.5 rounded-sm border border-gray-800 border-opacity-20"
+          class="w-2.5 h-2.5 rounded-sm border border-divider border-opacity-20"
           :class="`intensity-${level - 1}`"
         ></div>
       </div>
-      <span class="text-gray-400 text-xs">More</span>
+      <span class="text-secondary text-xs">More</span>
     </div>
 
     <!-- Tooltip -->
@@ -107,12 +107,12 @@
         :style="tooltip.style"
       >
         <div
-          class="bg-black bg-opacity-90 text-white px-3 py-2 rounded-md text-xs leading-snug whitespace-nowrap shadow-2xl backdrop-blur-sm border border-white border-opacity-10"
+          class="bg-secondary bg-opacity-95 text-primary px-3 py-2 rounded-md text-xs leading-snug whitespace-nowrap shadow-2xl backdrop-blur-sm border border-divider"
         >
-          <div class="font-semibold text-green-400 mb-0.5">
+          <div class="font-semibold success-text mb-0.5">
             <strong>{{ tooltip.count }} {{ tooltip.unit }}</strong>
           </div>
-          <div class="text-gray-300 text-xs">{{ tooltip.date }}</div>
+          <div class="text-secondary text-xs">{{ tooltip.date }}</div>
         </div>
       </div>
     </Teleport>
@@ -120,7 +120,29 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
+import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
+import { useHeatmapTheme } from '../../composables/useChartTheme'
+import { useTheme } from '../../composables/useTheme'
+
+const { theme: heatmapTheme } = useHeatmapTheme()
+const { currentTheme } = useTheme()
+
+// Container ref for CSS variables
+const containerRef = ref(null)
+
+// Update CSS variables when theme changes
+watch([heatmapTheme, containerRef], ([theme, container]) => {
+  if (!container) return
+  
+  // Set heatmap color CSS variables
+  theme.cellColors.forEach((color, index) => {
+    container.style.setProperty(`--heatmap-color-${index}`, color)
+  })
+  
+  // Set border colors
+  container.style.setProperty('--heatmap-border-default', theme.border.default)
+  container.style.setProperty('--heatmap-border-hover', theme.border.hover)
+}, { immediate: true })
 
 // Props definition
 const props = defineProps({
@@ -189,7 +211,6 @@ const props = defineProps({
 const emit = defineEmits(['cell-click', 'cell-hover', 'cell-leave'])
 
 // Reactive data
-const containerRef = ref(null)
 const gridRef = ref(null)
 const tooltipRef = ref(null)
 const hoveredIndex = ref(-1)
@@ -333,7 +354,7 @@ const formatDate = (date) => {
 
 // Methods - get cell style
 const getCellStyle = (day) => {
-  const color = props.colorScheme[day.intensity] || props.colorScheme[0]
+  const color = heatmapTheme.value.cellColors[day.intensity] || heatmapTheme.value.cellColors[0]
   return {
     backgroundColor: color,
     opacity: day.isEmpty ? 0.3 : 1,
@@ -419,25 +440,25 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-/* Custom intensity level color styles */
+/* Custom intensity level color styles - now controlled by theme */
 .intensity-0 {
-  background-color: #161b22 !important;
+  background-color: var(--heatmap-color-0) !important;
 }
 
 .intensity-1 {
-  background-color: #0e4429 !important;
+  background-color: var(--heatmap-color-1) !important;
 }
 
 .intensity-2 {
-  background-color: #006d32 !important;
+  background-color: var(--heatmap-color-2) !important;
 }
 
 .intensity-3 {
-  background-color: #26a641 !important;
+  background-color: var(--heatmap-color-3) !important;
 }
 
 .intensity-4 {
-  background-color: #39d353 !important;
+  background-color: var(--heatmap-color-4) !important;
 }
 
 /* Hover and empty cell states */
@@ -453,14 +474,7 @@ onUnmounted(() => {
 
 /* Cell hover effects */
 .grid > div:hover:not(.cell-empty) {
-  border-color: rgba(255, 255, 255, 0.4);
+  border-color: var(--heatmap-border-hover);
   transform: scale(1.1);
-}
-
-/* Dark theme adaptation */
-@media (prefers-color-scheme: dark) {
-  .grid > div {
-    border-color: rgba(255, 255, 255, 0.1);
-  }
 }
 </style>

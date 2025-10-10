@@ -1,14 +1,12 @@
 <template>
-  <div
-    class="w-full h-full bg-gray-900 rounded-lg border border-gray-800 p-4 flex flex-col min-h-0 overflow-hidden"
-  >
+  <div class="card min-h-0 overflow-hidden">
     <!-- Title -->
     <div class="flex items-center justify-between mb-4 flex-shrink-0">
       <div class="flex items-center space-x-2">
-        <div class="w-2 h-2 bg-emerald-500 rounded-full"></div>
-        <h3 class="text-sm font-medium text-white uppercase tracking-wider">SHELL DISTRIBUTION</h3>
+        <div class="w-2 h-2 rounded-full" :style="{ backgroundColor: 'var(--textSecondary)' }"></div>
+        <h3 class="text-sm font-medium uppercase tracking-wider text-primary">SHELL DISTRIBUTION</h3>
       </div>
-      <div class="text-xs text-gray-400">{{ totalCommands }} commands</div>
+      <div class="text-xs text-tertiary">{{ totalCommands }} commands</div>
     </div>
 
     <!-- Shell Type Statistics -->
@@ -16,12 +14,12 @@
       <div
         v-for="(shell, index) in shellStats"
         :key="shell.name"
-        class="bg-gray-800 border border-gray-700 rounded-lg p-3 hover:bg-gray-750 transition-colors flex-shrink-0"
+        class="rounded-lg p-3 transition-colors flex-shrink-0 bg-tertiary border border-secondary hover-item"
       >
         <div class="flex items-center justify-between mb-3">
           <div class="flex items-center space-x-3 min-w-0 flex-1">
             <div
-              class="flex items-center justify-center w-8 h-8 rounded-lg flex-shrink-0"
+              class="flex items-center justify-center w-8 h-8 rounded-lg flex-shrink-0 shell-icon-bg"
               :style="{
                 backgroundColor: getShellColor(shell.name) + '20',
                 border: '1px solid ' + getShellColor(shell.name) + '40'
@@ -34,17 +32,17 @@
               ></i>
             </div>
             <div class="flex flex-col min-w-0 flex-1">
-              <span class="text-white text-sm font-medium truncate">{{ shell.name }}</span>
-              <span class="text-xs text-gray-400">{{ shell.count }} sessions</span>
+              <span class="text-sm font-medium truncate text-primary">{{ shell.name }}</span>
+              <span class="text-xs text-tertiary">{{ shell.count }} sessions</span>
             </div>
           </div>
           <div class="text-right flex-shrink-0">
-            <div class="text-sm font-semibold text-white">{{ shell.percentage.toFixed(1) }}%</div>
+            <div class="text-sm font-semibold text-primary">{{ shell.percentage.toFixed(1) }}%</div>
           </div>
         </div>
 
         <!-- Progress Bar -->
-        <div class="bg-gray-700 h-1.5 rounded-full overflow-hidden">
+        <div class="h-1.5 rounded-full overflow-hidden bg-secondary">
           <div
             class="h-full transition-all duration-500 ease-out rounded-full"
             :style="{
@@ -57,10 +55,10 @@
     </div>
 
     <!-- Statistics Information -->
-    <div class="mt-4 pt-3 border-t border-gray-700 flex-shrink-0">
+    <div class="mt-4 pt-3 flex-shrink-0 border-t border-secondary">
       <div class="flex justify-between text-xs">
-        <span class="text-gray-400">Total Sessions</span>
-        <span class="text-gray-300 font-medium">{{ totalCommands }}</span>
+        <span class="text-tertiary">Total Sessions</span>
+        <span class="font-medium text-secondary">{{ totalCommands }}</span>
       </div>
     </div>
   </div>
@@ -69,9 +67,11 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useShellData } from '@renderer/composables/useShellData.js'
+import { useTheme } from '../../composables/useTheme'
 
 // Use global data store
 const { getShellDistribution, isLoading } = useShellData()
+const { currentThemeMode } = useTheme()
 
 const shellData = ref({})
 
@@ -110,23 +110,49 @@ const getShellIcon = (shellName) => {
   }
 }
 
-// Get terminal color
+// Get terminal color - supports colorful theme
 const getShellColor = (shellName) => {
-  switch (shellName?.toLowerCase()) {
-    case 'bash':
-      return '#10b981' // emerald-500
-    case 'zsh':
-      return '#3b82f6' // blue-500
-    case 'fish':
-      return '#f59e0b' // amber-500
-    case 'powershell':
-    case 'pwsh':
-      return '#8b5cf6' // violet-500
-    case 'cmd':
-      return '#ef4444' // red-500
-    default:
-      return '#6b7280' // gray-500
+  const theme = currentThemeMode.value
+  
+  // Colorful theme - different colors for each shell
+  if (theme === 'colorful') {
+    const colorfulColors = {
+      'bash': '#00D9FF',      // 青色
+      'zsh': '#7B68EE',       // 紫色
+      'fish': '#FF6B9D',      // 粉色
+      'powershell': '#4ECDC4', // 绿松石色
+      'pwsh': '#FFD93D',      // 金黄色
+      'cmd': '#6BCF7F',       // 薄荷绿
+      'default': '#00A8CC'    // 默认青色
+    }
+    return colorfulColors[shellName?.toLowerCase()] || colorfulColors.default
   }
+  
+  // Dark theme - grayscale
+  if (theme === 'dark') {
+    const darkColors = {
+      'bash': '#F3F4F6',    // gray-100
+      'zsh': '#D1D5DB',     // gray-300
+      'fish': '#9CA3AF',    // gray-400
+      'powershell': '#6B7280', // gray-500
+      'pwsh': '#6B7280',    // gray-500
+      'cmd': '#4B5563',     // gray-600
+      'default': '#9CA3AF'  // gray-400
+    }
+    return darkColors[shellName?.toLowerCase()] || darkColors.default
+  }
+  
+  // Light theme - grayscale
+  const lightColors = {
+    'bash': '#111827',    // gray-900
+    'zsh': '#374151',     // gray-700
+    'fish': '#4B5563',    // gray-600
+    'powershell': '#6B7280', // gray-500
+    'pwsh': '#6B7280',    // gray-500
+    'cmd': '#9CA3AF',     // gray-400
+    'default': '#6B7280'  // gray-500
+  }
+  return lightColors[shellName?.toLowerCase()] || lightColors.default
 }
 
 // Load terminal distribution data
@@ -146,5 +172,7 @@ onMounted(() => {
 </script>
 
 <style scoped>
-/* Keep it simple */
+.hover-item:hover {
+  background-color: var(--bgHover);
+}
 </style>

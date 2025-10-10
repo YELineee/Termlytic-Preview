@@ -266,7 +266,7 @@ export class DataStorageManager {
   }
 
   /**
-   * Clear all cached data和元数据
+   * Clear all cached data and metadata
    * @returns {Object} Clear operation result
    */
   async clearAllData() {

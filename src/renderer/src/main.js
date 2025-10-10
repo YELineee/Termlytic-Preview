@@ -1,9 +1,15 @@
 import './assets/main.css'
+import './assets/themes.css'
 
 import { createApp } from 'vue'
 import App from './App.vue'
 import { useShellData } from './composables/useShellData.js'
 import { useLoadingState } from './composables/useLoadingState.js'
+import { useTheme } from './composables/useTheme.js'
+
+// Initialize theme first
+const { initTheme } = useTheme()
+initTheme()
 
 // Initialize when application starts
 async function initializeApp() {

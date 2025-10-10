@@ -1,5 +1,6 @@
 <template>
-  <div class="flex-1 items-center justify-center w-full h-full bg-gray-950 min-h-0">
+  <div class="flex-1 items-center justify-center w-full h-full min-h-0" 
+       :style="{ backgroundColor: 'var(--bgPrimary)' }">
     <div class="grid grid-cols-4 grid-rows-5 gap-3 w-full h-full p-4 min-h-0 overflow-hidden">
       <!-- Top Left: Overall Statistics and Daily Statistics - High Priority, Show Immediately -->
       <div class="grid grid-cols-1 grid-rows-2 gap-3 col-span-1 row-span-2 min-h-0">
@@ -66,14 +67,19 @@
 
       <!-- Reserved Extension Area - Static Content, Show Immediately -->
       <div
-        class="bg-gray-900 rounded-lg col-span-2 row-span-1 flex items-center justify-center border border-gray-800 min-h-0"
+        class="rounded-lg col-span-2 row-span-1 flex items-center justify-center min-h-0"
+        :style="{ 
+          backgroundColor: 'var(--bgSecondary)', 
+          border: '1px solid var(--borderPrimary)' 
+        }"
       >
         <div class="text-center">
-          <div class="text-xs text-gray-400 uppercase tracking-wider font-medium mb-2">
+          <div class="text-xs uppercase tracking-wider font-medium mb-2"
+               :style="{ color: 'var(--textTertiary)' }">
             CUSTOM DASHBOARD
           </div>
-          <div class="text-2xl text-gray-600">+</div>
-          <div class="text-xs text-gray-500 mt-1">ADD WIDGET</div>
+          <div class="text-2xl" :style="{ color: 'var(--textMuted)' }">+</div>
+          <div class="text-xs mt-1" :style="{ color: 'var(--textMuted)' }">ADD WIDGET</div>
         </div>
       </div>
     </div>

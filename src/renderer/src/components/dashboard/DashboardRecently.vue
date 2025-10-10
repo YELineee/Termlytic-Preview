@@ -1,18 +1,28 @@
 <template>
   <div
-    class="w-full h-full bg-gray-900 rounded-lg border border-gray-800 p-4 flex flex-col min-h-0 overflow-hidden"
+    class="w-full h-full rounded-lg p-4 flex flex-col min-h-0 overflow-hidden"
+    :style="{ 
+      backgroundColor: 'var(--bgSecondary)', 
+      border: '1px solid var(--borderPrimary)' 
+    }"
   >
     <!-- Title bar -->
     <div class="flex items-center justify-between mb-4 flex-shrink-0">
       <div class="flex items-center space-x-2">
-        <div class="w-2 h-2 bg-blue-500 rounded-full"></div>
-        <h3 class="text-sm font-medium text-white uppercase tracking-wider">RECENT COMMANDS</h3>
+        <div class="w-2 h-2 rounded-full" :style="{ backgroundColor: 'var(--textSecondary)' }"></div>
+        <h3 class="text-sm font-medium uppercase tracking-wider" 
+            :style="{ color: 'var(--textPrimary)' }">RECENT COMMANDS</h3>
       </div>
       <div class="flex items-center space-x-2">
         <select
           v-model="selectedShell"
           @change="loadRecentCommands"
-          class="bg-gray-800 text-white px-2 py-1 rounded text-xs border border-gray-700 focus:border-blue-500 focus:outline-none"
+          class="px-2 py-1 rounded text-xs focus:outline-none"
+          :style="{ 
+            backgroundColor: 'var(--bgTertiary)', 
+            color: 'var(--textPrimary)',
+            border: '1px solid var(--borderSecondary)'
+          }"
         >
           <option value="all">All Shells</option>
           <option value="bash">Bash Only</option>
@@ -21,7 +31,8 @@
         <button
           @click="loadRecentCommands"
           :disabled="loading"
-          class="text-gray-400 hover:text-white px-2 py-1 rounded text-xs transition-colors"
+          class="px-2 py-1 rounded text-xs transition-colors hover-button"
+          :style="{ color: 'var(--textSecondary)' }"
           title="Refresh"
         >
           <i :class="['fas fa-sync-alt', { 'animate-spin': loading }]"></i>
@@ -33,18 +44,24 @@
     <div class="flex-1 overflow-hidden flex flex-col min-h-0">
       <!-- Loading state -->
       <div v-if="loading" class="flex items-center justify-center h-32">
-        <div class="text-gray-400 text-sm">Loading recent commands...</div>
+        <div class="text-sm" :style="{ color: 'var(--textSecondary)' }">Loading recent commands...</div>
       </div>
 
       <!-- Error state -->
       <div
         v-else-if="error"
-        class="text-red-400 text-sm bg-red-900 bg-opacity-20 p-3 rounded border border-red-800 flex-shrink-0"
+        class="text-sm p-3 rounded flex-shrink-0"
+        :style="{ 
+          color: 'var(--error)', 
+          backgroundColor: 'var(--bgTertiary)',
+          border: '1px solid var(--error)'
+        }"
       >
         {{ error }}
         <button
           @click="loadRecentCommands"
-          class="ml-2 text-blue-400 hover:text-blue-300 underline"
+          class="ml-2 underline hover-text"
+          :style="{ color: 'var(--textPrimary)' }"
         >
           Retry
         </button>
@@ -52,7 +69,7 @@
 
       <!-- No data state -->
       <div v-else-if="recentCommands.length === 0" class="flex items-center justify-center h-32">
-        <div class="text-gray-400 text-sm">No recent commands found</div>
+        <div class="text-sm" :style="{ color: 'var(--textSecondary)' }">No recent commands found</div>
       </div>
 
       <!-- Command list - scrollable area -->
@@ -60,27 +77,30 @@
         <div
           v-for="(command, index) in recentCommands"
           :key="index"
-          class="bg-gray-800 border border-gray-700 rounded-lg p-3 hover:bg-gray-750 hover:border-gray-600 transition-all cursor-pointer group"
+          class="rounded-lg p-3 transition-all cursor-pointer group hover-item"
+          :style="{ 
+            backgroundColor: 'var(--bgTertiary)', 
+            border: '1px solid var(--borderSecondary)' 
+          }"
           @click="copyCommand(command.command)"
         >
           <div class="flex items-start justify-between">
             <!-- Command information -->
             <div class="flex-1 min-w-0">
               <div class="flex items-center space-x-2 mb-2">
-                <code class="text-blue-300 font-mono text-sm break-all flex-1">{{
+                <code class="font-mono text-sm break-all flex-1" 
+                      :style="{ color: 'var(--textPrimary)' }">{{
                   command.command
                 }}</code>
                 <span
-                  :class="[
-                    'px-2 py-1 rounded text-xs font-medium flex-shrink-0',
-                    getShellStyle(command.shell)
-                  ]"
+                  class="px-2 py-1 rounded text-xs font-medium flex-shrink-0"
+                  :style="getShellColor(command.shell)"
                 >
                   {{ command.shell }}
                 </span>
               </div>
-              <div class="text-gray-400 text-xs flex items-center space-x-2">
-                <i class="fas fa-clock text-gray-500"></i>
+              <div class="text-xs flex items-center space-x-2" :style="{ color: 'var(--textTertiary)' }">
+                <i class="fas fa-clock"></i>
                 <span>{{ formatTimestamp(command.timestamp) }}</span>
               </div>
             </div>
@@ -91,7 +111,11 @@
             >
               <button
                 @click.stop="copyCommand(command.command)"
-                class="text-gray-400 hover:text-blue-400 p-1.5 rounded border border-gray-700 hover:border-blue-500 transition-colors"
+                class="p-1.5 rounded transition-colors hover-copy-button"
+                :style="{ 
+                  color: 'var(--textSecondary)',
+                  border: '1px solid var(--borderSecondary)'
+                }"
                 title="Copy Command"
               >
                 <i class="fas fa-copy text-xs"></i>
@@ -105,14 +129,15 @@
     <!-- Bottom statistics information -->
     <div
       v-if="!loading && !error && recentCommands.length > 0"
-      class="mt-4 pt-3 border-t border-gray-700 flex-shrink-0"
+      class="mt-4 pt-3 flex-shrink-0"
+      :style="{ borderTop: '1px solid var(--borderSecondary)' }"
     >
       <div class="flex justify-between text-xs">
-        <span class="text-gray-400">
+        <span :style="{ color: 'var(--textTertiary)' }">
           Showing {{ recentCommands.length }} commands
           <span v-if="selectedShell !== 'all'"> ({{ selectedShell }})</span>
         </span>
-        <span class="text-gray-500">Click to copy</span>
+        <span :style="{ color: 'var(--textMuted)' }">Click to copy</span>
       </div>
     </div>
   </div>
@@ -183,18 +208,24 @@ const formatTimestamp = (timestamp) => {
 
 // Get Shell style
 const getShellStyle = (shell) => {
+  // Use inline styles instead of Tailwind classes
+  return ''
+}
+
+// Get shell color based on type (for inline styling)
+const getShellColor = (shell) => {
   switch (shell?.toLowerCase()) {
     case 'bash':
-      return 'bg-emerald-900 text-emerald-300 border border-emerald-700'
+      return { backgroundColor: 'var(--bgTertiary)', color: 'var(--success)', border: '1px solid var(--success)' }
     case 'zsh':
-      return 'bg-blue-900 text-blue-300 border border-blue-700'
+      return { backgroundColor: 'var(--bgTertiary)', color: 'var(--textPrimary)', border: '1px solid var(--textPrimary)' }
     case 'fish':
-      return 'bg-amber-900 text-amber-300 border border-amber-700'
+      return { backgroundColor: 'var(--bgTertiary)', color: 'var(--warning)', border: '1px solid var(--warning)' }
     case 'powershell':
     case 'pwsh':
-      return 'bg-violet-900 text-violet-300 border border-violet-700'
+      return { backgroundColor: 'var(--bgTertiary)', color: 'var(--textSecondary)', border: '1px solid var(--textSecondary)' }
     default:
-      return 'bg-gray-700 text-gray-300 border border-gray-600'
+      return { backgroundColor: 'var(--bgTertiary)', color: 'var(--textSecondary)', border: '1px solid var(--borderSecondary)' }
   }
 }
 
@@ -219,22 +250,24 @@ onMounted(() => {
 </script>
 
 <style scoped>
-/* Scrollbar styles */
-.overflow-y-auto::-webkit-scrollbar {
-  width: 6px;
+/* Hover effects */
+.hover-button:hover {
+  background-color: var(--bgHover);
+  color: var(--textPrimary);
 }
 
-.overflow-y-auto::-webkit-scrollbar-track {
-  background: transparent;
+.hover-item:hover {
+  background-color: var(--bgHover);
+  border-color: var(--borderSecondary);
 }
 
-.overflow-y-auto::-webkit-scrollbar-thumb {
-  background: #4b5563;
-  border-radius: 3px;
+.hover-copy-button:hover {
+  color: var(--textPrimary);
+  border-color: var(--textPrimary);
 }
 
-.overflow-y-auto::-webkit-scrollbar-thumb:hover {
-  background: #6b7280;
+.hover-text:hover {
+  opacity: 0.8;
 }
 
 /* Animation effects */
@@ -249,30 +282,6 @@ onMounted(() => {
   to {
     transform: rotate(360deg);
   }
-}
-
-/* Custom scrollbar styles */
-.overflow-y-auto {
-  scrollbar-width: thin;
-  scrollbar-color: rgba(107, 114, 128, 0.8) rgba(55, 65, 81, 0.3);
-}
-
-.overflow-y-auto::-webkit-scrollbar {
-  width: 6px;
-}
-
-.overflow-y-auto::-webkit-scrollbar-track {
-  background: rgba(55, 65, 81, 0.3);
-  border-radius: 3px;
-}
-
-.overflow-y-auto::-webkit-scrollbar-thumb {
-  background: rgba(107, 114, 128, 0.8);
-  border-radius: 3px;
-}
-
-.overflow-y-auto::-webkit-scrollbar-thumb:hover {
-  background: rgba(156, 163, 175, 0.9);
 }
 
 /* Smooth scrolling */

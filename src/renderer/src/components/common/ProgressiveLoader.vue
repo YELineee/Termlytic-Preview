@@ -2,10 +2,15 @@
 <template>
   <div class="relative w-full h-full">
     <!-- Loading state placeholder -->
-    <div v-if="!isVisible" class="w-full h-full bg-gray-900 rounded-lg border border-gray-800 flex items-center justify-center">
+    <div v-if="!isVisible" class="w-full h-full rounded-lg flex items-center justify-center"
+         :style="{ 
+           backgroundColor: 'var(--bgSecondary)', 
+           border: '1px solid var(--borderPrimary)' 
+         }">
       <div class="text-center">
-        <div class="inline-block animate-pulse rounded-full h-4 w-4 bg-gray-700 mb-2"></div>
-        <div class="text-gray-500 text-xs">{{ loadingText || 'Loading...' }}</div>
+        <div class="inline-block animate-pulse rounded-full h-4 w-4 mb-2"
+             :style="{ backgroundColor: 'var(--bgTertiary)' }"></div>
+        <div class="text-xs" :style="{ color: 'var(--textMuted)' }">{{ loadingText || 'Loading...' }}</div>
       </div>
     </div>
 

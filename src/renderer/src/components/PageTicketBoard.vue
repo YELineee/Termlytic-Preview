@@ -1,10 +1,10 @@
 <template>
-  <div class="w-full h-full bg-gray-900 flex flex-col">
+  <div class="w-full h-full flex flex-col bg-primary">
     <!-- Page Header -->
     <div class="flex items-center justify-between p-6">
       <div class="flex items-center space-x-4">
-        <i class="fas fa-ticket-alt text-2xl text-amber-400"></i>
-        <h1 class="text-2xl font-bold text-white">Command Tickets</h1>
+        <i class="fas fa-ticket-alt text-2xl accent-text"></i>
+        <h1 class="text-2xl font-bold text-primary">Command Tickets</h1>
       </div>
 
       <div class="flex items-center space-x-3">
@@ -12,7 +12,7 @@
         <select
           v-model="selectedYear"
           @change="generateTicket"
-          class="bg-gray-700 text-white px-3 py-2 rounded border border-gray-600 focus:border-amber-500 focus:outline-none"
+          class="bg-secondary text-primary px-3 py-2 rounded border border-divider focus:border-accent focus:outline-none"
         >
           <option v-for="year in availableYears" :key="year" :value="year">{{ year }}</option>
         </select>
@@ -21,7 +21,7 @@
         <button
           @click="saveTicket"
           :disabled="saving"
-          class="bg-amber-500 hover:bg-amber-600 disabled:bg-gray-600 text-white px-4 py-2 rounded transition-colors duration-200 flex items-center space-x-2"
+          class="btn-primary disabled:opacity-50 disabled:cursor-not-allowed px-4 py-2 rounded transition-colors duration-200 flex items-center space-x-2"
         >
           <i :class="['fas', saving ? 'fa-spinner fa-spin' : 'fa-download']"></i>
           <span>{{ saving ? 'Saving...' : 'Save Ticket' }}</span>
@@ -31,7 +31,7 @@
         <button
           @click="generateTicket"
           :disabled="loading"
-          class="bg-gray-700 hover:bg-gray-600 text-white p-2 rounded transition-colors duration-200"
+          class="bg-secondary hover:bg-hover text-primary p-2 rounded transition-colors duration-200"
           title="Regenerate"
         >
           <i :class="['fas fa-sync-alt', { 'animate-spin': loading }]"></i>
@@ -44,19 +44,19 @@
       <!-- Loading state -->
       <div v-if="loading" class="text-center">
         <div
-          class="inline-block animate-spin rounded-full h-16 w-16 border-4 border-amber-500 border-t-transparent mb-4"
+          class="inline-block animate-spin rounded-full h-16 w-16 border-4 border-accent border-t-transparent mb-4"
         ></div>
-        <p class="text-gray-400">Generating your Command Ticket...</p>
+        <p class="text-secondary">Generating your Command Ticket...</p>
       </div>
 
       <!-- Error state -->
       <div v-else-if="error" class="text-center max-w-md">
         <i class="fas fa-exclamation-triangle text-6xl text-red-400 mb-4"></i>
-        <h3 class="text-xl font-bold text-white mb-2">Generation Failed</h3>
-        <p class="text-gray-400 mb-4">{{ error }}</p>
+        <h3 class="text-xl font-bold text-primary mb-2">Generation Failed</h3>
+        <p class="text-secondary mb-4">{{ error }}</p>
         <button
           @click="generateTicket"
-          class="bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded transition-colors"
+          class="btn-primary px-4 py-2 rounded transition-colors"
         >
           Retry
         </button>
@@ -105,12 +105,12 @@
 
       <!-- No data state -->
       <div v-else class="text-center max-w-md">
-        <i class="fas fa-inbox text-6xl text-gray-500 mb-4"></i>
-        <h3 class="text-xl font-bold text-white mb-2">No Data Available</h3>
-        <p class="text-gray-400 mb-4">{{ selectedYear }}Year: No command usage records</p>
+        <i class="fas fa-inbox text-6xl text-tertiary mb-4"></i>
+        <h3 class="text-xl font-bold text-primary mb-2">No Data Available</h3>
+        <p class="text-secondary mb-4">{{ selectedYear }}Year: No command usage records</p>
         <button
           @click="generateTicket"
-          class="bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded transition-colors"
+          class="btn-primary px-4 py-2 rounded transition-colors"
         >
           Check Again
         </button>

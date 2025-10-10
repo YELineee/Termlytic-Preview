@@ -1,14 +1,16 @@
 <template>
   <!-- Global loading overlay -->
-  <div v-if="isAppLoading" class="fixed inset-0 z-50 bg-gray-900 flex items-center justify-center">
+  <div v-if="isAppLoading" class="fixed inset-0 z-50 flex items-center justify-center" 
+       :style="{ backgroundColor: 'var(--bgPrimary)' }">
     <div class="text-center">
-      <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mb-4"></div>
-      <div class="text-white text-lg font-medium">Initializing Termlytic...</div>
-      <div class="text-gray-400 text-sm mt-2">Loading core data...</div>
+      <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 mb-4" 
+           :style="{ borderColor: 'var(--textPrimary)' }"></div>
+      <div class="text-lg font-medium" :style="{ color: 'var(--textPrimary)' }">Initializing Termlytic...</div>
+      <div class="text-sm mt-2" :style="{ color: 'var(--textSecondary)' }">Loading core data...</div>
     </div>
   </div>
 
-  <div class="flex h-screen bg-gray-900">
+  <div class="flex h-screen" :style="{ backgroundColor: 'var(--bgPrimary)' }">
     <!-- Left navigation -->
     <navigation
       ref="navigationRef"
@@ -24,7 +26,8 @@
       
       <!-- Page loading indicator -->
       <div v-if="isAnyLoading && !isAppLoading" class="absolute top-0 left-0 right-0 z-10">
-        <div class="bg-blue-600 h-1 transition-all duration-300" :style="{ width: `${loadingProgress}%` }"></div>
+        <div class="h-1 transition-all duration-300" 
+             :style="{ width: `${loadingProgress}%`, backgroundColor: 'var(--textPrimary)' }"></div>
       </div>
 
       <!-- Dashboard page -->
@@ -42,10 +45,15 @@
       <!-- Default or error page -->
       <div v-else class="flex items-center justify-center h-full">
         <div class="text-center">
-          <div class="text-gray-400 text-xl mb-4">Page not found</div>
+          <div class="text-xl mb-4" :style="{ color: 'var(--textSecondary)' }">Page not found</div>
           <button
             @click="goToDashboard"
-            class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+            class="px-4 py-2 rounded transition-colors"
+            :style="{ 
+              backgroundColor: 'var(--bgTertiary)', 
+              color: 'var(--textPrimary)',
+              border: '1px solid var(--borderPrimary)'
+            }"
           >
             Return to Dashboard
           </button>

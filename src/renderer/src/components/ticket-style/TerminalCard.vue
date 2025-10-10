@@ -1,26 +1,26 @@
 <template>
-  <div class="w-full max-w-lg bg-black rounded-lg shadow-2xl overflow-hidden border border-gray-600">
+  <div class="w-full max-w-lg bg-primary rounded-lg shadow-2xl overflow-hidden border border-divider">
     <!-- Terminal Title Bar -->
-    <div class="bg-gray-800 px-4 py-2 flex items-center justify-between border-b border-gray-600">
+    <div class="bg-secondary px-4 py-2 flex items-center justify-between border-b border-divider">
       <div class="flex items-center space-x-2">
-        <!-- Traffic Light Buttons -->
+        <!-- Traffic Light Buttons - Grayscale -->
         <div class="flex space-x-2">
-          <div class="w-3 h-3 bg-red-500 rounded-full"></div>
-          <div class="w-3 h-3 bg-yellow-500 rounded-full"></div>
-          <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+          <div class="w-3 h-3 bg-gray-600 rounded-full"></div>
+          <div class="w-3 h-3 bg-gray-500 rounded-full"></div>
+          <div class="w-3 h-3 bg-gray-400 rounded-full"></div>
         </div>
-        <span class="text-gray-300 text-sm font-mono ml-2">Command Summary {{ new Date().getFullYear() }}</span>
+        <span class="text-primary text-sm font-mono ml-2">Command Summary {{ new Date().getFullYear() }}</span>
       </div>
     </div>
 
     <!-- Terminal Content Area -->
-    <div class="p-6 font-mono text-sm text-green-400 bg-black min-h-96">
+    <div class="p-6 font-mono text-sm success-text bg-primary min-h-96">
       <!-- Ticket Header Information -->
       <div class="mb-6">
-        <div class="text-cyan-400 mb-2">
-          <span class="text-gray-500">$</span> cat ~/.command_ticket_{{ ticketNumber }}
+        <div class="accent-text mb-2">
+          <span class="text-tertiary">$</span> cat ~/.command_ticket_{{ ticketNumber }}
         </div>
-        <div class="text-white text-lg font-bold border-b border-gray-700 pb-2">
+        <div class="text-primary text-lg font-bold border-b border-divider pb-2">
           {{ cardName }}
         </div>
       </div>
@@ -28,34 +28,34 @@
       <!-- Main Statistics Information -->
       <div class="mb-6 space-y-2">
         <div class="flex justify-between items-center">
-          <span class="text-gray-400">Total Commands:</span>
-          <span class="text-green-400 font-bold">{{ formatNumber(totalCommands) }}</span>
+          <span class="text-secondary">Total Commands:</span>
+          <span class="success-text font-bold">{{ formatNumber(totalCommands) }}</span>
         </div>
         <div class="flex justify-between items-center">
-          <span class="text-gray-400">Active Days:</span>
-          <span class="text-blue-400 font-bold">{{ activeDays }}</span>
+          <span class="text-secondary">Active Days:</span>
+          <span class="accent-text font-bold">{{ activeDays }}</span>
         </div>
         <div class="flex justify-between items-center">
-          <span class="text-gray-400">Avg Commands/Day:</span>
-          <span class="text-yellow-400 font-bold">{{ Math.round(totalCommands / Math.max(activeDays, 1)) }}</span>
+          <span class="text-secondary">Avg Commands/Day:</span>
+          <span class="accent-text font-bold">{{ Math.round(totalCommands / Math.max(activeDays, 1)) }}</span>
         </div>
         <div class="flex justify-between items-center">
-          <span class="text-gray-400">Productivity Score:</span>
-          <span class="text-purple-400 font-bold">{{ calculateProductivityScore() }}/100</span>
+          <span class="text-secondary">Productivity Score:</span>
+          <span class="accent-text font-bold">{{ calculateProductivityScore() }}/100</span>
         </div>
       </div>
 
       <!-- Monthly Activity Chart -->
       <div class="mb-6">
-        <div class="text-white mb-3 text-xs">
-          <span class="text-gray-500">$</span> Monthly Activity Pattern:
+        <div class="text-primary mb-3 text-xs">
+          <span class="text-tertiary">$</span> Monthly Activity Pattern:
         </div>
-        <div class="bg-gray-900 p-4 rounded border border-gray-700">
+        <div class="bg-secondary p-4 rounded border border-divider">
           <div class="flex items-end space-x-1 h-20">
             <div
               v-for="(value, index) in chartData"
               :key="index"
-              class="flex-1 bg-gradient-to-t from-green-600 to-green-400 rounded-sm"
+              class="flex-1 accent-gradient rounded-sm"
               :style="{
                 height: `${Math.max(2, (value / 100) * 100)}%`,
                 opacity: value > 0 ? 0.8 : 0.3
@@ -63,7 +63,7 @@
               :title="`${getMonthName(index)}: ${value}%`"
             ></div>
           </div>
-          <div class="flex justify-between text-xs text-gray-500 mt-2">
+          <div class="flex justify-between text-xs text-tertiary mt-2">
             <span>Jan</span>
             <span>Apr</span>
             <span>Jul</span>
@@ -76,27 +76,27 @@
       <!-- System Information -->
       <div class="mb-4 space-y-1 text-xs">
         <div class="flex justify-between">
-          <span class="text-gray-500">Terminal Sessions:</span>
-          <span class="text-green-300">{{ Math.ceil(totalCommands / 50) }}</span>
+          <span class="text-tertiary">Terminal Sessions:</span>
+          <span class="success-text">{{ Math.ceil(totalCommands / 50) }}</span>
         </div>
         <div class="flex justify-between">
-          <span class="text-gray-500">Peak Day Commands:</span>
-          <span class="text-green-300">{{ Math.max(...chartData.map(v => Math.ceil(v * totalCommands / 100 / 12))) }}</span>
+          <span class="text-tertiary">Peak Day Commands:</span>
+          <span class="success-text">{{ Math.max(...chartData.map(v => Math.ceil(v * totalCommands / 100 / 12))) }}</span>
         </div>
         <div class="flex justify-between">
-          <span class="text-gray-500">Efficiency Rating:</span>
-          <span class="text-green-300">{{ getEfficiencyRating() }}</span>
+          <span class="text-tertiary">Efficiency Rating:</span>
+          <span class="success-text">{{ getEfficiencyRating() }}</span>
         </div>
       </div>
 
       <!-- Bottom Command Prompt -->
-      <div class="border-t border-gray-700 pt-4 mt-4">
+      <div class="border-t border-divider pt-4 mt-4">
         <div class="flex items-center space-x-2">
-          <span class="text-green-400">user@terminal:~$</span>
-          <span class="text-gray-400">echo "Year {{ new Date().getFullYear() }} Summary Complete"</span>
-          <span class="animate-pulse text-green-400">_</span>
+          <span class="success-text">user@terminal:~$</span>
+          <span class="text-secondary">echo "Year {{ new Date().getFullYear() }} Summary Complete"</span>
+          <span class="animate-pulse success-text">_</span>
         </div>
-        <div class="text-gray-500 text-xs mt-1">
+        <div class="text-tertiary text-xs mt-1">
           Generated on {{ new Date().toLocaleDateString() }} • Ticket #{{ ticketNumber }}
         </div>
       </div>

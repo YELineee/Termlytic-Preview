@@ -1,20 +1,19 @@
 <template>
-  <div class="bg-gray-800 rounded-lg p-4 h-full flex flex-col">
+  <div class="card h-full flex-col">
     <!-- Title - fixed, no scroll -->
-    <h4 class="text-md font-medium text-gray-200 mb-3 flex items-center shrink-0">
-      <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
-        <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-      </svg>
+    <h4 class="text-md font-medium mb-4 flex items-center shrink-0" :style="{ color: 'var(--textPrimary)' }">
+      <div class="w-2 h-2 rounded-full mr-2" :style="{ backgroundColor: 'var(--textSecondary)' }"></div>
       Command Execution History
-      <span v-if="selectedDate" class="ml-2 text-sm text-gray-400">
-        ({{ selectedDate.formattedDate }})
+      <span v-if="selectedDate" class="ml-2 text-sm" :style="{ color: 'var(--textTertiary)' }">
+        {{ selectedDate.formattedDate }}
       </span>
     </h4>
 
     <!-- No data state -->
     <div
       v-if="!selectedDate || !selectedDate.commands || selectedDate.commands.length === 0"
-      class="flex-1 text-gray-400 flex flex-col items-center justify-center"
+      class="flex-1 flex flex-col items-center justify-center"
+      :style="{ color: 'var(--textTertiary)' }"
     >
       <svg class="w-12 h-12 mb-2 opacity-50" fill="currentColor" viewBox="0 0 20 20">
         <path
@@ -23,21 +22,21 @@
           clip-rule="evenodd"
         />
       </svg>
-      <div>{{ !selectedDate ? 'Please click on the heat map to select the date' : 'No command records for this date' }}</div>
+      <div>{{ !selectedDate ? 'Click on heatmap to select a date' : 'No command records' }}</div>
     </div>
 
     <!-- Command List - Scrollable Content -->
     <div v-else class="flex-1 min-h-0 flex flex-col">
       <!-- Statistics Information - Fixed, No Scroll -->
-      <div class="bg-gray-700 rounded p-3 mb-3 shrink-0">
+      <div class="rounded-lg p-4 mb-3 shrink-0" :style="{ backgroundColor: 'var(--bgTertiary)', border: '1px solid var(--borderSecondary)' }">
         <div class="grid grid-cols-2 gap-4 text-sm">
           <div class="text-center">
-            <div class="text-2xl font-bold text-green-400">{{ selectedDate.totalCommands }}</div>
-            <div class="text-gray-400">Total Commands</div>
+            <div class="text-2xl font-bold mb-1" :style="{ color: 'var(--textPrimary)' }">{{ selectedDate.totalCommands }}</div>
+            <div class="text-xs" :style="{ color: 'var(--textTertiary)' }">Total Commands</div>
           </div>
           <div class="text-center">
-            <div class="text-2xl font-bold text-blue-400">{{ uniqueCommands }}</div>
-            <div class="text-gray-400">Unique Commands</div>
+            <div class="text-2xl font-bold mb-1" :style="{ color: 'var(--textPrimary)' }">{{ uniqueCommands }}</div>
+            <div class="text-xs" :style="{ color: 'var(--textTertiary)' }">Unique Commands</div>
           </div>
         </div>
       </div>
@@ -48,21 +47,21 @@
           <div
             v-for="(cmd, index) in displayCommands"
             :key="index"
-            class="flex items-center justify-between p-3 bg-gray-700 rounded hover:bg-gray-600 transition-colors"
+            class="flex items-center justify-between p-3 bg-tertiary rounded hover:bg-hover transition-colors"
           >
             <div class="flex-1 min-w-0 mr-3">
               <div class="flex items-center mb-1">
-                <code class="text-green-400 font-mono text-sm break-all mr-2">{{
+                <code class="success-text font-mono text-sm break-all mr-2">{{
                   cmd.command
                 }}</code>
                 <span
                   v-if="cmd.count > 1"
-                  class="bg-blue-600 text-white text-xs px-2 py-0.5 rounded-full"
+                  class="accent-text bg-secondary text-xs px-2 py-0.5 rounded-full border border-divider"
                 >
                   {{ cmd.count }}x
                 </span>
               </div>
-              <div class="text-gray-400 text-xs flex items-center space-x-3">
+              <div class="text-secondary text-xs flex items-center space-x-3">
                 <span class="flex items-center">
                   <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
                     <path

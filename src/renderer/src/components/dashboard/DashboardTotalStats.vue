@@ -1,21 +1,29 @@
 <template>
   <div
-    class="w-full h-full bg-gray-900 rounded-lg p-4 flex flex-col justify-between border border-gray-800"
+    class="w-full h-full rounded-lg p-4 flex flex-col justify-between"
+    :style="{ 
+      backgroundColor: 'var(--bgSecondary)', 
+      border: '1px solid var(--borderPrimary)' 
+    }"
   >
     <!-- Title -->
     <div class="flex items-center justify-between">
-      <div class="text-xs text-gray-400 uppercase tracking-wider font-medium">COMPLETED TASKS</div>
-      <div class="text-xs text-gray-500">∞</div>
+      <div class="flex items-center space-x-2">
+        <div class="w-2 h-2 rounded-full" :style="{ backgroundColor: 'var(--textSecondary)' }"></div>
+        <div class="text-xs uppercase tracking-wider font-medium" 
+             :style="{ color: 'var(--textTertiary)' }">COMPLETED TASKS</div>
+      </div>
+      <div class="text-xs" :style="{ color: 'var(--textMuted)' }">∞</div>
     </div>
 
     <!-- Main Values -->
     <div class="flex-1 flex flex-col justify-center">
-      <div class="text-4xl font-bold text-white mb-1">
+      <div class="text-4xl font-bold mb-1" :style="{ color: 'var(--textPrimary)' }">
         {{ isLoading ? '...' : formatMainNumber(stats.totalCommands) }}
       </div>
       <div class="flex items-center space-x-2">
-        <span class="text-sm text-gray-400">/</span>
-        <span class="text-xs text-purple-400 uppercase tracking-wider">{{
+        <span class="text-sm" :style="{ color: 'var(--textSecondary)' }">/</span>
+        <span class="text-xs uppercase tracking-wider" :style="{ color: 'var(--textSecondary)' }">{{
           getMainUnit(stats.totalCommands)
         }}</span>
       </div>
@@ -24,12 +32,12 @@
     <!-- Secondary Metrics -->
     <div class="space-y-1">
       <div class="flex items-center justify-between text-xs">
-        <span class="text-gray-500">Active Days</span>
-        <span class="text-gray-300">{{ stats.activeDays }}</span>
+        <span :style="{ color: 'var(--textTertiary)' }">Active Days</span>
+        <span :style="{ color: 'var(--textSecondary)' }">{{ stats.activeDays }}</span>
       </div>
       <div class="flex items-center justify-between text-xs">
-        <span class="text-gray-500">Unique Cmds</span>
-        <span class="text-gray-300">{{ formatNumber(stats.uniqueCommands) }}</span>
+        <span :style="{ color: 'var(--textTertiary)' }">Unique Cmds</span>
+        <span :style="{ color: 'var(--textSecondary)' }">{{ formatNumber(stats.uniqueCommands) }}</span>
       </div>
     </div>
   </div>

@@ -1,9 +1,14 @@
 <template>
   <div
-    class="w-18 h-full navibar bg-gray-900 border-r border-gray-700 flex flex-col items-center py-4"
+    class="w-18 h-full navibar flex flex-col items-center py-4"
+    :style="{ 
+      backgroundColor: 'var(--bgSecondary)', 
+      borderRight: '1px solid var(--borderPrimary)' 
+    }"
   >
     <!-- Top: App icon -->
-    <div class="text-white font-bold text-xl select-none mb-6 mt-12">T</div>
+    <div class="font-bold text-xl select-none mb-6 mt-12" 
+         :style="{ color: 'var(--textPrimary)' }">T</div>
 
     <!-- Middle: Navigation menu -->
     <div class="flex flex-col items-center space-y-2 flex-1">
@@ -13,23 +18,87 @@
         @click="switchPage(item.name)"
         :class="[
           'w-10 h-10 text-lg transition-all duration-200 rounded-md flex items-center justify-center',
-          'no-drag', // Prevent dragging
-          currentPage === item.name
-            ? 'bg-blue-600 text-white shadow-lg'
-            : 'text-gray-300 hover:text-white hover:bg-gray-700'
+          'no-drag'
         ]"
+        :style="getButtonStyle(item.name)"
         :title="item.label"
       >
         <i :class="item.icon"></i>
       </button>
     </div>
 
-    <!-- Bottom: Refresh button -->
-    <div class="flex flex-col items-center">
+    <!-- Bottom: Theme toggle and Refresh button -->
+    <div class="flex flex-col items-center space-y-2">
+      <!-- Theme Toggle Button -->
+      <div class="relative theme-selector-container" ref="themeSelectorContainer">
+        <button
+          ref="themeButton"
+          @click="handleThemeButtonClick"
+          class="no-drag w-10 h-10 rounded-md transition-all duration-200 flex items-center justify-center hover-button"
+          :style="getHoverButtonStyle()"
+          :title="getThemeTitle()"
+        >
+          <i :class="getThemeIcon()"></i>
+        </button>
+        
+        <!-- Theme Selector Bubbles -->
+        <div 
+          v-if="showThemeSelector" 
+          class="theme-bubbles-wrapper"
+        >
+          <!-- Dark Theme -->
+          <button
+            @click.stop="handleBubbleClick('dark')"
+            class="theme-bubble"
+            :class="{ 'active': currentThemeMode === 'dark' }"
+            :style="{ 
+              backgroundColor: currentThemeMode === 'dark' ? 'var(--textPrimary)' : 'var(--bgTertiary)',
+              color: currentThemeMode === 'dark' ? 'var(--bgPrimary)' : 'var(--textPrimary)',
+              border: '2px solid var(--borderPrimary)'
+            }"
+            title="Dark Theme"
+          >
+            <i class="fas fa-moon"></i>
+          </button>
+          
+          <!-- Light Theme -->
+          <button
+            @click.stop="handleBubbleClick('light')"
+            class="theme-bubble"
+            :class="{ 'active': currentThemeMode === 'light' }"
+            :style="{ 
+              backgroundColor: currentThemeMode === 'light' ? 'var(--textPrimary)' : 'var(--bgTertiary)',
+              color: currentThemeMode === 'light' ? 'var(--bgPrimary)' : 'var(--textPrimary)',
+              border: '2px solid var(--borderPrimary)'
+            }"
+            title="Light Theme"
+          >
+            <i class="fas fa-sun"></i>
+          </button>
+          
+          <!-- Colorful Theme -->
+          <button
+            @click.stop="handleBubbleClick('colorful')"
+            class="theme-bubble"
+            :class="{ 'active': currentThemeMode === 'colorful' }"
+            :style="{ 
+              backgroundColor: currentThemeMode === 'colorful' ? '#00D9FF' : 'var(--bgTertiary)',
+              color: currentThemeMode === 'colorful' ? '#1A1A2E' : 'var(--textPrimary)',
+              border: '2px solid var(--borderPrimary)'
+            }"
+            title="Colorful Theme"
+          >
+            <i class="fas fa-palette"></i>
+          </button>
+        </div>
+      </div>
+      
+      <!-- Refresh Button -->
       <button
         @click="refreshData"
-        class="no-drag w-10 h-10 text-gray-400 hover:text-white hover:bg-gray-700 rounded-md transition-colors flex items-center justify-center"
-        title="RefreshData"
+        class="no-drag w-10 h-10 rounded-md transition-all duration-200 flex items-center justify-center hover-button"
+        :style="getHoverButtonStyle()"
+        title="Refresh Data"
       >
         <i class="fas fa-sync-alt"></i>
       </button>
@@ -38,12 +107,79 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onBeforeUnmount, computed } from 'vue'
+import { useTheme } from '@renderer/composables/useTheme.js'
 
 // Define emits
 const emit = defineEmits(['page-change', 'refresh-data'])
 
-// Reactive data
+// Use theme composable
+const { isDark, currentThemeMode, toggleTheme, setTheme } = useTheme()
+
+// Theme selector state
+const showThemeSelector = ref(false)
+const themeButton = ref(null)
+const themeSelectorContainer = ref(null)
+const clickTimer = ref(null)
+const clickCount = ref(0)
+
+// Handle theme button click with double-click detection
+const handleThemeButtonClick = (e) => {
+  e.stopPropagation()
+  clickCount.value++
+  
+  if (clickTimer.value) {
+    clearTimeout(clickTimer.value)
+  }
+  
+  clickTimer.value = setTimeout(() => {
+    if (clickCount.value === 1) {
+      // Single click - toggle theme
+      toggleTheme()
+    } else if (clickCount.value >= 2) {
+      // Double click - show theme selector
+      showThemeSelector.value = !showThemeSelector.value
+    }
+    clickCount.value = 0
+  }, 250) // 250ms window for double click
+}
+
+// Handle bubble click to switch theme
+const handleBubbleClick = (theme) => {
+  setTheme(theme)
+  showThemeSelector.value = false
+}
+
+const getThemeIcon = () => {
+  switch (currentThemeMode.value) {
+    case 'dark':
+      return 'fas fa-moon'
+    case 'light':
+      return 'fas fa-sun'
+    case 'colorful':
+      return 'fas fa-palette'
+    default:
+      return 'fas fa-moon'
+  }
+}
+
+const getThemeTitle = () => {
+  const currentName = currentThemeMode.value === 'dark' ? 'Dark' : 
+                      currentThemeMode.value === 'light' ? 'Light' : 'Colorful'
+  return `${currentName} Theme (Click: toggle, Double-click: all options)`
+}
+
+// Close theme selector when clicking outside
+const handleClickOutside = (e) => {
+  if (showThemeSelector.value) {
+    const container = themeSelectorContainer.value
+    if (container && !container.contains(e.target)) {
+      showThemeSelector.value = false
+    }
+  }
+}
+
+// Rest of the original code
 const currentPage = ref('dashboard')
 
 // Navigation item configuration
@@ -70,6 +206,26 @@ const navigationItems = [
   }
 ]
 
+// Get button style based on active state
+const getButtonStyle = (pageName) => {
+  if (currentPage.value === pageName) {
+    return {
+      backgroundColor: 'var(--textPrimary)',
+      color: 'var(--bgPrimary)',
+    }
+  }
+  return {
+    color: 'var(--textSecondary)',
+  }
+}
+
+// Get hover button style
+const getHoverButtonStyle = () => {
+  return {
+    color: 'var(--textSecondary)',
+  }
+}
+
 // Methods
 const switchPage = (pageName) => {
   if (pageName !== currentPage.value) {
@@ -95,6 +251,15 @@ defineExpose({
 onMounted(() => {
   // Send default page on initialization
   emit('page-change', currentPage.value)
+  // Add click outside listener
+  document.addEventListener('click', handleClickOutside)
+})
+
+onBeforeUnmount(() => {
+  document.removeEventListener('click', handleClickOutside)
+  if (clickTimer.value) {
+    clearTimeout(clickTimer.value)
+  }
 })
 </script>
 
@@ -113,17 +278,96 @@ button {
   user-select: none;
 }
 
-/* Add some animation effects */
-.animate-spin {
-  animation: spin 1s linear infinite;
+/* Hover effects */
+.hover-button:hover {
+  background-color: var(--bgHover);
+  color: var(--textPrimary);
 }
 
-@keyframes spin {
+button:not(.hover-button):hover {
+  background-color: var(--bgHover);
+}
+
+/* Theme Selector Container */
+.theme-selector-container {
+  position: relative;
+  z-index: 100;
+  -webkit-app-region: no-drag;
+}
+
+/* Theme Bubbles Wrapper */
+.theme-bubbles-wrapper {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 8px;
+  z-index: 1000;
+  -webkit-app-region: no-drag;
+}
+
+/* Theme Bubbles */
+.theme-bubble {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  font-size: 16px;
+  z-index: 1001;
+  position: relative;
+  background: none;
+  border: none;
+  outline: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-app-region: no-drag;
+}
+
+.theme-bubble i {
+  pointer-events: none;
+}
+
+.theme-bubble:hover {
+  transform: scale(1.15);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
+}
+
+.theme-bubble:active {
+  transform: scale(1.05);
+}
+
+.theme-bubble.active {
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.3),
+              0 10px 15px -3px rgba(0, 0, 0, 0.4);
+}
+
+/* Bubble appear animation */
+.theme-bubbles-wrapper .theme-bubble:nth-child(1) {
+  animation: bubbleAppear 0.25s cubic-bezier(0.34, 1.56, 0.64, 1) 0s backwards;
+}
+
+.theme-bubbles-wrapper .theme-bubble:nth-child(2) {
+  animation: bubbleAppear 0.25s cubic-bezier(0.34, 1.56, 0.64, 1) 0.05s backwards;
+}
+
+.theme-bubbles-wrapper .theme-bubble:nth-child(3) {
+  animation: bubbleAppear 0.25s cubic-bezier(0.34, 1.56, 0.64, 1) 0.1s backwards;
+}
+
+@keyframes bubbleAppear {
   from {
-    transform: rotate(0deg);
+    opacity: 0;
+    transform: scale(0.3) translateY(10px);
   }
   to {
-    transform: rotate(360deg);
+    opacity: 1;
+    transform: scale(1) translateY(0);
   }
 }
 </style>

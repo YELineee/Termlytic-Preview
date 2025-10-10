@@ -121,9 +121,9 @@ export class FileReaderService {
   }
 
   /**
-   * 获取所有历史文件的当前状态
-   * 包括检测所有可能的历史文件位置
-   * @returns {Object} 所有文件的状态信息
+   * Get current status of all history files
+   * Including detection of all possible history file locations
+   * @returns {Object} Status information for all files
    */
   async getAllFileStatus() {
     const status = {
@@ -136,7 +136,7 @@ export class FileReaderService {
       }
     }
     
-    // 检查配置的文件
+    // Check configured files
     for (const [shell, filePath] of Object.entries(this.historyFiles)) {
       const fileInfo = await this.getFileInfo(filePath)
       status.configured[shell] = fileInfo
@@ -146,7 +146,7 @@ export class FileReaderService {
       status.summary.totalFiles++
     }
     
-    // 检测其他可能的历史文件
+    // Detect other possible history files
     const additionalPaths = [
       path.join(this.homeDir, '.history'),
       path.join(this.homeDir, '.zhistory'),
@@ -155,7 +155,7 @@ export class FileReaderService {
     ]
     
     for (const additionalPath of additionalPaths) {
-      // 避免重复检查已配置的文件
+      // Avoid duplicate checks of already configured files
       if (!Object.values(this.historyFiles).includes(additionalPath)) {
         const fileInfo = await this.getFileInfo(additionalPath)
         if (fileInfo.exists) {
@@ -169,10 +169,10 @@ export class FileReaderService {
   }
 
   /**
-   * 读取指定 Shell 的历史文件
-   * @param {string} shell - Shell 类型 ('bash', 'zsh', 'fish')
-   * @param {number} fromByte - 从第几个字节开始读取（用于增量读取）
-   * @returns {Array} 解析后的历史条目数组
+   * Read history file for specified Shell
+   * @param {string} shell - Shell type ('bash', 'zsh', 'fish')
+   * @param {number} fromByte - Starting byte position for reading (for incremental reads)
+   * @returns {Array} Array of parsed history entries
    */
   async readShellHistory(shell, fromByte = 0) {
     const filePath = this.historyFiles[shell]
@@ -184,7 +184,7 @@ export class FileReaderService {
     console.log(`Reading ${shell} history from: ${filePath}`)
     
     try {
-      // 检查文件是否存在和可读
+      // Check if file exists and is readable
       const fileInfo = await this.getFileInfo(filePath)
       if (!fileInfo.exists) {
         console.log(`History file not found for ${shell}: ${filePath}`)
@@ -206,11 +206,11 @@ export class FileReaderService {
         lastModified: new Date(fileInfo.mtime).toISOString()
       })
 
-      // 读取文件内容
+      // Read file content
       const fileHandle = await fs.open(filePath, 'r')
       const stats = await fileHandle.stat()
       
-      // 如果指定了起始字节且小于文件大小，进行增量读取
+      // Perform incremental read if start byte is specified and less than file size
       const startByte = Math.min(fromByte, stats.size)
       const readSize = stats.size - startByte
       
@@ -229,7 +229,7 @@ export class FileReaderService {
 
       console.log(`Processing ${lines.length} lines for ${shell} (${readSize} bytes)`)
 
-      // 解析历史条目
+      // Parse history entries
       const entries = []
       let index = 0
       let validEntries = 0
@@ -242,7 +242,7 @@ export class FileReaderService {
           const parseResult = parseShellEntry(shell, line, lines, index)
           
           if (parseResult.entry && parseResult.entry.command) {
-            // 过滤掉无效或空的命令
+            // Filter out invalid or empty commands
             const command = parseResult.entry.command.trim()
             if (command && command.length > 0 && !command.startsWith('#')) {
               entries.push({
@@ -280,9 +280,9 @@ export class FileReaderService {
   }
 
   /**
-   * 读取所有支持的 Shell 历史文件
-   * 优先读取当前检测到的 Shell，然后读取其他 Shell
-   * @returns {Object} 包含所有 Shell 历史数据的对象
+   * Read history files from all supported Shells
+   * Prioritize reading the currently detected Shell, then read other Shells
+   * @returns {Object} Object containing all Shell history data
    */
   async readAllShellHistory() {
     console.log('Reading history from all supported shells...')
@@ -302,14 +302,14 @@ export class FileReaderService {
 
     const results = {}
     
-    // 首先获取所有文件状态
+    // First get all file status
     const fileStatus = await this.getAllFileStatus()
     allHistory.files = fileStatus
 
-    // 按优先级排序 Shell（当前检测到的 Shell 优先）
+    // Sort Shells by priority (currently detected Shell first)
     const shellOrder = [this.currentShell, ...Object.keys(this.historyFiles).filter(s => s !== this.currentShell)]
 
-    // 读取各个 Shell 的历史文件
+    // Read history files for each Shell
     for (const shell of shellOrder) {
       console.log(`\n=== Processing ${shell} shell ===`)
       
@@ -331,7 +331,7 @@ export class FileReaderService {
         allHistory.entries.push(...entries)
         allHistory.shells[shell] = entries.length
         
-        // 添加诊断信息
+        // Add diagnostic information
         allHistory.diagnostics[shell] = {
           detectedAsCurrent: shell === this.currentShell,
           hasValidEntries: entries.length > 0,
@@ -388,11 +388,11 @@ export class FileReaderService {
   }
 
   /**
-   * 读取指定文件的指定字节范围
+   * Read specified byte range from a file
    * @param {string} filePath - File path
-   * @param {number} startByte - 起始字节
-   * @param {number} endByte - 结束字节（不包含）
-   * @returns {string} 读取的内容
+   * @param {number} startByte - Starting byte position
+   * @param {number} endByte - Ending byte position (exclusive)
+   * @returns {string} Content read from file
    */
   async readFileRange(filePath, startByte, endByte) {
     try {
@@ -411,9 +411,9 @@ export class FileReaderService {
   }
 
   /**
-   * 获取文件的行数（用于大文件的快速检查）
+   * Get line count of a file (for quick checks on large files)
    * @param {string} filePath - File path
-   * @returns {number} 文件行数
+   * @returns {number} Number of lines in file
    */
   async getFileLineCount(filePath) {
     try {
@@ -426,9 +426,9 @@ export class FileReaderService {
   }
 
   /**
-   * 诊断 shell 历史配置
-   * 检查各种可能导致无数据的问题
-   * @returns {Object} 诊断结果
+   * Diagnose shell history configuration
+   * Check various issues that may cause no data
+   * @returns {Object} Diagnosis results
    */
   async diagnoseShellHistory() {
     console.log('Starting shell history diagnosis...')
@@ -447,7 +447,7 @@ export class FileReaderService {
       recommendations: []
     }
 
-    // 检查所有可能的历史文件位置
+    // Check all possible history file locations
     const allPossiblePaths = [
       { path: process.env.HISTFILE, source: 'HISTFILE env var' },
       { path: path.join(this.homeDir, '.zsh_history'), source: 'default zsh' },
@@ -483,7 +483,7 @@ export class FileReaderService {
       }
     }
 
-    // 生成建议
+    // Generate recommendations
     const existingFiles = Object.entries(diagnosis.files)
       .filter(([_, info]) => info.exists && info.lineCount > 0)
     
@@ -497,7 +497,7 @@ export class FileReaderService {
       })
     }
 
-    // 检查当前 shell 特定的问题
+    // Check current shell specific issues
     if (diagnosis.environment.detectedShell === 'zsh') {
       if (!diagnosis.environment.histfile) {
         diagnosis.recommendations.push('Consider setting HISTFILE environment variable for zsh.')

@@ -6,12 +6,12 @@
       <div class="flex items-center space-x-4">
         <!-- Year Selector -->
         <div class="flex items-center space-x-2">
-          <label class="text-gray-300 text-sm">Year:</label>
+          <label class="text-secondary text-sm">Year:</label>
           <select
             v-model="selectedYear"
             @change="onYearChange"
             :disabled="loading"
-            class="bg-gray-700 text-white px-3 py-1 rounded text-sm border border-gray-600 focus:border-blue-500 focus:outline-none"
+            class="bg-secondary text-primary px-3 py-1 rounded text-sm border border-divider focus:border-accent focus:outline-none"
           >
             <option v-for="year in availableYears" :key="year" :value="year">
               {{ year }}
@@ -21,12 +21,12 @@
 
         <!-- Shell Type Selector -->
         <div class="flex items-center space-x-2">
-          <label class="text-gray-300 text-sm">Shell:</label>
+          <label class="text-secondary text-sm">Shell:</label>
           <select
             v-model="selectedShellType"
             @change="onShellTypeChange"
             :disabled="loading"
-            class="bg-gray-700 text-white px-3 py-1 rounded text-sm border border-gray-600 focus:border-blue-500 focus:outline-none"
+            class="bg-secondary text-primary px-3 py-1 rounded text-sm border border-divider focus:border-accent focus:outline-none"
           >
             <option value="all">All (bash + zsh)</option>
             <option value="bash">bash only</option>
@@ -36,7 +36,7 @@
       </div>
 
       <!-- Right: Statistics Information -->
-      <div class="text-right text-gray-400 text-sm">
+      <div class="text-right text-secondary text-sm">
         <div v-if="loading">Loading...</div>
         <div v-else-if="currentYearStats.totalCommands > 0">
           {{ selectedYear }}Year ({{ getShellTypeLabel() }}):
@@ -55,7 +55,7 @@
             :data="formattedHeatmapData"
             :start-date="yearStartDate"
             :end-date="yearEndDate"
-            :color-scheme="['#161b22', '#1e4b32', '#228542', '#26a641', '#39d353']"
+            :color-scheme="heatmapColorScheme"
             :cell-size="14"
             :cell-gap="4"
             unit="commands"
@@ -73,16 +73,16 @@
           <!-- Date Title - Fixed, Not Scrollable -->
           <div class="mb-4 shrink-0">
             <div v-if="selectedDateInfo" class="text-center">
-              <h3 class="text-lg font-semibold text-gray-200">
+              <h3 class="text-lg font-semibold text-primary">
                 {{ selectedDateInfo.formattedDate }}
               </h3>
-              <p class="text-sm text-gray-400">
+              <p class="text-sm text-secondary">
                 Total execution: {{ selectedDateInfo.totalCommands }}  commands
               </p>
             </div>
             <div v-else class="text-center">
-              <h3 class="text-lg font-semibold text-gray-400">Click on heatmap to select a date</h3>
-              <p class="text-sm text-gray-500">View daily command execution details and statistics</p>
+              <h3 class="text-lg font-semibold text-secondary">Click on heatmap to select a date</h3>
+              <p class="text-sm text-tertiary">View daily command execution details and statistics</p>
             </div>
           </div>
 
@@ -103,7 +103,7 @@
 
       <!-- Loading state -->
       <div v-if="loading" class="flex items-center justify-center h-full">
-        <div class="text-gray-400">Loading heatmap data...</div>
+        <div class="text-secondary">Loading heatmap data...</div>
       </div>
 
       <!-- No Data Prompt -->
@@ -111,14 +111,14 @@
         v-if="!loading && !error && currentYearStats.totalCommands === 0"
         class="flex items-center justify-center h-full"
       >
-        <div class="text-gray-400">{{ selectedYear }}Year ({{ getShellTypeLabel() }}) No data available</div>
+        <div class="text-secondary">{{ selectedYear }}Year ({{ getShellTypeLabel() }}) No data available</div>
       </div>
     </div>
 
     <!-- Error Prompt -->
     <div v-if="error" class="text-red-400 text-sm mt-2 bg-red-900 bg-opacity-20 p-2 rounded">
       {{ error }}
-      <button @click="retryLoad" class="ml-2 text-blue-400 hover:text-blue-300 underline">
+      <button @click="retryLoad" class="ml-2 accent-text hover:opacity-80 underline">
         Retry
       </button>
     </div>
@@ -131,8 +131,10 @@ import HeatmapWrapper from '../wrapper/HeatmapWrapper.vue'
 import HeatmapCommandList from '../heatmap/HeatmapCommandList.vue'
 import HeatmapCustomStats from '../heatmap/HeatmapCustomStats.vue'
 import { useDataService } from '@renderer/services/dataService.js'
+import { useTheme } from '@renderer/composables/useTheme'
 
-// Use unified data service
+// Use theme and data service
+const { isDark } = useTheme()
 const { dataService, isLoading: globalLoading, error: globalError } = useDataService()
 
 // Reactive data
@@ -143,6 +145,17 @@ const heatmapData = ref([])
 const loading = ref(false)
 const error = ref('')
 const selectedDateInfo = ref(null) // Selected date details
+
+// Heatmap color scheme based on theme
+const heatmapColorScheme = computed(() => {
+  if (isDark.value) {
+    // Dark theme - GitHub style green
+    return ['#161b22', '#0e4429', '#006d32', '#26a641', '#39d353']
+  } else {
+    // Light theme - subtle colors
+    return ['#ebedf0', '#9be9a8', '#40c463', '#30a14e', '#216e39']
+  }
+})
 
 // Calculate current year statistics
 const currentYearStats = computed(() => {

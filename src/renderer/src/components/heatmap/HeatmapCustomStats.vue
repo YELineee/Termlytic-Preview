@@ -1,22 +1,19 @@
 <template>
-  <div class="bg-gray-800 rounded-lg p-4 h-full flex flex-col">
+  <div class="card h-full flex-col">
     <!-- Title - fixed, no scroll -->
-    <h4 class="text-md font-medium text-gray-200 mb-3 flex items-center shrink-0">
-      <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
-        <path
-          d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"
-        />
-      </svg>
-      StatisticsAnalysis
-      <span v-if="selectedDate" class="ml-2 text-sm text-gray-400">
-        ({{ selectedDate.formattedDate }})
+    <h4 class="text-md font-medium mb-4 flex items-center shrink-0" :style="{ color: 'var(--textPrimary)' }">
+      <div class="w-2 h-2 rounded-full mr-2" :style="{ backgroundColor: 'var(--textSecondary)' }"></div>
+      Statistics Analysis
+      <span v-if="selectedDate" class="ml-2 text-sm" :style="{ color: 'var(--textTertiary)' }">
+        {{ selectedDate.formattedDate }}
       </span>
     </h4>
 
     <!-- No data state -->
     <div
       v-if="!selectedDate || !selectedDate.stats"
-      class="flex-1 text-gray-400 flex flex-col items-center justify-center"
+      class="flex-1 flex flex-col items-center justify-center"
+      :style="{ color: 'var(--textTertiary)' }"
     >
       <svg class="w-12 h-12 mb-2 opacity-50" fill="currentColor" viewBox="0 0 20 20">
         <path
@@ -25,94 +22,76 @@
           clip-rule="evenodd"
         />
       </svg>
-      <div>{{ !selectedDate ? 'Please click on the heatmap to select a date' : 'No statistics data available' }}</div>
+      <div>{{ !selectedDate ? 'Click on heatmap to select a date' : 'No data available' }}</div>
     </div>
 
     <!-- Statistics content - scrollable -->
     <div v-else class="flex-1 min-h-0 overflow-y-auto">
       <div class="space-y-6">
         <!-- Terminal type distribution -->
-        <div v-if="shellStats.length > 0">
-          <div class="text-sm text-gray-300 mb-3 flex items-center">
-            <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
-              <path
-                fill-rule="evenodd"
-                d="M2 5a2 2 0 012-2h8a2 2 0 012 2v10a2 2 0 002 2H4a2 2 0 01-2-2V5zm3 1h6v4H5V6zm6 6H5v2h6v-2z"
-                clip-rule="evenodd"
-              />
-            </svg>
-            Terminal Type Distribution
+        <div v-if="shellStats.length > 0" class="rounded-lg p-4" :style="{ backgroundColor: 'var(--bgTertiary)', border: '1px solid var(--borderSecondary)' }">
+          <div class="text-sm font-medium mb-3 flex items-center" :style="{ color: 'var(--textPrimary)' }">
+            <div class="w-1.5 h-1.5 rounded-full mr-2" :style="{ backgroundColor: 'var(--textSecondary)' }"></div>
+            Terminal Distribution
           </div>
-          <div class="space-y-2">
+          <div class="space-y-3">
             <div
               v-for="stat in shellStats"
               :key="stat.shell"
-              class="flex items-center justify-between text-sm"
+              class="flex items-center justify-between"
             >
-              <div class="flex items-center">
-                <span
-                  class="inline-block w-3 h-3 rounded-full mr-2"
-                  :class="getShellColor(stat.shell)"
-                ></span>
-                <span class="text-gray-300 font-medium">{{ stat.shell.toUpperCase() }}</span>
-              </div>
-              <div class="flex items-center">
-                <div class="w-20 bg-gray-700 rounded-full h-2 mr-3">
+              <div class="flex items-center flex-1">
+                <span class="text-xs font-medium uppercase w-12" :style="{ color: 'var(--textSecondary)' }">
+                  {{ stat.shell }}
+                </span>
+                <div class="flex-1 mx-3 rounded-full h-2" :style="{ backgroundColor: 'var(--bgSecondary)' }">
                   <div
-                    class="h-2 rounded-full"
-                    :class="getShellColor(stat.shell)"
-                    :style="{ width: `${stat.percentage}%` }"
+                    class="h-2 rounded-full transition-all duration-300"
+                    :style="{ 
+                      width: `${stat.percentage}%`,
+                      backgroundColor: getShellGradient(stat.shell)
+                    }"
                   ></div>
                 </div>
-                <span class="text-gray-300 w-8 text-right font-medium">{{ stat.count }}</span>
-                <span class="text-gray-500 text-xs ml-1">({{ stat.percentage }}%)</span>
+              </div>
+              <div class="flex items-center ml-2">
+                <span class="text-sm font-bold w-10 text-right" :style="{ color: 'var(--textPrimary)' }">{{ stat.count }}</span>
+                <span class="text-xs ml-2 w-12 text-right" :style="{ color: 'var(--textTertiary)' }">{{ stat.percentage }}%</span>
               </div>
             </div>
           </div>
         </div>
 
         <!-- Command category statistics -->
-        <div v-if="categoryStats.length > 0">
-          <div class="text-sm text-gray-300 mb-3 flex items-center">
-            <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" />
-              <path
-                fill-rule="evenodd"
-                d="M4 5a2 2 0 012-2v1a1 1 0 001 1h6a1 1 0 001-1V3a2 2 0 012 2v6.5a1.5 1.5 0 01-1.5 1.5H13v.5a1.5 1.5 0 01-1.5 1.5h-3A1.5 1.5 0 017 13v-.5H5.5A1.5 1.5 0 014 11.5V5zm7 2V6H9v1h2zm-2 3h2v1H9v-1zm2 3H9v1h2v-1z"
-                clip-rule="evenodd"
-              />
-            </svg>
-            Command Category Statistics
+        <div v-if="categoryStats.length > 0" class="rounded-lg p-4" :style="{ backgroundColor: 'var(--bgTertiary)', border: '1px solid var(--borderSecondary)' }">
+          <div class="text-sm font-medium mb-3 flex items-center" :style="{ color: 'var(--textPrimary)' }">
+            <div class="w-1.5 h-1.5 rounded-full mr-2" :style="{ backgroundColor: 'var(--textSecondary)' }"></div>
+            Command Categories
           </div>
           <EChartWrapper :option="pieChartOption" height="200px" />
         </div>
 
         <!-- Time distribution heatmap -->
-        <div v-if="hourlyDistribution.length > 0">
-          <div class="text-sm text-gray-300 mb-3 flex items-center">
-            <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
-              <path
-                fill-rule="evenodd"
-                d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"
-                clip-rule="evenodd"
-              />
-            </svg>
-            24-Hour Activity Distribution
+        <div v-if="hourlyDistribution.length > 0" class="rounded-lg p-4" :style="{ backgroundColor: 'var(--bgTertiary)', border: '1px solid var(--borderSecondary)' }">
+          <div class="text-sm font-medium mb-3 flex items-center" :style="{ color: 'var(--textPrimary)' }">
+            <div class="w-1.5 h-1.5 rounded-full mr-2" :style="{ backgroundColor: 'var(--textSecondary)' }"></div>
+            24-Hour Activity
           </div>
-          <div class="grid grid-cols-12 gap-1">
+          <div class="grid grid-cols-8 gap-2">
             <div v-for="(count, hour) in hourlyDistribution" :key="hour" class="relative group">
               <div
-                class="w-full h-8 rounded text-xs flex flex-col items-center justify-center cursor-pointer"
-                :class="getHourIntensityClass(count, maxHourlyCount)"
-                :title="`${String(hour).padStart(2, '0')}:00 - ${count}  commands`"
+                class="w-full h-12 rounded-lg flex flex-col items-center justify-center cursor-pointer transition-all duration-200 hover:scale-105"
+                :style="getHourIntensityStyle(count, maxHourlyCount)"
+                :title="`${String(hour).padStart(2, '0')}:00 - ${count} commands`"
               >
-                <div class="text-xs font-medium">{{ String(hour).padStart(2, '0') }}</div>
-                <div class="text-xs opacity-80">{{ count || '' }}</div>
+                <div class="text-xs font-bold opacity-90">{{ String(hour).padStart(2, '0') }}</div>
+                <div class="text-xs opacity-70 mt-0.5">{{ count || '-' }}</div>
               </div>
             </div>
           </div>
-          <div class="text-xs text-gray-500 mt-2 text-center">
-            Peak hours: {{ peakHour }}:00 ({{ maxHourlyCount }}  commands)
+          <div class="text-xs mt-3 flex items-center justify-between" :style="{ color: 'var(--textTertiary)' }">
+            <span>Peak: {{ peakHour }}:00</span>
+            <span>{{ maxHourlyCount }} commands</span>
           </div>
         </div>
       </div>
@@ -121,8 +100,11 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import EChartWrapper from '../wrapper/EChartWrapper.vue'
+import { useTheme } from '../../composables/useTheme'
+
+const { currentTheme } = useTheme()
 
 // Props
 const props = defineProps({
@@ -191,7 +173,7 @@ const categoryStats = computed(() => {
         'service'
       ]
     },
-    'Others': { count: 0, color: '#9CA3AF', commands: [] }
+    Others: { count: 0, color: '#9CA3AF', commands: [] }
   }
 
   props.selectedDate.commands.forEach((cmd) => {
@@ -219,35 +201,59 @@ const categoryStats = computed(() => {
 })
 
 const pieChartOption = computed(() => {
+  const isDark = currentTheme.value === 'dark'
+  
+  // Pre-calculate colors
+  const tooltipBg = isDark ? '#1F2937' : '#FFFFFF'
+  const tooltipBorder = isDark ? '#374151' : '#E5E7EB'
+  const tooltipTextColor = isDark ? '#F3F4F6' : '#111827'
+  const labelColor = isDark ? '#D1D5DB' : '#4B5563'
+  const pieColors = isDark
+    ? ['#F3F4F6', '#D1D5DB', '#9CA3AF', '#6B7280', '#4B5563', '#374151']
+    : ['#111827', '#1F2937', '#374151', '#4B5563', '#6B7280', '#9CA3AF']
+  const shadowColor = isDark ? 'rgba(0, 0, 0, 0.5)' : 'rgba(0, 0, 0, 0.3)'
+  
+  // Dynamic font size based on category count
+  const categoryCount = categoryStats.value.length
+  const labelFontSize = categoryCount > 6 ? 10 : 11
+  const tooltipFontSize = 11
+
   return {
     backgroundColor: 'transparent',
     tooltip: {
       trigger: 'item',
-      backgroundColor: '#374151',
-      borderColor: '#6B7280',
+      backgroundColor: tooltipBg,
+      borderColor: tooltipBorder,
+      borderWidth: 1,
       textStyle: {
-        color: '#F3F4F6'
+        color: tooltipTextColor,
+        fontSize: tooltipFontSize
       },
+      extraCssText: `
+        box-shadow: ${isDark ? '0 4px 6px -1px rgba(0, 0, 0, 0.3)' : '0 4px 6px -1px rgba(0, 0, 0, 0.1)'};
+        border-radius: 6px;
+        padding: 6px 10px;
+      `,
       formatter: '{a} <br/>{b}: {c} ({d}%)'
     },
     series: [
       {
         name: 'Command Categories',
         type: 'pie',
-        radius: ['40%', '70%'], // Donut chart
+        radius: ['40%', '70%'],
         center: ['50%', '40%'],
-        data: categoryStats.value.map((item) => ({
+        data: categoryStats.value.map((item, index) => ({
           value: item.count,
           name: item.name,
           itemStyle: {
-            color: item.color
+            color: pieColors[index % pieColors.length]
           }
         })),
         emphasis: {
           itemStyle: {
             shadowBlur: 10,
             shadowOffsetX: 0,
-            shadowColor: 'rgba(0, 0, 0, 0.5)'
+            shadowColor: shadowColor
           }
         },
         labelLine: {
@@ -256,8 +262,8 @@ const pieChartOption = computed(() => {
         label: {
           show: true,
           position: 'center',
-          fontSize: 12,
-          color: '#D1D5DB'
+          fontSize: labelFontSize,
+          color: labelColor
         }
       }
     ]
@@ -280,25 +286,52 @@ const peakHour = computed(() => {
 })
 
 // Methods
-const getShellColor = (shell) => {
-  const colors = {
-    bash: 'bg-blue-500',
-    zsh: 'bg-green-500',
-    fish: 'bg-purple-500',
-    sh: 'bg-gray-500'
+const getShellGradient = (shell) => {
+  // 使用灰度渐变，从深到浅
+  const gradients = {
+    bash: '#9CA3AF',    // gray-400
+    zsh: '#6B7280',     // gray-500
+    fish: '#4B5563',    // gray-600
+    sh: '#374151'       // gray-700
   }
-  return colors[shell.toLowerCase()] || 'bg-gray-400'
+  return gradients[shell.toLowerCase()] || '#9CA3AF'
 }
 
-const getHourIntensityClass = (count, max) => {
-  if (!count || count === 0) return 'bg-gray-700 text-gray-500'
+const getHourIntensityStyle = (count, max) => {
+  if (!count || count === 0) {
+    return {
+      backgroundColor: 'var(--bgSecondary)',
+      color: 'var(--textMuted)',
+      border: '1px solid var(--borderSecondary)'
+    }
+  }
 
   const ratio = count / max
-  if (ratio >= 0.8) return 'bg-green-500 text-white'
-  if (ratio >= 0.6) return 'bg-green-400 text-white'
-  if (ratio >= 0.4) return 'bg-green-300 text-gray-800'
-  if (ratio >= 0.2) return 'bg-green-200 text-gray-800'
-  return 'bg-green-100 text-gray-700'
+  // 使用灰度，根据强度调整
+  let bgColor, textColor
+  
+  if (ratio >= 0.8) {
+    bgColor = '#374151'  // gray-700
+    textColor = '#F3F4F6' // gray-100
+  } else if (ratio >= 0.6) {
+    bgColor = '#4B5563'  // gray-600
+    textColor = '#F3F4F6'
+  } else if (ratio >= 0.4) {
+    bgColor = '#6B7280'  // gray-500
+    textColor = '#F9FAFB'
+  } else if (ratio >= 0.2) {
+    bgColor = '#9CA3AF'  // gray-400
+    textColor = '#1F2937'
+  } else {
+    bgColor = '#D1D5DB'  // gray-300
+    textColor = '#374151'
+  }
+  
+  return {
+    backgroundColor: bgColor,
+    color: textColor,
+    border: '1px solid var(--borderSecondary)'
+  }
 }
 </script>
 

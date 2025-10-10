@@ -1,0 +1,224 @@
+/**
+ * Termlytic Theme System
+ * 支持三种主题：Dark（暗色）、Light（亮色）、Colorful（彩色）
+ * 每个板块都有独立的颜色变量，方便未来个性化定制
+ */
+
+/* ==================== Dark Theme (默认) ==================== */
+:root,
+[data-theme="dark"] {
+  /* === 基础背景色 === */
+  --bgPrimary: #0A0A0A;
+  --bgSecondary: #161616;
+  --bgTertiary: #1F1F1F;
+  --bgHover: #2A2A2A;
+  
+  /* === 边框色 === */
+  --borderPrimary: #2A2A2A;
+  --borderSecondary: #3A3A3A;
+  
+  /* === 文字色 === */
+  --textPrimary: #FFFFFF;
+  --textSecondary: #A0A0A0;
+  --textTertiary: #6B6B6B;
+  --textMuted: #4A4A4A;
+  
+  /* === 主色调 === */
+  --accentPrimary: #FFFFFF;
+  --accentSecondary: #E5E5E5;
+  
+  /* === Dashboard 板块颜色 === */
+  --dashboard-card-bg: #161616;
+  --dashboard-card-border: #2A2A2A;
+  --dashboard-primary-color: #FFFFFF;
+  --dashboard-secondary-color: #A0A0A0;
+  --dashboard-accent-color: #E5E5E5;
+  --dashboard-chart-color-1: #888888;
+  --dashboard-chart-color-2: #666666;
+  --dashboard-chart-color-3: #444444;
+  --dashboard-chart-color-4: #AAAAAA;
+  
+  /* === Heatmap 板块颜色 === */
+  --heatmap-card-bg: #161616;
+  --heatmap-card-border: #2A2A2A;
+  --heatmap-primary-color: #FFFFFF;
+  --heatmap-secondary-color: #A0A0A0;
+  --heatmap-low-intensity: #2A2A2A;
+  --heatmap-mid-intensity: #4A4A4A;
+  --heatmap-high-intensity: #6B6B6B;
+  
+  /* === Ticket 板块颜色 === */
+  --ticket-card-bg: #161616;
+  --ticket-card-border: #2A2A2A;
+  --ticket-primary-color: #FFFFFF;
+  --ticket-secondary-color: #A0A0A0;
+  
+  /* === Settings 板块颜色 === */
+  --settings-card-bg: #161616;
+  --settings-card-border: #2A2A2A;
+  --settings-primary-color: #FFFFFF;
+  --settings-secondary-color: #A0A0A0;
+  
+  /* === 功能色 === */
+  --success: #10B981;
+  --warning: #F59E0B;
+  --error: #EF4444;
+  --info: #3B82F6;
+}
+
+/* ==================== Light Theme ==================== */
+[data-theme="light"] {
+  /* === 基础背景色 === */
+  --bgPrimary: #FFFFFF;
+  --bgSecondary: #F5F5F5;
+  --bgTertiary: #E5E5E5;
+  --bgHover: #D5D5D5;
+  
+  /* === 边框色 === */
+  --borderPrimary: #E5E5E5;
+  --borderSecondary: #D5D5D5;
+  
+  /* === 文字色 === */
+  --textPrimary: #0A0A0A;
+  --textSecondary: #4A4A4A;
+  --textTertiary: #6B6B6B;
+  --textMuted: #A0A0A0;
+  
+  /* === 主色调 === */
+  --accentPrimary: #0A0A0A;
+  --accentSecondary: #2A2A2A;
+  
+  /* === Dashboard 板块颜色 === */
+  --dashboard-card-bg: #F5F5F5;
+  --dashboard-card-border: #E5E5E5;
+  --dashboard-primary-color: #0A0A0A;
+  --dashboard-secondary-color: #4A4A4A;
+  --dashboard-accent-color: #2A2A2A;
+  --dashboard-chart-color-1: #666666;
+  --dashboard-chart-color-2: #888888;
+  --dashboard-chart-color-3: #AAAAAA;
+  --dashboard-chart-color-4: #444444;
+  
+  /* === Heatmap 板块颜色 === */
+  --heatmap-card-bg: #F5F5F5;
+  --heatmap-card-border: #E5E5E5;
+  --heatmap-primary-color: #0A0A0A;
+  --heatmap-secondary-color: #4A4A4A;
+  --heatmap-low-intensity: #D5D5D5;
+  --heatmap-mid-intensity: #A0A0A0;
+  --heatmap-high-intensity: #6B6B6B;
+  
+  /* === Ticket 板块颜色 === */
+  --ticket-card-bg: #F5F5F5;
+  --ticket-card-border: #E5E5E5;
+  --ticket-primary-color: #0A0A0A;
+  --ticket-secondary-color: #4A4A4A;
+  
+  /* === Settings 板块颜色 === */
+  --settings-card-bg: #F5F5F5;
+  --settings-card-border: #E5E5E5;
+  --settings-primary-color: #0A0A0A;
+  --settings-secondary-color: #4A4A4A;
+  
+  /* === 功能色 === */
+  --success: #10B981;
+  --warning: #F59E0B;
+  --error: #EF4444;
+  --info: #3B82F6;
+}
+
+/* ==================== Colorful Theme (彩色主题) ==================== */
+[data-theme="colorful"] {
+  /* === 基础背景色 === */
+  --bgPrimary: #1A1A2E;
+  --bgSecondary: #16213E;
+  --bgTertiary: #0F3460;
+  --bgHover: #1A4D6D;
+  
+  /* === 边框色 === */
+  --borderPrimary: #0F3460;
+  --borderSecondary: #1A4D6D;
+  
+  /* === 文字色 === */
+  --textPrimary: #E8F1F5;
+  --textSecondary: #B8C5D6;
+  --textTertiary: #8899AA;
+  --textMuted: #556677;
+  
+  /* === 主色调 === */
+  --accentPrimary: #00D9FF;
+  --accentSecondary: #00A8CC;
+  
+  /* === Dashboard 板块颜色（彩色渐变） === */
+  --dashboard-card-bg: #16213E;
+  --dashboard-card-border: #0F3460;
+  --dashboard-primary-color: #00D9FF;
+  --dashboard-secondary-color: #B8C5D6;
+  --dashboard-accent-color: #00A8CC;
+  /* 彩色图表配色 */
+  --dashboard-chart-color-1: #00D9FF;  /* 青色 */
+  --dashboard-chart-color-2: #7B68EE;  /* 紫色 */
+  --dashboard-chart-color-3: #FF6B9D;  /* 粉色 */
+  --dashboard-chart-color-4: #4ECDC4;  /* 绿松石色 */
+  --dashboard-chart-color-5: #FFD93D;  /* 金黄色 */
+  --dashboard-chart-color-6: #6BCF7F;  /* 薄荷绿 */
+  
+  /* === Heatmap 板块颜色（渐变热力） === */
+  --heatmap-card-bg: #16213E;
+  --heatmap-card-border: #0F3460;
+  --heatmap-primary-color: #00D9FF;
+  --heatmap-secondary-color: #B8C5D6;
+  --heatmap-low-intensity: #0F3460;
+  --heatmap-mid-intensity: #1A4D6D;
+  --heatmap-high-intensity: #00A8CC;
+  --heatmap-max-intensity: #00D9FF;
+  
+  /* === Ticket 板块颜色 === */
+  --ticket-card-bg: #16213E;
+  --ticket-card-border: #0F3460;
+  --ticket-primary-color: #00D9FF;
+  --ticket-secondary-color: #B8C5D6;
+  --ticket-accent-color: #FF6B9D;
+  
+  /* === Settings 板块颜色 === */
+  --settings-card-bg: #16213E;
+  --settings-card-border: #0F3460;
+  --settings-primary-color: #00D9FF;
+  --settings-secondary-color: #B8C5D6;
+  
+  /* === 功能色（彩色增强） === */
+  --success: #6BCF7F;
+  --warning: #FFD93D;
+  --error: #FF6B9D;
+  --info: #00D9FF;
+}
+
+/* ==================== 渐变背景（仅彩色模式） ==================== */
+[data-theme="colorful"] .gradient-bg {
+  background: linear-gradient(135deg, #16213E 0%, #0F3460 50%, #1A1A2E 100%);
+}
+
+[data-theme="colorful"] .gradient-card {
+  background: linear-gradient(135deg, rgba(0, 217, 255, 0.1) 0%, rgba(123, 104, 238, 0.1) 100%);
+  border-color: var(--accentPrimary);
+}
+
+/* ==================== 过渡动画 ==================== */
+:root {
+  --transition-fast: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-normal: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* 主题切换时的平滑过渡 */
+* {
+  transition: background-color 0.3s ease, 
+              border-color 0.3s ease, 
+              color 0.3s ease;
+}
+
+/* 图表和动画元素不需要过渡 */
+canvas,
+.no-transition {
+  transition: none !important;
+}

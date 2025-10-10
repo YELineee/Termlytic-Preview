@@ -21,8 +21,8 @@ export class WindowManager {
    */
   getDefaultWindowConfig() {
     return {
-      width: 1200,
-      height: 800,
+      width: 1400,
+      height: 900,
       minWidth: 1024,
       minHeight: 700,
       show: false,

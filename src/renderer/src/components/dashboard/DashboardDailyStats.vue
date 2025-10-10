@@ -1,30 +1,37 @@
 <template>
   <div
-    class="w-full h-full bg-gray-900 rounded-lg p-4 flex flex-col justify-between border border-gray-800"
+    class="w-full h-full rounded-lg p-4 flex flex-col justify-between"
+    :style="{ 
+      backgroundColor: 'var(--bgSecondary)', 
+      border: '1px solid var(--borderPrimary)' 
+    }"
   >
     <!-- Title and Metrics -->
     <div class="flex items-center justify-between">
-      <div class="text-xs text-gray-400 uppercase tracking-wider font-medium">TODAY'S FOCUS</div>
-      <div class="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+      <div class="flex items-center space-x-2">
+        <div class="w-2 h-2 rounded-full" :style="{ backgroundColor: 'var(--textSecondary)' }"></div>
+        <div class="text-xs uppercase tracking-wider font-medium" 
+             :style="{ color: 'var(--textTertiary)' }">TODAY'S FOCUS</div>
+      </div>
     </div>
 
     <!-- Main Values -->
     <div class="flex-1 flex flex-col justify-center">
-      <div class="text-3xl font-bold text-white mb-1">
+      <div class="text-3xl font-bold mb-1" :style="{ color: 'var(--textPrimary)' }">
         {{ isLoading ? '...' : formatNumber(todayCommands) }}
       </div>
       <div class="flex items-center space-x-2">
-        <span class="text-sm text-gray-400">/</span>
-        <span class="text-xs text-blue-400 uppercase tracking-wider">CMD</span>
+        <span class="text-sm" :style="{ color: 'var(--textSecondary)' }">/</span>
+        <span class="text-xs uppercase tracking-wider" :style="{ color: 'var(--textSecondary)' }">CMD</span>
       </div>
     </div>
 
     <!-- Bottom Information -->
     <div class="flex items-center justify-between text-xs">
-      <span class="text-gray-500">{{ formatDate(today) }}</span>
+      <span :style="{ color: 'var(--textTertiary)' }">{{ formatDate(today) }}</span>
       <div class="flex items-center space-x-1">
-        <div class="w-1 h-1 bg-green-400 rounded-full"></div>
-        <span class="text-green-400">LIVE</span>
+        <div class="w-1 h-1 rounded-full" :style="{ backgroundColor: 'var(--textSecondary)' }"></div>
+        <span :style="{ color: 'var(--textSecondary)' }">LIVE</span>
       </div>
     </div>
   </div>

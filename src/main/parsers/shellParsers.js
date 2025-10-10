@@ -93,11 +93,11 @@ export function extractCommandInfo(command) {
 
 /**
  * Parse history entries according to Shell type
- * @param {string} shell - Shell 类型 ('zsh', 'fish', 'bash')
- * @param {string} line - 历史记录行
- * @param {Array} lines - 所有行（用于 Fish 格式的时间戳读取）
- * @param {number} index - Current line索引
- * @returns {Object} 包含解析结果和下一个索引的对象
+ * @param {string} shell - Shell type ('zsh', 'fish', 'bash')
+ * @param {string} line - History line
+ * @param {Array} lines - All lines (used for Fish format timestamp reading)
+ * @param {number} index - Current line index
+ * @returns {Object} Object containing parse result and next index
  */
 export function parseShellEntry(shell, line, lines = [], index = 0) {
   let entry = null
@@ -110,10 +110,10 @@ export function parseShellEntry(shell, line, lines = [], index = 0) {
 
     case 'fish':
       entry = parseFishEntry(line)
-      // Fish 格式需要检查下一行的时间戳
+      // Fish format needs to check next line for timestamp
       if (entry && index + 1 < lines.length && lines[index + 1].startsWith('  when: ')) {
         entry.timestamp = new Date(parseInt(lines[index + 1].substring(8)) * 1000)
-        nextIndex = index + 1 // 跳过时间戳行
+        nextIndex = index + 1 // Skip timestamp line
       }
       break
 
@@ -123,7 +123,7 @@ export function parseShellEntry(shell, line, lines = [], index = 0) {
       break
   }
 
-  // 提取命令信息
+  // Extract command information
   if (entry && entry.command) {
     const commandInfo = extractCommandInfo(entry.command)
     if (commandInfo) {

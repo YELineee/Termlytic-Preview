@@ -108,7 +108,7 @@ export class DataService {
       dataCache.value.error = null
 
       console.log(`Fetching time range stats for ${timeRange}...`)
-      const result = await window.electron.ipcRenderer.invoke('get-time-range-stats', timeRange)
+      const result = await window.electron.ipcRenderer.invoke('get-time-range-stats', timeRange, forceRefresh)
 
       if (result.success) {
         const processedData = this.processTimeRangeStats(result.data)
@@ -190,7 +190,7 @@ export class DataService {
       dataCache.value.error = null
 
       console.log(`Fetching heatmap data for year ${year}...`)
-      const result = await window.electron.ipcRenderer.invoke('get-yearly-heatmap-data', year, shellTypes)
+      const result = await window.electron.ipcRenderer.invoke('get-yearly-heatmap-data', year, shellTypes, forceRefresh)
 
       if (result.success) {
         dataCache.value.heatmapData.set(cacheKey, {

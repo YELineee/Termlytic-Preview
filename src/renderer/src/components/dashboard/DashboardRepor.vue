@@ -1,10 +1,10 @@
 <template>
-  <div class="w-full h-full bg-gray-900 rounded-lg border border-gray-800 flex flex-col">
+  <div class="card flex-col">
     <!-- Title and time range selection -->
-    <div class="flex items-center justify-between p-4 border-b border-gray-700">
+    <div class="flex items-center justify-between p-4 border-b border-divider">
       <div class="flex items-center space-x-2">
-        <div class="w-2 h-2 bg-orange-500 rounded-full"></div>
-        <h3 class="text-sm font-medium text-white uppercase tracking-wider">COMMAND ANALYTICS</h3>
+        <div class="w-2 h-2 rounded-full" :style="{ backgroundColor: 'var(--textSecondary)' }"></div>
+        <h3 class="text-sm font-medium text-primary uppercase tracking-wider">COMMAND ANALYTICS</h3>
       </div>
 
       <div class="flex items-center space-x-2">
@@ -15,14 +15,14 @@
           :class="[
             'px-3 py-1 rounded text-xs font-medium transition-all duration-200 cursor-pointer',
             selectedTimeRange === option.value
-              ? 'bg-orange-500 text-white shadow-sm'
-              : 'bg-gray-800 text-gray-400 hover:text-white hover:bg-gray-700 border border-gray-700'
+              ? 'btn-primary shadow-sm'
+              : 'bg-secondary text-secondary hover:text-primary hover:bg-hover border border-divider'
           ]"
           :disabled="loading"
         >
           {{ option.label }}
         </div>
-        <div v-if="loading" class="flex items-center text-gray-500">
+        <div v-if="loading" class="flex items-center text-tertiary">
           <i class="fas fa-sync-alt animate-spin text-xs mr-2"></i>
           <span class="text-xs">Loading...</span>
         </div>
@@ -33,24 +33,24 @@
       <!-- Statistics data area -->
       <div class="w-1/3 flex flex-col justify-center min-h-0">
         <div
-          class="bg-gray-800 border border-gray-700 rounded-lg p-6 text-center h-full flex flex-col justify-center"
+          class="bg-secondary border border-divider rounded-lg p-6 text-center h-full flex flex-col justify-center"
         >
           <div class="mb-4">
-            <div class="text-4xl font-bold text-white mb-2">{{ currentStats.total }}</div>
-            <div class="text-sm text-gray-400 uppercase tracking-wider">Total Commands</div>
+            <div class="text-4xl font-bold text-primary mb-2">{{ currentStats.total }}</div>
+            <div class="text-sm text-secondary uppercase tracking-wider">Total Commands</div>
           </div>
 
-          <div class="border-t border-gray-700 pt-4">
+          <div class="border-t border-divider pt-4">
             <div class="grid grid-cols-1 gap-3">
               <div class="flex justify-between items-center">
-                <span class="text-xs text-gray-400">Unique Commands</span>
-                <span class="text-sm font-medium text-orange-400">{{
+                <span class="text-xs text-secondary">Unique Commands</span>
+                <span class="text-sm font-medium accent-text">{{
                   currentStats.uniqueCommands || 0
                 }}</span>
               </div>
               <div class="flex justify-between items-center">
-                <span class="text-xs text-gray-400">Period</span>
-                <span class="text-sm font-medium text-gray-300">{{ getTimeRangeLabel() }}</span>
+                <span class="text-xs text-secondary">Period</span>
+                <span class="text-sm font-medium text-primary">{{ getTimeRangeLabel() }}</span>
               </div>
             </div>
           </div>
@@ -59,14 +59,14 @@
 
       <!-- Chart area -->
       <div class="flex-1 relative min-h-0">
-        <div class="bg-gray-800 border border-gray-700 rounded-lg h-full p-4 min-h-0">
+        <div class="bg-secondary border border-divider rounded-lg h-full p-4 min-h-0">
           <div
             v-if="loading"
-            class="absolute inset-0 flex items-center justify-center bg-gray-800 bg-opacity-90 rounded-lg"
+            class="absolute inset-0 flex items-center justify-center bg-secondary bg-opacity-90 rounded-lg"
           >
             <div class="text-center">
-              <i class="fas fa-sync-alt animate-spin text-2xl text-gray-400 mb-2"></i>
-              <div class="text-gray-400 text-sm">Loading chart data...</div>
+              <i class="fas fa-sync-alt animate-spin text-2xl text-secondary mb-2"></i>
+              <div class="text-secondary text-sm">Loading chart data...</div>
             </div>
           </div>
           <div
@@ -92,12 +92,15 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 import EChartWrapper from '../wrapper/EChartWrapper.vue'
-import { useDataService } from '@renderer/services/dataService.js'
+import { DataService } from '../../services/dataService.js'
+import { useTheme } from '../../composables/useTheme'
 
-// Use unified data service
-const { dataService, isLoading: globalLoading, error: globalError } = useDataService()
+const { currentTheme } = useTheme()
+
+// Create dataService instance
+const dataService = new DataService()
 
 // Reactive data
 const selectedTimeRange = ref('week')
@@ -140,13 +143,23 @@ const currentStats = computed(() => {
 
 const chartOption = computed(() => {
   const data = statsData.value[selectedTimeRange.value]
+  const isDark = currentTheme.value === 'dark'
+  
+  // Pre-calculate colors for use in callbacks
+  const textColor = isDark ? '#9CA3AF' : '#6B7280'
+  const labelColor = isDark ? '#D1D5DB' : '#374151'
+  const tooltipBg = isDark ? '#1F2937' : '#FFFFFF'
+  const tooltipBorder = isDark ? '#374151' : '#E5E7EB'
+  const tooltipTextColor = isDark ? '#F9FAFB' : '#111827'
+  const axisColor = isDark ? '#374151' : '#E5E7EB'
+
   if (!data || !data.chartData) {
     return {
       backgroundColor: 'transparent',
       title: {
         text: 'No Data Available',
         textStyle: {
-          color: '#9CA3AF',
+          color: textColor,
           fontSize: 14
         },
         left: 'center',
@@ -159,29 +172,42 @@ const chartOption = computed(() => {
   }
 
   const { chartData } = data
+  
+  // Dynamic font size based on label count
+  const labelCount = chartData.labels.length
+  const fontSize = labelCount > 12 ? 8 : labelCount > 8 ? 9 : 10
+  const yAxisFontSize = labelCount > 12 ? 9 : 10
+  const shouldRotate = labelCount > 10
+  const rotateAngle = labelCount > 15 ? 45 : labelCount > 10 ? 30 : 0
 
   return {
     backgroundColor: 'transparent',
     tooltip: {
       trigger: 'axis',
-      backgroundColor: '#1F2937',
-      borderColor: '#374151',
+      backgroundColor: tooltipBg,
+      borderColor: tooltipBorder,
       borderWidth: 1,
       textStyle: {
-        color: '#F9FAFB'
+        color: tooltipTextColor,
+        fontSize: 12
       },
+      extraCssText: `
+        box-shadow: ${isDark ? '0 4px 6px -1px rgba(0, 0, 0, 0.3)' : '0 4px 6px -1px rgba(0, 0, 0, 0.1)'};
+        border-radius: 6px;
+        padding: 8px 12px;
+      `,
       formatter: function (params) {
         const point = params[0]
         return `<div style="padding: 4px;">
-          <div style="color: #F97316; font-weight: bold;">${point.name}</div>
-          <div style="margin-top: 4px;">${point.value} commands</div>
+          <div style="color: ${labelColor}; font-weight: 600;">${point.name}</div>
+          <div style="margin-top: 4px; color: ${textColor};">${point.value} commands</div>
         </div>`
       }
     },
     grid: {
       left: '8%',
       right: '5%',
-      bottom: '15%', // Increase bottom margin for rotated labels
+      bottom: shouldRotate ? '20%' : '15%', // More space when rotated
       top: '10%',
       containLabel: true
     },
@@ -189,33 +215,40 @@ const chartOption = computed(() => {
       type: 'category',
       data: chartData.labels,
       axisLabel: {
-        fontSize: 10,
-        color: '#9CA3AF',
-        interval: 'auto', // Auto interval to prevent crowding
-        rotate: chartData.labels.length > 8 ? 30 : 0, // Rotate if more than 8 labels
+        fontSize: fontSize,
+        color: isDark ? '#9CA3AF' : '#6B7280',
+        interval: labelCount > 20 ? Math.floor(labelCount / 12) : 'auto',
+        rotate: rotateAngle,
         margin: 8,
         formatter: function(value) {
-          // Truncate long labels to prevent overlap
-          return value.length > 10 ? value.substring(0, 8) + '...' : value
+          // Adaptive truncation based on label count
+          const maxLength = labelCount > 15 ? 6 : labelCount > 10 ? 8 : 10
+          return value.length > maxLength ? value.substring(0, maxLength - 2) + '..' : value
         }
       },
       axisLine: {
         lineStyle: {
-          color: '#374151'
+          color: isDark ? '#374151' : '#E5E7EB'
         }
       },
       axisTick: {
         lineStyle: {
-          color: '#374151'
+          color: isDark ? '#374151' : '#E5E7EB'
         }
       }
     },
     yAxis: {
       type: 'value',
       axisLabel: {
-        fontSize: 11,
-        color: '#9CA3AF',
-        formatter: '{value}'
+        fontSize: yAxisFontSize,
+        color: isDark ? '#9CA3AF' : '#6B7280',
+        formatter: function(value) {
+          // Format large numbers
+          if (value >= 1000) {
+            return (value / 1000).toFixed(1) + 'k'
+          }
+          return value
+        }
       },
       axisLine: {
         show: false
@@ -225,7 +258,7 @@ const chartOption = computed(() => {
       },
       splitLine: {
         lineStyle: {
-          color: '#374151',
+          color: isDark ? '#374151' : '#E5E7EB',
           type: 'dashed'
         }
       }
@@ -245,11 +278,11 @@ const chartOption = computed(() => {
             colorStops: [
               {
                 offset: 0,
-                color: '#F97316' // orange-500
+                color: isDark ? '#D1D5DB' : '#4B5563'
               },
               {
                 offset: 1,
-                color: '#EA580C' // orange-600
+                color: isDark ? '#9CA3AF' : '#374151'
               }
             ]
           },
@@ -257,23 +290,9 @@ const chartOption = computed(() => {
         },
         emphasis: {
           itemStyle: {
-            color: {
-              type: 'linear',
-              x: 0,
-              y: 0,
-              x2: 0,
-              y2: 1,
-              colorStops: [
-                {
-                  offset: 0,
-                  color: '#EA580C' // orange-600
-                },
-                {
-                  offset: 1,
-                  color: '#C2410C' // orange-700
-                }
-              ]
-            }
+            color: isDark ? '#FFFFFF' : '#000000',
+            shadowBlur: 10,
+            shadowColor: isDark ? 'rgba(255, 255, 255, 0.3)' : 'rgba(0, 0, 0, 0.3)'
           }
         },
         animationDelay: function (idx) {
@@ -311,7 +330,7 @@ const loadTimeRangeData = async (timeRange, forceRefresh = false) => {
 
     console.log(`Loading data for time range: ${timeRange}`)
 
-    // Use unified data service
+    // Use DataService to get time range stats
     const result = await dataService.getTimeRangeStats(timeRange, forceRefresh)
     
     statsData.value[timeRange] = result

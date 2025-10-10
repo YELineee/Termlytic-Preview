@@ -2,11 +2,11 @@
   <div class="lazy-component">
     <!-- Loading state -->
     <div v-if="loading" class="flex items-center justify-center h-full">
-      <div class="animate-spin rounded-full h-8 w-8 border-2 border-blue-500 border-t-transparent"></div>
+      <div class="animate-spin rounded-full h-8 w-8 border-2 border-accent border-t-transparent"></div>
     </div>
     
     <!-- Error state -->
-    <div v-else-if="error" class="flex items-center justify-center h-full text-red-400">
+    <div v-else-if="error" class="flex items-center justify-center h-full error-text">
       <div class="text-center">
         <i class="fas fa-exclamation-triangle text-2xl mb-2"></i>
         <div class="text-xs">{{ error }}</div>
