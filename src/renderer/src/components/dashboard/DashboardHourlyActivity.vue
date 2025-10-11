@@ -54,7 +54,7 @@ import dataCenter from '../../utils/dataProcessingCenter.js'
 import { getIntensityColor } from '../../composables/useChartTheme'
 import { useTheme } from '../../composables/useTheme'
 
-const { currentTheme } = useTheme()
+const { currentThemeMode } = useTheme()
 
 const commands = ref(Array(24).fill(0))
 const loading = ref(false)
@@ -73,7 +73,7 @@ const averagePerHour = computed(() => Math.round(totalCommands.value / 24))
 // EChart configuration
 const chartOption = computed(() => {
   const hours = Array.from({ length: 24 }, (_, i) => `${i.toString().padStart(2, '0')}:00`)
-  const isDark = currentTheme.value === 'dark'
+  const isDark = currentThemeMode.value === 'dark'
 
   // Pre-calculate colors for use in callbacks
   const textColor = isDark ? '#9CA3AF' : '#6B7280'

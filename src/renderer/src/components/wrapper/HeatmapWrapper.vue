@@ -125,7 +125,7 @@ import { useHeatmapTheme } from '../../composables/useChartTheme'
 import { useTheme } from '../../composables/useTheme'
 
 const { theme: heatmapTheme } = useHeatmapTheme()
-const { currentTheme } = useTheme()
+const { currentThemeMode } = useTheme()
 
 // Container ref for CSS variables
 const containerRef = ref(null)

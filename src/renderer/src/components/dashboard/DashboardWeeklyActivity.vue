@@ -127,7 +127,7 @@ import { useTheme } from '../../composables/useTheme'
 
 // Use global data store
 const { getWeeklyActivity, isLoading } = useShellData()
-const { currentTheme } = useTheme()
+const { currentThemeMode } = useTheme()
 
 const weekData = ref(Array(7).fill(0))
 const selectedDayIndex = ref(0) // Default to select first day
@@ -173,7 +173,7 @@ const selectDay = (index) => {
 
 // Get day color - black & white theme
 const getDayColor = (index) => {
-  const isDark = currentTheme.value === 'dark'
+  const isDark = currentThemeMode.value === 'dark'
 
   // Use grayscale gradient for different days
   const darkColors = [

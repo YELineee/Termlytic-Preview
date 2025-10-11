@@ -169,6 +169,7 @@ const { getRecentCommands, isLoading } = useShellData()
 const recentCommands = ref([])
 const error = ref('')
 const selectedShell = ref('all')
+const loading = ref(false)
 
 // Load recently used commands
 const loadRecentCommands = async () => {

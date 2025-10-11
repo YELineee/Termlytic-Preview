@@ -100,7 +100,7 @@ import EChartWrapper from '../wrapper/EChartWrapper.vue'
 import { DataService } from '../../services/dataService.js'
 import { useTheme } from '../../composables/useTheme'
 
-const { currentTheme } = useTheme()
+const { currentThemeMode } = useTheme()
 
 // Create dataService instance
 const dataService = new DataService()
@@ -146,7 +146,7 @@ const currentStats = computed(() => {
 
 const chartOption = computed(() => {
   const data = statsData.value[selectedTimeRange.value]
-  const isDark = currentTheme.value === 'dark'
+  const isDark = currentThemeMode.value === 'dark'
 
   // Pre-calculate colors for use in callbacks
   const textColor = isDark ? '#9CA3AF' : '#6B7280'

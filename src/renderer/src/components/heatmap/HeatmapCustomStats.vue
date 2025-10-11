@@ -164,7 +164,7 @@ import { ref, computed, onMounted } from 'vue'
 import EChartWrapper from '../wrapper/EChartWrapper.vue'
 import { useTheme } from '../../composables/useTheme'
 
-const { currentTheme } = useTheme()
+const { currentThemeMode } = useTheme()
 
 // Props
 const props = defineProps({
@@ -261,7 +261,7 @@ const categoryStats = computed(() => {
 })
 
 const pieChartOption = computed(() => {
-  const isDark = currentTheme.value === 'dark'
+  const isDark = currentThemeMode.value === 'dark'
 
   // Pre-calculate colors
   const tooltipBg = isDark ? '#1F2937' : '#FFFFFF'
