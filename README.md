@@ -1,10 +1,9 @@
-# Termlytic Preview
+# Termlytic
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![Electron](https://img.shields.io/badge/Electron-20+-blue.svg)](https://www.electronjs.org/) [![Vue.js](https://img.shields.io/badge/Vue.js-3.0+-green.svg)](https://vuejs.org/) [![Node.js](https://img.shields.io/badge/Node.js-16+-brightgreen.svg)](https://nodejs.org/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![Electron](https://img.shields.io/badge/Electron-20+-blue.svg)](https://www.electronjs.org/) [![Vue.js](https://img.shields.io/badge/Vue.js-3.0+-green.svg)](https://vuejs.org/)
 
-🚀 **A powerful and beautiful terminal command analytics application** that transforms your shell history into meaningful insights and stunning visualizations.
-
-Termlytic analyzes your command-line usage patterns and provides comprehensive analytics through an elegant, modern interface. Whether you're a developer wanting to optimize your workflow or just curious about your terminal habits, Termlytic gives you the data-driven insights you need.
+> 🚀 **Transform your terminal history into beautiful insights**  
+> A modern desktop app that analyzes your shell commands and reveals productivity patterns through stunning visualizations.
 
 ![Dashboard](resources/dashboard.png)
 
@@ -14,99 +13,134 @@ Termlytic analyzes your command-line usage patterns and provides comprehensive a
 
 ---
 
-> ⚠️ **Beta Preview Warning**  
-> This project is currently in **beta/preview** version. Most of the codebase was generated with AI assistance and may contain bugs or incomplete features. Use at your own discretion and feel free to report issues!
+## ✨ Highlights
 
-## 💡 Why I Made This
+🎯 **Smart Analytics** - Track command patterns, execution frequency, and productivity trends across multiple shells (Zsh, Bash, Fish)
 
-I've always been passionate about data visualization and turning raw information into beautiful, meaningful insights. This project was inspired by [cmd-wrapped](https://github.com/YiNNx/cmd-wrapped), a fantastic Rust-based tool that analyzes terminal usage.
+📊 **Interactive Visualizations** - GitHub-style heatmaps, real-time charts, and intuitive dashboards powered by ECharts
 
-I wanted to create something similar but with:
-- **Real-time analytics** instead of just yearly summaries
-- **Interactive visualizations** that you can explore and drill down into
-- **Cross-platform desktop app** with a modern, responsive interface
-- **Multi-shell support** with intelligent parsing and caching
+⚡ **Real-time Updates** - Intelligent caching and incremental parsing for instant insights
 
-The goal was to build a tool that not only shows you *what* commands you use, but *when*, *how often*, and *in what patterns* - helping developers understand and optimize their workflow habits.
+🎨 **Beautiful UI** - Modern dark theme with smooth animations and responsive design
 
-## ✨ Features
-
-- **📊 Comprehensive Analytics**: Analyze your shell command history with detailed statistics including:
-  - Daily, weekly, monthly, and yearly command counts
-  - Most frequently used commands and execution patterns
-  - Shell type distribution (Zsh, Bash, Fish)
-  - Command execution time trends
-
-- **🎯 Command Insights**: Discover your productivity patterns:
-  - Top commands by frequency and recency
-  - Command categorization (File Operations, Development Tools, System Management)
-  - Hourly activity distribution to identify peak productivity times
-  - Command complexity analysis
-
-- **📈 Visual Dashboard**: Beautiful interactive charts powered by ECharts:
-  - Real-time statistics with responsive design
-  - Weekly and monthly activity visualizations
-  - Command distribution pie charts
-  - Timeline-based activity tracking
-
-- **⏰ Time-based Analysis**: Interactive heatmap calendar view:
-  - GitHub-style contribution heatmap for daily command usage
-  - Click any day to see detailed command history
-  - Multi-year view with shell type filtering
-  - Daily command breakdown with time stamps
-
-- **🔍 Multi-shell Support**: Seamless integration with popular shells:
-  - Zsh with extended history format
-  - Bash with timestamp formatting
-  - Fish with native timestamp support
-  - Automatic shell detection and parsing
-
-- **⚡ Real-time Updates**: Smart caching and incremental analysis:
-  - Monitors shell history files for changes
-  - Incremental parsing for large history files
-  - Efficient data caching for fast load times
-  - Background analysis without UI blocking
-
-- **🎨 Modern UI**: Clean, responsive interface:
-  - Dark theme optimized for developers
-  - Responsive design for different screen sizes
-  - Smooth animations and transitions
-  - Keyboard shortcuts for quick navigation
+🔍 **Deep Insights** - 24-hour activity analysis, command categorization, and peak productivity detection
 
 ## 📸 Screenshots
 
 ### Dashboard Overview
 ![Dashboard](resources/dashboard.png)
-*The main dashboard provides an overview of your terminal usage with key statistics, recent commands, and activity trends. View your most used commands, daily/weekly/monthly statistics, and shell distribution at a glance.*
 
-### Heatmap Analytics  
+### Interactive Heatmap
 ![Heatmap](resources/heatmap.png)
-*Interactive heatmap visualization shows your command usage patterns over time. Click on any day to see detailed command history and statistics for that specific date. Supports multiple years and shell type filtering.*
 
 ### Ticket Board View
 ![Ticket Board](resources/ticket.png)
-*A unique ticket-style interface that presents your command data in an organized, card-based layout. Perfect for reviewing command patterns and getting insights into your development workflow.*
 
-### GIF Preview
-![Main](resources/main.gif)
+## 🚀 Quick Start
 
-## ⚠️ Important Requirements
+### Prerequisites
+- Node.js 16+
+- Configured shell with timestamp support (see below)
 
-**Before using Termlytic, you must configure your shell to save command history with timestamps:**
-
-### For Zsh Users (Required)
-
-Add these lines to your `~/.zshrc` file:
+### Installation
 
 ```bash
-# Enable extended history format with timestamps
-export HISTFILE=~/.zsh_history
-export HISTSIZE=10000
-export SAVEHIST=10000
-setopt EXTENDED_HISTORY
-setopt SHARE_HISTORY
-setopt HIST_VERIFY
-setopt INC_APPEND_HISTORY
+git clone https://github.com/YELineee/Termlytic-Preview.git
+cd Termlytic-Preview
+npm install
+npm run dev
+```
+
+### Build
+
+```bash
+npm run build          # Current platform
+npm run build:mac      # macOS
+npm run build:win      # Windows
+npm run build:linux    # Linux
+```
+
+## ⚙️ Shell Configuration (Required)
+
+**Termlytic requires shell history with timestamps. Configure your shell before using:**
+
+### Zsh
+Add to `~/.zshrc`:
+```bash
+setopt EXTENDED_HISTORY SHARE_HISTORY INC_APPEND_HISTORY
+export HISTFILE=~/.zsh_history HISTSIZE=10000 SAVEHIST=10000
+```
+
+### Bash
+Add to `~/.bashrc`:
+```bash
+export HISTTIMEFORMAT="%Y-%m-%d %H:%M:%S "
+export HISTSIZE=10000 HISTFILESIZE=20000
+```
+
+### Fish
+Timestamps enabled by default. Optionally increase history size in `~/.config/fish/config.fish`:
+```bash
+set -g fish_history_max_size 10000
+```
+
+Apply changes: `source ~/.zshrc` (or restart terminal)
+
+## �️ Tech Stack
+
+- **Frontend**: Vue 3 + Tailwind CSS + ECharts
+- **Backend**: Electron + Node.js
+- **Build**: Vite + Electron Builder
+
+## 📝 Features
+
+- 📈 **Comprehensive Analytics**: Daily/weekly/monthly command statistics
+- 🔥 **Activity Heatmap**: GitHub-style contribution calendar
+- ⏰ **Time Analysis**: 24-hour productivity patterns
+- 🏷️ **Smart Categorization**: Auto-classify commands by type
+- 🔄 **Multi-shell Support**: Zsh, Bash, Fish with auto-detection
+- 💾 **Intelligent Caching**: Fast incremental updates
+
+## 🤝 Contributing
+
+Contributions welcome! Feel free to open issues or submit PRs.
+
+## 📄 License
+
+MIT License - see [LICENSE](LICENSE) for details.
+
+---
+
+> ⚠️ **Beta Preview**: This project is AI-assisted and may contain bugs. Use at your own discretion.bash
+Apply changes: `source ~/.zshrc` (or restart terminal)
+
+## 🛠️ Tech Stack
+
+- **Frontend**: Vue 3 + Tailwind CSS + ECharts
+- **Backend**: Electron + Node.js
+- **Build**: Vite + Electron Builder
+
+## 📝 Features
+
+- 📈 **Comprehensive Analytics**: Daily/weekly/monthly command statistics
+- 🔥 **Activity Heatmap**: GitHub-style contribution calendar
+- ⏰ **Time Analysis**: 24-hour productivity patterns
+- 🏷️ **Smart Categorization**: Auto-classify commands by type
+- 🔄 **Multi-shell Support**: Zsh, Bash, Fish with auto-detection
+- 💾 **Intelligent Caching**: Fast incremental updates
+
+## 🤝 Contributing
+
+Contributions welcome! Feel free to open issues or submit PRs.
+
+## 📄 License
+
+MIT License - see [LICENSE](LICENSE) for details.
+
+---
+
+> ⚠️ **Beta Preview**: This project is AI-assisted and may contain bugs. Use at your own discretion.
+
 ```
 
 After adding these lines, restart your terminal or run:
