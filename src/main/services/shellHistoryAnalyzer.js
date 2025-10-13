@@ -24,7 +24,8 @@ export class ShellHistoryAnalyzer {
       console.log('=== Starting Shell History Analysis ===')
 
       console.log('Checking for file changes...')
-      const currentFiles = await this.fileReader.getAllFileStatus()
+      const fileStatusResult = await this.fileReader.getAllFileStatus()
+      const currentFiles = fileStatusResult.configured // Fix: use configured files
       const metadata = await this.storageManager.loadMetadata()
 
       let needsUpdate = false
@@ -144,7 +145,8 @@ export class ShellHistoryAnalyzer {
     try {
       // Read all history files
       const historyData = await this.fileReader.readAllShellHistory()
-      const currentFiles = await this.fileReader.getAllFileStatus()
+      const fileStatusResult = await this.fileReader.getAllFileStatus()
+      const currentFiles = fileStatusResult.configured // Fix: use configured files
 
       return await this.generateFinalResult(historyData.entries, currentFiles, true)
     } catch (err) {

@@ -159,37 +159,35 @@ const displayCommands = computed(() => {
 const getCommandTypeColor = (command) => {
   const mainCommand = command.split(' ')[0].toLowerCase()
 
-  // Return different colors based on command type
+  // Unified grayscale color scheme based on command importance/risk
   const commandTypes = {
-    // File operations
-    ls: 'bg-blue-500',
-    cd: 'bg-blue-500',
-    mkdir: 'bg-blue-500',
-    rm: 'bg-red-500',
-    cp: 'bg-blue-500',
-    mv: 'bg-blue-500',
+    // System critical commands - darkest gray
+    rm: 'bg-gray-700',
+    sudo: 'bg-gray-700',
+    kill: 'bg-gray-700',
 
-    // Git commands
-    git: 'bg-green-500',
+    // Development tools - medium dark gray
+    git: 'bg-gray-600',
+    npm: 'bg-gray-600',
+    yarn: 'bg-gray-600',
+    node: 'bg-gray-600',
+    code: 'bg-gray-600',
+    vim: 'bg-gray-600',
+    nano: 'bg-gray-600',
 
-    // Development tools
-    npm: 'bg-yellow-500',
-    yarn: 'bg-yellow-500',
-    node: 'bg-green-600',
-    code: 'bg-purple-500',
-    vim: 'bg-green-600',
-    nano: 'bg-green-600',
+    // File operations - medium gray
+    ls: 'bg-gray-500',
+    cd: 'bg-gray-500',
+    mkdir: 'bg-gray-500',
+    cp: 'bg-gray-500',
+    mv: 'bg-gray-500',
 
-    // System commands
-    ps: 'bg-gray-500',
-    top: 'bg-gray-500',
-    kill: 'bg-red-500',
-    sudo: 'bg-red-600',
-
-    // Network
-    curl: 'bg-orange-500',
-    wget: 'bg-orange-500',
-    ping: 'bg-orange-500',
+    // System monitoring & network - light gray
+    ps: 'bg-gray-400',
+    top: 'bg-gray-400',
+    curl: 'bg-gray-400',
+    wget: 'bg-gray-400',
+    ping: 'bg-gray-400',
 
     // Default
     default: 'bg-gray-400'

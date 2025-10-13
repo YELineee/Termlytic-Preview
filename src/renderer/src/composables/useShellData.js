@@ -352,9 +352,33 @@ export const useShellData = () => {
     return preloadPromise
   }
 
-  // Manual data refresh
+  // Manual data refresh - force reload from file system
   const refreshData = async () => {
-    return await getShellHistory(true)
+    try {
+      console.log('Force refreshing shell history from file system...')
+      
+      // Call backend force refresh API
+      const result = await window.electron.ipcRenderer.invoke('refresh-shell-history')
+      
+      if (result.success) {
+        // Update cache with new data
+        globalData.value.shellHistory = result
+        globalData.value.lastUpdate = Date.now()
+        
+        // Also clear stats cache to force reload
+        globalData.value.statsOnly = null
+        globalData.value.lastStatsUpdate = null
+        
+        console.log('Shell history force refreshed successfully')
+        return result
+      } else {
+        throw new Error(result.error || 'Failed to refresh shell history')
+      }
+    } catch (error) {
+      console.error('Error force refreshing shell history:', error)
+      globalData.value.error = error
+      throw error
+    }
   }
 
   return {

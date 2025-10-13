@@ -125,33 +125,37 @@
           }"
         >
           <div
-            class="text-sm font-medium mb-3 flex items-center"
+            class="text-sm font-medium mb-3 flex items-center justify-between"
             :style="{ color: 'var(--textPrimary)' }"
           >
-            <div
-              class="w-1.5 h-1.5 rounded-full mr-2"
-              :style="{ backgroundColor: 'var(--textSecondary)' }"
-            ></div>
-            24-Hour Activity
+            <div class="flex items-center">
+              <div
+                class="w-1.5 h-1.5 rounded-full mr-2"
+                :style="{ backgroundColor: 'var(--textSecondary)' }"
+              ></div>
+              24-Hour Activity
+            </div>
+            <div class="text-xs" :style="{ color: 'var(--textTertiary)' }">
+              Peak: {{ peakHour }}:00 ({{ maxHourlyCount }})
+            </div>
           </div>
-          <div class="grid grid-cols-8 gap-2">
+          <div class="grid grid-cols-12 gap-1.5">
             <div v-for="(count, hour) in hourlyDistribution" :key="hour" class="relative group">
               <div
-                class="w-full h-12 rounded-lg flex flex-col items-center justify-center cursor-pointer transition-all duration-200 hover:scale-105"
+                class="w-full aspect-square rounded flex items-center justify-center cursor-pointer transition-all duration-200 hover:scale-110 hover:z-10"
                 :style="getHourIntensityStyle(count, maxHourlyCount)"
                 :title="`${String(hour).padStart(2, '0')}:00 - ${count} commands`"
               >
-                <div class="text-xs font-bold opacity-90">{{ String(hour).padStart(2, '0') }}</div>
-                <div class="text-xs opacity-70 mt-0.5">{{ count || '-' }}</div>
+                <div class="text-[9px] font-medium">{{ count || '-' }}</div>
+              </div>
+              <div 
+                v-if="hour % 3 === 0"
+                class="text-[9px] text-center mt-0.5" 
+                :style="{ color: 'var(--textTertiary)' }"
+              >
+                {{ String(hour).padStart(2, '0') }}
               </div>
             </div>
-          </div>
-          <div
-            class="text-xs mt-3 flex items-center justify-between"
-            :style="{ color: 'var(--textTertiary)' }"
-          >
-            <span>Peak: {{ peakHour }}:00</span>
-            <span>{{ maxHourlyCount }} commands</span>
           </div>
         </div>
       </div>
@@ -268,26 +272,33 @@ const pieChartOption = computed(() => {
   const tooltipBorder = isDark ? '#374151' : '#E5E7EB'
   const tooltipTextColor = isDark ? '#F3F4F6' : '#111827'
   const labelColor = isDark ? '#D1D5DB' : '#4B5563'
-  const pieColors = isDark
-    ? ['#F3F4F6', '#D1D5DB', '#9CA3AF', '#6B7280', '#4B5563', '#374151']
-    : ['#111827', '#1F2937', '#374151', '#4B5563', '#6B7280', '#9CA3AF']
-  const shadowColor = isDark ? 'rgba(0, 0, 0, 0.5)' : 'rgba(0, 0, 0, 0.3)'
-
-  // Dynamic font size based on category count
-  const categoryCount = categoryStats.value.length
-  const labelFontSize = categoryCount > 6 ? 10 : 11
-  const tooltipFontSize = 11
+  const axisColor = isDark ? '#6B7280' : '#9CA3AF'
+  
+  // Use grayscale color scheme for bars
+  const barColors = isDark
+    ? ['#9CA3AF', '#6B7280', '#4B5563', '#374151', '#D1D5DB', '#F3F4F6']
+    : ['#374151', '#4B5563', '#6B7280', '#9CA3AF', '#D1D5DB', '#F3F4F6']
 
   return {
     backgroundColor: 'transparent',
+    grid: {
+      left: '25%',
+      right: '10%',
+      top: '10%',
+      bottom: '10%',
+      containLabel: false
+    },
     tooltip: {
-      trigger: 'item',
+      trigger: 'axis',
+      axisPointer: {
+        type: 'shadow'
+      },
       backgroundColor: tooltipBg,
       borderColor: tooltipBorder,
       borderWidth: 1,
       textStyle: {
         color: tooltipTextColor,
-        fontSize: tooltipFontSize
+        fontSize: 11
       },
       extraCssText: `
         box-shadow: ${
@@ -295,37 +306,67 @@ const pieChartOption = computed(() => {
         };
         border-radius: 6px;
         padding: 6px 10px;
-      `,
-      formatter: '{a} <br/>{b}: {c} ({d}%)'
+      `
+    },
+    xAxis: {
+      type: 'value',
+      axisLine: {
+        lineStyle: {
+          color: axisColor
+        }
+      },
+      axisLabel: {
+        color: labelColor,
+        fontSize: 10
+      },
+      splitLine: {
+        lineStyle: {
+          color: isDark ? '#374151' : '#E5E7EB',
+          type: 'dashed'
+        }
+      }
+    },
+    yAxis: {
+      type: 'category',
+      data: categoryStats.value.map(item => item.name),
+      axisLine: {
+        lineStyle: {
+          color: axisColor
+        }
+      },
+      axisLabel: {
+        color: labelColor,
+        fontSize: 10
+      },
+      axisTick: {
+        show: false
+      }
     },
     series: [
       {
-        name: 'Command Categories',
-        type: 'pie',
-        radius: ['40%', '70%'],
-        center: ['50%', '40%'],
+        name: 'Commands',
+        type: 'bar',
         data: categoryStats.value.map((item, index) => ({
           value: item.count,
-          name: item.name,
           itemStyle: {
-            color: pieColors[index % pieColors.length]
+            color: barColors[index % barColors.length],
+            borderRadius: [0, 4, 4, 0]
           }
         })),
+        barWidth: '60%',
+        label: {
+          show: true,
+          position: 'right',
+          color: labelColor,
+          fontSize: 10,
+          formatter: '{c}'
+        },
         emphasis: {
           itemStyle: {
             shadowBlur: 10,
             shadowOffsetX: 0,
-            shadowColor: shadowColor
+            shadowColor: isDark ? 'rgba(0, 0, 0, 0.5)' : 'rgba(0, 0, 0, 0.3)'
           }
-        },
-        labelLine: {
-          show: false
-        },
-        label: {
-          show: true,
-          position: 'center',
-          fontSize: labelFontSize,
-          color: labelColor
         }
       }
     ]
@@ -349,17 +390,21 @@ const peakHour = computed(() => {
 
 // Methods
 const getShellGradient = (shell) => {
-  // 使用灰度渐变，从深到浅
+  const isDark = currentThemeMode.value === 'dark'
+  
+  // 使用灰度渐变，根据主题调整
   const gradients = {
-    bash: '#9CA3AF', // gray-400
-    zsh: '#6B7280', // gray-500
-    fish: '#4B5563', // gray-600
-    sh: '#374151' // gray-700
+    bash: isDark ? '#9CA3AF' : '#4B5563', // gray-400 / gray-600
+    zsh: isDark ? '#6B7280' : '#374151',  // gray-500 / gray-700
+    fish: isDark ? '#4B5563' : '#1F2937', // gray-600 / gray-800
+    sh: isDark ? '#374151' : '#111827'    // gray-700 / gray-900
   }
-  return gradients[shell.toLowerCase()] || '#9CA3AF'
+  return gradients[shell.toLowerCase()] || (isDark ? '#9CA3AF' : '#4B5563')
 }
 
 const getHourIntensityStyle = (count, max) => {
+  const isDark = currentThemeMode.value === 'dark'
+  
   if (!count || count === 0) {
     return {
       backgroundColor: 'var(--bgSecondary)',
@@ -369,30 +414,60 @@ const getHourIntensityStyle = (count, max) => {
   }
 
   const ratio = count / max
-  // 使用灰度，根据强度调整
-  let bgColor, textColor
+  let bgColor, textColor, borderColor
 
-  if (ratio >= 0.8) {
-    bgColor = '#374151' // gray-700
-    textColor = '#F3F4F6' // gray-100
-  } else if (ratio >= 0.6) {
-    bgColor = '#4B5563' // gray-600
-    textColor = '#F3F4F6'
-  } else if (ratio >= 0.4) {
-    bgColor = '#6B7280' // gray-500
-    textColor = '#F9FAFB'
-  } else if (ratio >= 0.2) {
-    bgColor = '#9CA3AF' // gray-400
-    textColor = '#1F2937'
+  if (isDark) {
+    // 深色模式：从浅到深
+    if (ratio >= 0.8) {
+      bgColor = '#F3F4F6' // gray-100
+      textColor = '#111827' // gray-900
+      borderColor = '#E5E7EB'
+    } else if (ratio >= 0.6) {
+      bgColor = '#D1D5DB' // gray-300
+      textColor = '#1F2937'
+      borderColor = '#D1D5DB'
+    } else if (ratio >= 0.4) {
+      bgColor = '#9CA3AF' // gray-400
+      textColor = '#1F2937'
+      borderColor = '#9CA3AF'
+    } else if (ratio >= 0.2) {
+      bgColor = '#6B7280' // gray-500
+      textColor = '#F9FAFB'
+      borderColor = '#6B7280'
+    } else {
+      bgColor = '#4B5563' // gray-600
+      textColor = '#F3F4F6'
+      borderColor = '#4B5563'
+    }
   } else {
-    bgColor = '#D1D5DB' // gray-300
-    textColor = '#374151'
+    // 浅色模式：从深到浅
+    if (ratio >= 0.8) {
+      bgColor = '#1F2937' // gray-800
+      textColor = '#F9FAFB'
+      borderColor = '#1F2937'
+    } else if (ratio >= 0.6) {
+      bgColor = '#374151' // gray-700
+      textColor = '#F3F4F6'
+      borderColor = '#374151'
+    } else if (ratio >= 0.4) {
+      bgColor = '#4B5563' // gray-600
+      textColor = '#F9FAFB'
+      borderColor = '#4B5563'
+    } else if (ratio >= 0.2) {
+      bgColor = '#6B7280' // gray-500
+      textColor = '#F3F4F6'
+      borderColor = '#6B7280'
+    } else {
+      bgColor = '#9CA3AF' // gray-400
+      textColor = '#1F2937'
+      borderColor = '#9CA3AF'
+    }
   }
 
   return {
     backgroundColor: bgColor,
     color: textColor,
-    border: '1px solid var(--borderSecondary)'
+    border: `1px solid ${borderColor}`
   }
 }
 </script>
