@@ -1,6 +1,6 @@
 <template>
   <div
-    class="w-full h-full rounded-lg p-4 flex flex-col justify-between"
+    class="w-full h-full rounded-lg p-4 flex flex-col justify-between dashboard-card"
     :style="{
       backgroundColor: 'var(--bgSecondary)',
       border: '1px solid var(--borderPrimary)'

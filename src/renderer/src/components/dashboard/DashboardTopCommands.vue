@@ -1,6 +1,6 @@
 <template>
   <div
-    class="w-full h-full rounded-lg p-4 sm:p-3 xs:p-2 flex flex-col min-h-0 overflow-hidden"
+    class="w-full h-full rounded-lg p-4 sm:p-3 xs:p-2 flex flex-col min-h-0 overflow-hidden dashboard-card"
     :style="{
       backgroundColor: 'var(--bgSecondary)',
       border: '1px solid var(--borderPrimary)'
@@ -151,7 +151,5 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.hover-item:hover {
-  background-color: var(--hover-bg);
-}
+/* Styles inherited from main.css */
 </style>

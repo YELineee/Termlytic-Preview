@@ -1,11 +1,19 @@
 <template>
   <div
-    class="w-full h-full rounded-lg p-4 flex flex-col min-h-0 overflow-hidden"
+    class="w-full h-full rounded-lg p-4 flex flex-col min-h-0 overflow-hidden dashboard-card"
     :style="{
       backgroundColor: 'var(--bgSecondary)',
       border: '1px solid var(--borderPrimary)'
     }"
   >
+    <!-- Context Menu -->
+    <ContextMenu
+      :isVisible="contextMenu.visible"
+      :position="contextMenu.position"
+      :items="contextMenu.items"
+      @close="closeContextMenu"
+      @select="handleContextAction"
+    />
     <!-- Title bar -->
     <div class="flex items-center justify-between mb-4 flex-shrink-0">
       <div class="flex items-center space-x-2">
@@ -94,6 +102,7 @@
             border: '1px solid var(--borderSecondary)'
           }"
           @click="copyCommand(command.command)"
+          @contextmenu.prevent="openContextMenu($event, command)"
         >
           <div class="flex items-start justify-between">
             <!-- Command information -->
@@ -161,15 +170,26 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useShellData } from '@renderer/composables/useShellData.js'
+import { useToast } from '@renderer/composables/useToast.js'
+import ContextMenu from '@renderer/components/common/ContextMenu.vue'
 
 // Use global data storage
 const { getRecentCommands, isLoading } = useShellData()
+const { success, error: showError } = useToast()
 
 // Reactive data
 const recentCommands = ref([])
 const error = ref('')
 const selectedShell = ref('all')
 const loading = ref(false)
+
+// Context menu state
+const contextMenu = ref({
+  visible: false,
+  position: { x: 0, y: 0 },
+  items: [],
+  selectedCommand: null
+})
 
 // Load recently used commands
 const loadRecentCommands = async () => {
@@ -270,11 +290,60 @@ const copyCommand = async (command) => {
   try {
     await navigator.clipboard.writeText(command)
     console.log('Command copied to clipboard:', command)
-
-    // Here you can add a simple hint, such as temporarily changing the button color
-    // Since there is no toast component in the UI framework, we display it in the console first
+    success('Command copied to clipboard!')
   } catch (err) {
     console.error('Failed to copy command:', err)
+    showError('Failed to copy command')
+  }
+}
+
+// Open context menu
+const openContextMenu = (event, command) => {
+  contextMenu.value.selectedCommand = command
+  contextMenu.value.position = { x: event.clientX, y: event.clientY }
+  contextMenu.value.items = [
+    {
+      id: 'copy',
+      label: 'Copy Command',
+      icon: 'fas fa-copy',
+      action: 'copy'
+    },
+    {
+      id: 'search',
+      label: 'Search Similar',
+      icon: 'fas fa-search',
+      action: 'search'
+    },
+    {
+      id: 'info',
+      label: 'Command Info',
+      icon: 'fas fa-info-circle',
+      action: 'info'
+    }
+  ]
+  contextMenu.value.visible = true
+}
+
+// Close context menu
+const closeContextMenu = () => {
+  contextMenu.value.visible = false
+}
+
+// Handle context menu action
+const handleContextAction = (item) => {
+  const command = contextMenu.value.selectedCommand
+  if (!command) return
+
+  switch (item.action) {
+    case 'copy':
+      copyCommand(command.command)
+      break
+    case 'search':
+      success('Search feature coming soon!')
+      break
+    case 'info':
+      success(`Shell: ${command.shell} | Time: ${formatTimestamp(command.timestamp)}`)
+      break
   }
 }
 
@@ -292,9 +361,35 @@ onMounted(() => {
   color: var(--textPrimary);
 }
 
+.hover-item {
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
+              box-shadow 0.2s ease,
+              background-color 0.2s ease,
+              border-color 0.2s ease;
+}
+
 .hover-item:hover {
   background-color: var(--bgHover);
-  border-color: var(--borderSecondary);
+  transform: translateX(4px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Theme-specific border colors on hover */
+[data-theme="dark"] .hover-item:hover {
+  border-color: #505050;
+}
+
+[data-theme="light"] .hover-item:hover {
+  border-color: #B0B0B0;
+}
+
+[data-theme="colorful"] .hover-item:hover {
+  border-color: #2A5A7D;
+}
+
+.hover-item:active {
+  transform: translateX(2px) scale(0.99);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
 }
 
 .hover-copy-button:hover {

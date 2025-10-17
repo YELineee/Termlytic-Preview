@@ -46,13 +46,14 @@
     "echarts": "^6.0.0",
     "electron-updater": "^6.3.9",
     "html2canvas-pro": "^1.5.11",
+    "motion": "^12.23.24",
     "tailwindcss": "^4.1.11"
   },
   "devDependencies": {
     "@electron-toolkit/eslint-config": "^2.0.0",
     "@electron-toolkit/eslint-config-prettier": "^3.0.0",
     "@vitejs/plugin-vue": "^6.0.0",
-    "electron": "^37.2.3",
+    "electron": "^38.3.0",
     "electron-builder": "^25.1.8",
     "electron-vite": "^4.0.0",
     "eslint": "^9.31.0",

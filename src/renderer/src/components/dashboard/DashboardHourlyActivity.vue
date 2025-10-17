@@ -1,5 +1,5 @@
 <template>
-  <div class="card">
+  <div class="card dashboard-card">
     <!-- Title -->
     <div class="flex items-center justify-between mb-3">
       <div class="flex items-center space-x-2">
@@ -23,22 +23,45 @@
       <div class="grid grid-cols-3 gap-2.5 mb-4">
         <!-- Peak Hour -->
         <div class="stats-card">
-          <div class="text-[10px] uppercase tracking-wide mb-1.5" :style="{ color: 'var(--textTertiary)' }">Peak</div>
-          <div class="text-lg font-bold" :style="{ color: 'var(--textPrimary)' }">{{ mostActiveHour }}:00</div>
-          <div class="text-[10px] mt-0.5" :style="{ color: 'var(--textSecondary)' }">{{ maxCommands }} cmds</div>
+          <div
+            class="text-[10px] uppercase tracking-wide mb-1.5"
+            :style="{ color: 'var(--textTertiary)' }"
+          >
+            Peak
+          </div>
+          <div class="text-lg font-bold" :style="{ color: 'var(--textPrimary)' }">
+            {{ mostActiveHour }}:00
+          </div>
+          <div class="text-[10px] mt-0.5" :style="{ color: 'var(--textSecondary)' }">
+            {{ maxCommands }} cmds
+          </div>
         </div>
 
         <!-- Average -->
         <div class="stats-card">
-          <div class="text-[10px] uppercase tracking-wide mb-1.5" :style="{ color: 'var(--textTertiary)' }">Average</div>
-          <div class="text-lg font-bold" :style="{ color: 'var(--textPrimary)' }">{{ averagePerHour }}</div>
+          <div
+            class="text-[10px] uppercase tracking-wide mb-1.5"
+            :style="{ color: 'var(--textTertiary)' }"
+          >
+            Average
+          </div>
+          <div class="text-lg font-bold" :style="{ color: 'var(--textPrimary)' }">
+            {{ averagePerHour }}
+          </div>
           <div class="text-[10px] mt-0.5" :style="{ color: 'var(--textSecondary)' }">per hour</div>
         </div>
 
         <!-- Total -->
         <div class="stats-card">
-          <div class="text-[10px] uppercase tracking-wide mb-1.5" :style="{ color: 'var(--textTertiary)' }">Total</div>
-          <div class="text-lg font-bold" :style="{ color: 'var(--textPrimary)' }">{{ formatTotalCommands(totalCommands) }}</div>
+          <div
+            class="text-[10px] uppercase tracking-wide mb-1.5"
+            :style="{ color: 'var(--textTertiary)' }"
+          >
+            Total
+          </div>
+          <div class="text-lg font-bold" :style="{ color: 'var(--textPrimary)' }">
+            {{ formatTotalCommands(totalCommands) }}
+          </div>
           <div class="text-[10px] mt-0.5" :style="{ color: 'var(--textSecondary)' }">commands</div>
         </div>
       </div>

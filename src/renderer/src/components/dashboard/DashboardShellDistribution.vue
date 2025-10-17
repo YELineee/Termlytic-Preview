@@ -1,5 +1,5 @@
 <template>
-  <div class="card min-h-0 overflow-hidden">
+  <div class="card min-h-0 overflow-hidden dashboard-card">
     <!-- Title -->
     <div class="flex items-center justify-between mb-4 flex-shrink-0">
       <div class="flex items-center space-x-2">
@@ -177,7 +177,5 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.hover-item:hover {
-  background-color: var(--bgHover);
-}
+/* Styles inherited from main.css */
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <div class="card flex-col">
+  <div class="card flex-col dashboard-card">
     <!-- Title and time range selection -->
     <div class="flex items-center justify-between p-4 border-b border-divider">
       <div class="flex items-center space-x-2">

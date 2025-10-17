@@ -148,9 +148,9 @@
               >
                 <div class="text-[9px] font-medium">{{ count || '-' }}</div>
               </div>
-              <div 
+              <div
                 v-if="hour % 3 === 0"
-                class="text-[9px] text-center mt-0.5" 
+                class="text-[9px] text-center mt-0.5"
                 :style="{ color: 'var(--textTertiary)' }"
               >
                 {{ String(hour).padStart(2, '0') }}
@@ -273,7 +273,7 @@ const pieChartOption = computed(() => {
   const tooltipTextColor = isDark ? '#F3F4F6' : '#111827'
   const labelColor = isDark ? '#D1D5DB' : '#4B5563'
   const axisColor = isDark ? '#6B7280' : '#9CA3AF'
-  
+
   // Use grayscale color scheme for bars
   const barColors = isDark
     ? ['#9CA3AF', '#6B7280', '#4B5563', '#374151', '#D1D5DB', '#F3F4F6']
@@ -328,7 +328,7 @@ const pieChartOption = computed(() => {
     },
     yAxis: {
       type: 'category',
-      data: categoryStats.value.map(item => item.name),
+      data: categoryStats.value.map((item) => item.name),
       axisLine: {
         lineStyle: {
           color: axisColor
@@ -391,20 +391,20 @@ const peakHour = computed(() => {
 // Methods
 const getShellGradient = (shell) => {
   const isDark = currentThemeMode.value === 'dark'
-  
+
   // 使用灰度渐变，根据主题调整
   const gradients = {
     bash: isDark ? '#9CA3AF' : '#4B5563', // gray-400 / gray-600
-    zsh: isDark ? '#6B7280' : '#374151',  // gray-500 / gray-700
+    zsh: isDark ? '#6B7280' : '#374151', // gray-500 / gray-700
     fish: isDark ? '#4B5563' : '#1F2937', // gray-600 / gray-800
-    sh: isDark ? '#374151' : '#111827'    // gray-700 / gray-900
+    sh: isDark ? '#374151' : '#111827' // gray-700 / gray-900
   }
   return gradients[shell.toLowerCase()] || (isDark ? '#9CA3AF' : '#4B5563')
 }
 
 const getHourIntensityStyle = (count, max) => {
   const isDark = currentThemeMode.value === 'dark'
-  
+
   if (!count || count === 0) {
     return {
       backgroundColor: 'var(--bgSecondary)',

@@ -1,22 +1,27 @@
 <!-- Progressive component loader wrapper -->
 <template>
   <div class="relative w-full h-full">
-    <!-- Loading state placeholder -->
+    <!-- Loading state with skeleton -->
     <div
       v-if="!isVisible"
-      class="w-full h-full rounded-lg flex items-center justify-center"
+      class="w-full h-full rounded-lg p-4"
       :style="{
         backgroundColor: 'var(--bgSecondary)',
         border: '1px solid var(--borderPrimary)'
       }"
     >
-      <div class="text-center">
-        <div
-          class="inline-block animate-pulse rounded-full h-4 w-4 mb-2"
-          :style="{ backgroundColor: 'var(--bgTertiary)' }"
-        ></div>
-        <div class="text-xs" :style="{ color: 'var(--textMuted)' }">
-          {{ loadingText || 'Loading...' }}
+      <div class="flex flex-col h-full">
+        <!-- Title skeleton -->
+        <div class="skeleton-line w-1/3 h-4 mb-4"></div>
+
+        <!-- Main content skeleton -->
+        <div class="skeleton-line w-full h-8 mb-3"></div>
+        <div class="skeleton-line w-2/3 h-4 mb-4"></div>
+
+        <!-- Secondary metrics skeleton -->
+        <div class="space-y-2 mt-auto">
+          <div class="skeleton-line w-full h-3"></div>
+          <div class="skeleton-line w-5/6 h-3"></div>
         </div>
       </div>
     </div>

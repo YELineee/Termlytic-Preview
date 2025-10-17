@@ -222,3 +222,243 @@ canvas,
 .no-transition {
   transition: none !important;
 }
+
+/* ==================== Glassmorphism Effects ==================== */
+.glass-card {
+  background: rgba(var(--glass-bg-rgb), 0.7) !important;
+  backdrop-filter: blur(10px) saturate(180%);
+  -webkit-backdrop-filter: blur(10px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  box-shadow: none;
+  transition: box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              backdrop-filter 0.3s ease,
+              transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.glass-card:hover {
+  box-shadow: 0 6px 20px 0 rgba(0, 0, 0, 0.12);
+  backdrop-filter: blur(12px) saturate(200%);
+  -webkit-backdrop-filter: blur(12px) saturate(200%);
+}
+
+[data-theme="dark"] {
+  --glass-bg-rgb: 22, 22, 22;
+}
+
+[data-theme="light"] {
+  --glass-bg-rgb: 245, 245, 245;
+}
+
+[data-theme="colorful"] {
+  --glass-bg-rgb: 22, 33, 62;
+}
+
+/* ==================== Gradient Borders & Glow Effects ==================== */
+.gradient-border-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.gradient-border-card::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  padding: 2px;
+  background: linear-gradient(45deg, var(--accentPrimary), var(--accentSecondary), var(--accentPrimary));
+  background-size: 200% 200%;
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+  animation: gradient-rotate 3s linear infinite;
+}
+
+.gradient-border-card:hover::before {
+  opacity: 1;
+}
+
+@keyframes gradient-rotate {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* ==================== Micro-interactions (Legacy - prefer dashboard-card) ==================== */
+.interactive-card {
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
+              box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              border-color 0.3s ease;
+}
+
+.interactive-card:hover {
+  transform: translateY(-4px) scale(1.01);
+}
+
+.interactive-card:active {
+  transform: scale(0.98) translateY(-2px);
+  transition: transform 0.1s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ==================== Dashboard Card Unified Style ==================== */
+.dashboard-card {
+  box-shadow: none;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
+              box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              border-color 0.3s ease;
+}
+
+.dashboard-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+}
+
+/* Dark theme - border becomes lighter on hover */
+[data-theme="dark"] .dashboard-card:hover {
+  border-color: #505050;
+}
+
+/* Light theme - border becomes darker on hover */
+[data-theme="light"] .dashboard-card:hover {
+  border-color: #B0B0B0;
+}
+
+/* Colorful theme - border becomes more vibrant on hover */
+[data-theme="colorful"] .dashboard-card:hover {
+  border-color: #2A5A7D;
+}
+
+.dashboard-card:active {
+  transform: translateY(-1px);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+}
+
+/* ==================== Ripple Effect ==================== */
+.ripple-container {
+  position: relative;
+  overflow: hidden;
+}
+
+.ripple-effect {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.5);
+  transform: scale(0);
+  animation: ripple 0.6s ease-out;
+  pointer-events: none;
+}
+
+@keyframes ripple {
+  to {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+
+/* ==================== Skeleton Loader ==================== */
+.skeleton-line {
+  background: linear-gradient(90deg,
+    var(--bgTertiary) 25%,
+    var(--bgHover) 50%,
+    var(--bgTertiary) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 4px;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ==================== Focus Indicators (Accessibility) ==================== */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--accentPrimary);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ==================== Smooth Page Transitions ==================== */
+.page-transition-enter-active,
+.page-transition-leave-active {
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.page-transition-enter-from {
+  opacity: 0;
+  transform: translateX(20px);
+}
+
+.page-transition-leave-to {
+  opacity: 0;
+  transform: translateX(-20px);
+}
+
+/* ==================== Particle Background Effect ==================== */
+.particles-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.particle {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: var(--textMuted);
+  border-radius: 50%;
+  opacity: 0.3;
+}
+
+/* Staggered particle animations */
+.particle:nth-child(1) { left: 10%; animation: float-1 25s infinite; }
+.particle:nth-child(2) { left: 20%; animation: float-2 20s infinite; }
+.particle:nth-child(3) { left: 30%; animation: float-3 30s infinite; }
+.particle:nth-child(4) { left: 40%; animation: float-1 22s infinite; }
+.particle:nth-child(5) { left: 50%; animation: float-2 28s infinite; }
+.particle:nth-child(6) { left: 60%; animation: float-3 18s infinite; }
+.particle:nth-child(7) { left: 70%; animation: float-1 24s infinite; }
+.particle:nth-child(8) { left: 80%; animation: float-2 26s infinite; }
+.particle:nth-child(9) { left: 90%; animation: float-3 21s infinite; }
+.particle:nth-child(10) { left: 15%; animation: float-1 27s infinite; }
+.particle:nth-child(11) { left: 25%; animation: float-2 23s infinite; }
+.particle:nth-child(12) { left: 35%; animation: float-3 19s infinite; }
+.particle:nth-child(13) { left: 45%; animation: float-1 29s infinite; }
+.particle:nth-child(14) { left: 55%; animation: float-2 20s infinite; }
+.particle:nth-child(15) { left: 65%; animation: float-3 25s infinite; }
+.particle:nth-child(16) { left: 75%; animation: float-1 22s infinite; }
+.particle:nth-child(17) { left: 85%; animation: float-2 24s infinite; }
+.particle:nth-child(18) { left: 95%; animation: float-3 26s infinite; }
+.particle:nth-child(19) { left: 5%; animation: float-1 28s infinite; }
+.particle:nth-child(20) { left: 50%; animation: float-2 21s infinite; }
+
+@keyframes float-1 {
+  0%, 100% { transform: translateY(100vh) translateX(0); }
+  50% { transform: translateY(-20px) translateX(50px); }
+}
+
+@keyframes float-2 {
+  0%, 100% { transform: translateY(100vh) translateX(0); }
+  50% { transform: translateY(-20px) translateX(-50px); }
+}
+
+@keyframes float-3 {
+  0%, 100% { transform: translateY(100vh) translateX(0); }
+  50% { transform: translateY(-20px) translateX(30px); }
+}

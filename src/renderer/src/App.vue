@@ -19,7 +19,28 @@
     </div>
   </div>
 
-  <div class="flex h-screen" :style="{ backgroundColor: 'var(--bgPrimary)' }">
+  <!-- Particle Background -->
+  <div class="particles-container">
+    <div v-for="i in 20" :key="i" class="particle"></div>
+  </div>
+
+  <!-- Toast Notifications -->
+  <ToastContainer />
+
+  <!-- Command Palette -->
+  <CommandPalette
+    :isOpen="showCommandPalette"
+    @close="showCommandPalette = false"
+    @execute="handlePaletteAction"
+  />
+
+  <!-- Keyboard Shortcuts -->
+  <KeyboardShortcuts
+    :isOpen="showShortcuts"
+    @close="showShortcuts = false"
+  />
+
+  <div class="flex h-screen relative z-10" :style="{ backgroundColor: 'var(--bgPrimary)' }">
     <!-- Left navigation -->
     <navigation
       ref="navigationRef"
@@ -40,35 +61,38 @@
         ></div>
       </div>
 
-      <!-- Dashboard page -->
-      <PageDashboard v-if="currentPage === 'dashboard'" />
+      <!-- Pages with transitions -->
+      <transition name="page-transition" mode="out-in">
+        <!-- Dashboard page -->
+        <PageDashboard v-if="currentPage === 'dashboard'" key="dashboard" />
 
-      <!-- Analysis page -->
-      <PageAnalysis v-else-if="currentPage === 'analysis'" />
+        <!-- Analysis page -->
+        <PageAnalysis v-else-if="currentPage === 'analysis'" key="analysis" />
 
-      <!-- Ticket page -->
-      <PageTicketBoard v-else-if="currentPage === 'ticket'" />
+        <!-- Ticket page -->
+        <PageTicketBoard v-else-if="currentPage === 'ticket'" key="ticket" />
 
-      <!-- Settings page -->
-      <PageSettings v-else-if="currentPage === 'settings'" />
+        <!-- Settings page -->
+        <PageSettings v-else-if="currentPage === 'settings'" key="settings" />
 
-      <!-- Default or error page -->
-      <div v-else class="flex items-center justify-center h-full">
-        <div class="text-center">
-          <div class="text-xl mb-4" :style="{ color: 'var(--textSecondary)' }">Page not found</div>
-          <button
-            @click="goToDashboard"
-            class="px-4 py-2 rounded transition-colors"
-            :style="{
-              backgroundColor: 'var(--bgTertiary)',
-              color: 'var(--textPrimary)',
-              border: '1px solid var(--borderPrimary)'
-            }"
-          >
-            Return to Dashboard
-          </button>
+        <!-- Default or error page -->
+        <div v-else class="flex items-center justify-center h-full" key="error">
+          <div class="text-center">
+            <div class="text-xl mb-4" :style="{ color: 'var(--textSecondary)' }">Page not found</div>
+            <button
+              @click="goToDashboard"
+              class="px-4 py-2 rounded transition-colors"
+              :style="{
+                backgroundColor: 'var(--bgTertiary)',
+                color: 'var(--textPrimary)',
+                border: '1px solid var(--borderPrimary)'
+              }"
+            >
+              Return to Dashboard
+            </button>
+          </div>
         </div>
-      </div>
+      </transition>
     </div>
   </div>
 </template>
@@ -80,16 +104,25 @@ import PageDashboard from '@renderer/components/PageDashboard.vue'
 import PageAnalysis from '@renderer/components/PageHeatmap.vue'
 import PageTicketBoard from '@renderer/components/PageTicketBoard.vue'
 import PageSettings from '@renderer/components/PageSettings.vue'
+import ToastContainer from '@renderer/components/common/ToastContainer.vue'
+import CommandPalette from '@renderer/components/common/CommandPalette.vue'
+import KeyboardShortcuts from '@renderer/components/common/KeyboardShortcuts.vue'
 import { useShellData } from '@renderer/composables/useShellData.js'
 import { useLoadingState } from '@renderer/composables/useLoadingState.js'
+import { useToast } from '@renderer/composables/useToast.js'
+import { useTheme } from '@renderer/composables/useTheme.js'
 
 // Use global data store and loading state
 const { refreshData } = useShellData()
 const { isAppLoading, isAnyLoading, loadingProgress, setGlobalLoading } = useLoadingState()
+const { success } = useToast()
+const { toggleTheme } = useTheme()
 
 // Reactive data
 const currentPage = ref('dashboard')
 const navigationRef = ref(null)
+const showCommandPalette = ref(false)
+const showShortcuts = ref(false)
 
 // Page switching with loading state management
 const handlePageChange = async (pageName) => {
@@ -132,11 +165,37 @@ const handleRefreshData = async () => {
 
     if (result.success) {
       console.log('Data refreshed successfully')
+      success('Data refreshed successfully!')
     } else {
       console.error('Refresh failed:', result.error || 'Unknown error')
     }
   } catch (error) {
     console.error('Failed to refresh data:', error)
+  }
+}
+
+// Handle command palette actions
+const handlePaletteAction = (action) => {
+  switch (action.type) {
+    case 'page':
+      handlePageChange(action.value)
+      navigationRef.value?.setPage(action.value)
+      break
+    case 'refresh':
+      handleRefreshData()
+      break
+    case 'clear-cache':
+      success('Navigate to Settings to clear cache')
+      handlePageChange('settings')
+      navigationRef.value?.setPage('settings')
+      break
+    case 'export':
+      success('Export feature coming soon!')
+      break
+    case 'theme':
+      toggleTheme()
+      success('Theme toggled!')
+      break
   }
 }
 
@@ -148,6 +207,20 @@ const goToDashboard = () => {
 
 // Keyboard shortcut support
 const handleKeydown = (event) => {
+  // Command Palette (Cmd/Ctrl + K)
+  if ((event.ctrlKey || event.metaKey) && event.key === 'k') {
+    event.preventDefault()
+    showCommandPalette.value = !showCommandPalette.value
+    return
+  }
+
+  // Help (?)
+  if (event.key === '?' && !event.ctrlKey && !event.metaKey) {
+    event.preventDefault()
+    showShortcuts.value = !showShortcuts.value
+    return
+  }
+
   if ((event.ctrlKey || event.metaKey) && !event.shiftKey) {
     switch (event.key) {
       case '1':

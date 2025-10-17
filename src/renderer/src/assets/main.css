@@ -119,10 +119,29 @@ html, body {
 
 /* Hover Items */
 .hover-item {
-  transition: var(--transition);
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
+              background-color 0.2s ease,
+              box-shadow 0.2s ease,
+              border-color 0.2s ease;
+  box-shadow: none;
 }
 .hover-item:hover {
   background-color: var(--bgHover);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Theme-specific border colors on hover */
+[data-theme="dark"] .hover-item:hover {
+  border-color: #505050;
+}
+
+[data-theme="light"] .hover-item:hover {
+  border-color: #B0B0B0;
+}
+
+[data-theme="colorful"] .hover-item:hover {
+  border-color: #2A5A7D;
 }
 
 /* Button Styles */

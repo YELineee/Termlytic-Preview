@@ -1,7 +1,7 @@
 <template>
   <div
     ref="containerRef"
-    class="w-full h-full rounded-lg p-3 flex flex-col min-h-0"
+    class="w-full h-full rounded-lg p-3 flex flex-col min-h-0 dashboard-card"
     :style="{
       backgroundColor: 'var(--bgSecondary)',
       border: '1px solid var(--borderPrimary)'
