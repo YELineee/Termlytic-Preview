@@ -11,8 +11,7 @@
         <!-- Year Selection -->
         <select
           v-model="selectedYear"
-          @change="generateTicket"
-          class="bg-secondary text-primary px-3 py-2 rounded border border-divider focus:border-accent focus:outline-none"
+          class="bg-secondary text-primary px-3 py-2 rounded border border-divider focus:border-accent focus:outline-none transition-colors"
         >
           <option v-for="year in availableYears" :key="year" :value="year">{{ year }}</option>
         </select>
@@ -116,14 +115,17 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import html2canvas from 'html2canvas-pro'
 import TerminalCard from './ticket-style/TerminalCard.vue'
 import HeatmapCard from './ticket-style/HeatmapCard.vue'
+import StatsCard from './ticket-style/StatsCard.vue'
+import TimelineCard from './ticket-style/TimelineCard.vue'
+import CompactCard from './ticket-style/CompactCard.vue'
 import { useDataService } from '@renderer/services/dataService.js'
 
 // Use unified data service
-const { dataService, isLoading: globalLoading, error: globalError } = useDataService()
+const { dataService } = useDataService()
 
 // Reactive data
 const loading = ref(false)
@@ -132,10 +134,10 @@ const error = ref('')
 const selectedYear = ref(new Date().getFullYear())
 const availableYears = ref([])
 const ticketData = ref(null)
-const currentStyleIndex = ref(0) // Current style index
-const ticketElement = ref(null) // Ticket element reference
+const currentStyleIndex = ref(0)
+const ticketElement = ref(null)
 
-// Style configuration
+// Card style configuration
 const ticketStyles = [
   {
     name: 'Terminal',
@@ -146,7 +148,22 @@ const ticketStyles = [
     name: 'Heatmap',
     component: HeatmapCard,
     description: 'Heatmap style'
-  }
+  },
+  {
+    name: 'Stats',
+    component: StatsCard,
+    description: 'Statistics card style'
+  },
+  {
+    name: 'Timeline',
+    component: TimelineCard,
+    description: 'Timeline style'
+  },
+  {
+    name: 'Compact',
+    component: CompactCard,
+    description: 'Compact card style'
+  },
 ]
 
 // Computed properties
@@ -154,111 +171,119 @@ const currentStyle = computed(() => ticketStyles[currentStyleIndex.value])
 const canGoPreviousStyle = computed(() => currentStyleIndex.value > 0)
 const canGoNextStyle = computed(() => currentStyleIndex.value < ticketStyles.length - 1)
 
+// Check if ticket has valid data
+const hasValidTicketData = computed(() => {
+  return ticketData.value && ticketData.value.totalCommands > 0
+})
+
 // Load available years
 const loadAvailableYears = async () => {
   try {
-    console.log('Loading available years...')
-
-    // Use unified data service
     const years = await dataService.getAvailableYears()
-
     availableYears.value = years
 
-    // If the currently selected year is not in available years, select the latest year
+    // Auto-select most recent year if current selection is invalid
     if (years.length > 0 && !years.includes(selectedYear.value)) {
       selectedYear.value = years[0]
     }
 
-    console.log('Available years loaded:', years)
+    return years
   } catch (err) {
-    console.error('Failed to load available years:', err)
-    error.value = `Load years failed: ${err.message}`
+    const errorMsg = err?.message || 'Unknown error'
+    error.value = `Failed to load years: ${errorMsg}`
+    throw err
   }
 }
 
 // Generate ticket data
 const generateTicket = async () => {
+  if (!selectedYear.value) return
+
   try {
     loading.value = true
     error.value = ''
 
-    console.log(`Generating ticket for year ${selectedYear.value}`)
-
-    // Use unified data service
     const result = await dataService.generateCommandTicket(selectedYear.value)
-
     ticketData.value = result
-    console.log('Ticket generated successfully:', ticketData.value)
   } catch (err) {
-    console.error('Failed to generate ticket:', err)
-    error.value = `Generation failed: ${err.message}`
+    const errorMsg = err?.message || 'Unknown error'
+    error.value = `Failed to generate ticket: ${errorMsg}`
+    ticketData.value = null
   } finally {
     loading.value = false
   }
 }
 
-// Save ticket
+// Wait for render completion
+const waitForRender = (ms = 1000) => {
+  return new Promise((resolve) => {
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        setTimeout(resolve, ms)
+      })
+    })
+  })
+}
+
+// Convert canvas to blob
+const canvasToBlob = (canvas, type = 'image/png', quality = 0.95) => {
+  return new Promise((resolve) => {
+    canvas.toBlob(resolve, type, quality)
+  })
+}
+
+// Download blob as file
+const downloadBlob = (blob, filename) => {
+  const url = URL.createObjectURL(blob)
+  const link = document.createElement('a')
+  link.href = url
+  link.download = filename
+
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
+
+  URL.revokeObjectURL(url)
+}
+
+// Save ticket as image
 const saveTicket = async () => {
-  if (!ticketData.value || !ticketElement.value) return
+  if (!ticketData.value || !ticketElement.value) {
+    error.value = 'No ticket data to save'
+    return
+  }
 
   try {
     saving.value = true
-    console.log('Starting to save ticket as image...')
+    error.value = ''
 
-    // Wait for dynamic content to fully load and render
-    await new Promise((resolve) => {
-      // Wait for next render cycle to ensure all content is rendered
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          setTimeout(resolve, 1000) // Additional 1 second wait to ensure all styles take effect
-        })
-      })
-    })
+    // Wait for all content to render
+    await waitForRender(1000)
 
-    // Use simplified html2canvas-pro configuration
+    // Generate canvas
     const canvas = await html2canvas(ticketElement.value, {
       backgroundColor: '#000000',
       scale: 4,
       useCORS: true,
       allowTaint: true,
-      logging: true
+      logging: false
     })
 
-    console.log('Canvas generated successfully, size:', canvas.width, 'x', canvas.height)
+    // Convert to blob
+    const blob = await canvasToBlob(canvas)
 
-    // Convert canvas to blob
-    const blob = await new Promise((resolve) => {
-      canvas.toBlob(resolve, 'image/png', 0.95)
-    })
-
-    if (blob) {
-      // Create download link
-      const url = URL.createObjectURL(blob)
-      const link = document.createElement('a')
-      const fileName = `command-ticket-${
-        selectedYear.value
-      }-${currentStyle.value.name.toLowerCase()}.png`
-
-      link.href = url
-      link.download = fileName
-
-      // Trigger download
-      document.body.appendChild(link)
-      link.click()
-      document.body.removeChild(link)
-
-      // Clean up URL
-      URL.revokeObjectURL(url)
-
-      console.log(`Ticket image saved successfully: ${fileName}`)
-    } else {
-      throw new Error('Unable to generate image blob')
+    if (!blob) {
+      throw new Error('Failed to generate image')
     }
-  } catch (err) {
-    console.error('Failed to save ticket:', err)
-    error.value = `Save failed: ${err.message}`
 
-    // Clear error message after 5 seconds
+    // Download file
+    const fileName = `command-ticket-${selectedYear.value}-${currentStyle.value.name.toLowerCase()}.png`
+    downloadBlob(blob, fileName)
+  } catch (err) {
+    const errorMsg = err?.message || 'Unknown error'
+    error.value = `Save failed: ${errorMsg}`
+
+    // Auto-clear error after 5 seconds
     setTimeout(() => {
       error.value = ''
     }, 5000)
@@ -267,7 +292,7 @@ const saveTicket = async () => {
   }
 }
 
-// Style navigation methods
+// Style navigation
 const previousStyle = () => {
   if (canGoPreviousStyle.value) {
     currentStyleIndex.value--
@@ -280,12 +305,22 @@ const nextStyle = () => {
   }
 }
 
-// Component mounting
+// Watch year changes and regenerate ticket
+watch(selectedYear, (newYear, oldYear) => {
+  if (newYear !== oldYear && newYear) {
+    generateTicket()
+  }
+})
+
+// Initialize on mount
 onMounted(async () => {
-  console.log('TicketBoard component mounted')
-  await loadAvailableYears()
-  if (availableYears.value.length > 0) {
-    await generateTicket()
+  try {
+    const years = await loadAvailableYears()
+    if (years.length > 0) {
+      await generateTicket()
+    }
+  } catch (err) {
+    // Error already handled in loadAvailableYears
   }
 })
 </script>

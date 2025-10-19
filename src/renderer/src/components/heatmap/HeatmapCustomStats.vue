@@ -392,7 +392,7 @@ const peakHour = computed(() => {
 const getShellGradient = (shell) => {
   const isDark = currentThemeMode.value === 'dark'
 
-  // 使用灰度渐变，根据主题调整
+  // Use grayscale gradient, adjusted based on theme
   const gradients = {
     bash: isDark ? '#9CA3AF' : '#4B5563', // gray-400 / gray-600
     zsh: isDark ? '#6B7280' : '#374151', // gray-500 / gray-700
@@ -417,7 +417,7 @@ const getHourIntensityStyle = (count, max) => {
   let bgColor, textColor, borderColor
 
   if (isDark) {
-    // 深色模式：从浅到深
+    // Dark mode: light to dark
     if (ratio >= 0.8) {
       bgColor = '#F3F4F6' // gray-100
       textColor = '#111827' // gray-900
@@ -440,7 +440,7 @@ const getHourIntensityStyle = (count, max) => {
       borderColor = '#4B5563'
     }
   } else {
-    // 浅色模式：从深到浅
+    // Light mode: dark to light
     if (ratio >= 0.8) {
       bgColor = '#1F2937' // gray-800
       textColor = '#F9FAFB'

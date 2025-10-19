@@ -1,366 +1,295 @@
 <template>
-  <div class="p-8 max-w-4xl mx-auto h-full overflow-y-scroll">
-    <div class="mb-8">
-      <h1 class="text-3xl font-bold mb-2" :style="{ color: 'var(--textPrimary)' }">Settings</h1>
-      <p :style="{ color: 'var(--textSecondary)' }">
-        Manage your Termlytic application configuration
-      </p>
-    </div>
-
-    <!-- Application Info Card -->
-    <div
-      class="rounded-xl p-6 mb-6"
-      :style="{
-        backgroundColor: 'var(--bgSecondary)',
-        border: '1px solid var(--borderPrimary)'
-      }"
-    >
-      <h2
-        class="text-xl font-semibold mb-4 flex items-center"
-        :style="{ color: 'var(--textPrimary)' }"
-      >
-        <div
-          class="w-2 h-2 rounded-full mr-3"
-          :style="{ backgroundColor: 'var(--textSecondary)' }"
-        ></div>
-        Application Info
-      </h2>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <div class="text-sm mb-1" :style="{ color: 'var(--textTertiary)' }">Application Name</div>
-          <div class="font-medium" :style="{ color: 'var(--textPrimary)' }">Termlytic</div>
+  <div class="settings-wrapper">
+    <!-- Settings Content -->
+    <div class="settings-content">
+      <!-- Application Info Card -->
+      <div class="settings-card">
+        <div class="card-header">
+          <div class="header-dot"></div>
+          <h2>APPLICATION INFORMATION</h2>
         </div>
-        <div>
-          <div class="text-sm mb-1" :style="{ color: 'var(--textTertiary)' }">Version</div>
-          <div class="font-medium" :style="{ color: 'var(--textPrimary)' }">1.0.0</div>
-        </div>
-        <div>
-          <div class="text-sm mb-1" :style="{ color: 'var(--textTertiary)' }">
-            Data Storage Location
-          </div>
-          <div class="font-medium font-mono text-sm" :style="{ color: 'var(--textPrimary)' }">
-            ~/.termlytic
-          </div>
-        </div>
-        <div>
-          <div class="text-sm mb-1" :style="{ color: 'var(--textTertiary)' }">Cache Status</div>
-          <div class="font-medium" :style="{ color: 'var(--textPrimary)' }">
-            {{ cacheInfo.status }}
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Cache Management Card -->
-    <div
-      class="rounded-xl p-6 mb-6"
-      :style="{
-        backgroundColor: 'var(--bgSecondary)',
-        border: '1px solid var(--borderPrimary)'
-      }"
-    >
-      <h2
-        class="text-xl font-semibold mb-4 flex items-center"
-        :style="{ color: 'var(--textPrimary)' }"
-      >
-        <div
-          class="w-2 h-2 rounded-full mr-3"
-          :style="{ backgroundColor: 'var(--textSecondary)' }"
-        ></div>
-        Cache Management
-      </h2>
-
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        <div
-          class="rounded-lg p-4 text-center"
-          :style="{
-            backgroundColor: 'var(--bgTertiary)',
-            border: '1px solid var(--borderSecondary)'
-          }"
-        >
-          <div class="text-2xl font-bold mb-1" :style="{ color: 'var(--textPrimary)' }">
-            {{ cacheInfo.entries }}
-          </div>
-          <div class="text-sm" :style="{ color: 'var(--textTertiary)' }">Cache Entries</div>
-        </div>
-        <div
-          class="rounded-lg p-4 text-center"
-          :style="{
-            backgroundColor: 'var(--bgTertiary)',
-            border: '1px solid var(--borderSecondary)'
-          }"
-        >
-          <div class="text-2xl font-bold mb-1" :style="{ color: 'var(--textPrimary)' }">
-            {{ cacheInfo.size }}
-          </div>
-          <div class="text-sm" :style="{ color: 'var(--textTertiary)' }">Cache Size</div>
-        </div>
-        <div
-          class="rounded-lg p-4 text-center"
-          :style="{
-            backgroundColor: 'var(--bgTertiary)',
-            border: '1px solid var(--borderSecondary)'
-          }"
-        >
-          <div class="text-2xl font-bold mb-1" :style="{ color: 'var(--textPrimary)' }">
-            {{ cacheInfo.lastUpdate }}
-          </div>
-          <div class="text-sm" :style="{ color: 'var(--textTertiary)' }">Last Updated</div>
-        </div>
-      </div>
-
-      <div class="flex flex-col sm:flex-row gap-3">
-        <button
-          @click="clearCache"
-          :disabled="isClearing"
-          class="flex items-center justify-center px-4 py-2 rounded-lg transition-colors border"
-          :style="{
-            backgroundColor: isClearing ? 'var(--bgTertiary)' : 'var(--bgSecondary)',
-            color: 'var(--textPrimary)',
-            borderColor: 'var(--borderPrimary)',
-            opacity: isClearing ? '0.5' : '1'
-          }"
-        >
-          <i class="fas fa-trash mr-2" :class="{ 'fa-spin fa-spinner': isClearing }"></i>
-          {{ isClearing ? 'Clearing...' : 'Clear all cache' }}
-        </button>
-
-        <button
-          @click="refreshCacheInfo"
-          :disabled="isRefreshing"
-          class="flex items-center justify-center px-4 py-2 rounded-lg transition-colors border"
-          :style="{
-            backgroundColor: isRefreshing ? 'var(--bgTertiary)' : 'var(--bgSecondary)',
-            color: 'var(--textPrimary)',
-            borderColor: 'var(--borderPrimary)',
-            opacity: isRefreshing ? '0.5' : '1'
-          }"
-        >
-          <i class="fas fa-sync-alt mr-2" :class="{ 'fa-spin': isRefreshing }"></i>
-          {{ isRefreshing ? 'Refreshing...' : 'Refresh cache info' }}
-        </button>
-      </div>
-
-      <div
-        class="mt-4 p-4 rounded-lg"
-        :style="{
-          backgroundColor: 'var(--bgTertiary)',
-          border: '1px solid var(--borderPrimary)'
-        }"
-      >
-        <div class="flex items-start">
-          <i
-            class="fas fa-exclamation-triangle mr-3 mt-1"
-            :style="{ color: 'var(--textSecondary)' }"
-          ></i>
-          <div>
-            <div class="font-medium mb-1" :style="{ color: 'var(--textSecondary)' }">Warning</div>
-            <div class="text-sm" :style="{ color: 'var(--textSecondary)' }">
-              Clearing cache will delete all analyzed command history data. The next startup will
-              require re-analysis, which may take some time.
+        <div class="card-body">
+          <div class="info-grid">
+            <div class="info-item">
+              <div class="info-label">Version</div>
+              <div class="info-value">v1.0.0</div>
+            </div>
+            <div class="info-item">
+              <div class="info-label">Data Directory</div>
+              <div class="info-value">~/.termlytic</div>
+            </div>
+            <div class="info-item">
+              <div class="info-label">Cache Status</div>
+              <div class="info-value">{{ cacheInfo.status }}</div>
+            </div>
+            <div class="info-item">
+              <div class="info-label">Last Updated</div>
+              <div class="info-value">{{ cacheInfo.lastUpdate }}</div>
             </div>
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- Success/Error Messages -->
-    <div v-if="message" class="mb-6">
-      <div
-        class="p-4 rounded-lg flex items-center"
-        :style="{
-          backgroundColor: 'var(--bgTertiary)',
-          border: '1px solid var(--borderPrimary)',
-          color: 'var(--textSecondary)'
-        }"
-      >
+      <!-- Cache Management Card -->
+      <div class="settings-card">
+        <div class="card-header">
+          <div class="header-dot"></div>
+          <h2>CACHE MANAGEMENT</h2>
+        </div>
+        <div class="card-body">
+          <div class="stats-row">
+            <div class="stat-item">
+              <div class="stat-label">Entries</div>
+              <div class="stat-value">{{ cacheInfo.entries }}</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-label">Size</div>
+              <div class="stat-value">{{ cacheInfo.size }}</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-label">Last Update</div>
+              <div class="stat-value">{{ cacheInfo.lastUpdate }}</div>
+            </div>
+          </div>
+
+          <div class="action-row">
+            <button
+              @click="refreshCacheInfo"
+              :disabled="isRefreshing"
+              class="btn btn-secondary"
+            >
+              <i class="fas fa-sync-alt" :class="{ 'fa-spin': isRefreshing }"></i>
+              <span>{{ isRefreshing ? 'Refreshing...' : 'Refresh' }}</span>
+            </button>
+            <button @click="clearCache" :disabled="isClearing" class="btn btn-danger">
+              <i class="fas fa-trash-alt" :class="{ 'fa-spin fa-spinner': isClearing }"></i>
+              <span>{{ isClearing ? 'Clearing...' : 'Clear Cache' }}</span>
+            </button>
+          </div>
+
+          <div class="warning-notice">
+            <i class="fas fa-exclamation-triangle"></i>
+            <div>
+              <strong>Warning:</strong> Clearing cache will remove all analyzed data and require
+              re-analysis on next startup.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Success/Error Messages -->
+      <div v-if="message" class="message-toast" :class="`toast-${message.type}`">
         <i
-          class="mr-3"
           :class="{
             'fas fa-check-circle': message.type === 'success',
             'fas fa-exclamation-circle': message.type === 'error'
           }"
         ></i>
-        {{ message.text }}
-      </div>
-    </div>
-
-    <!-- Shell History Diagnosis Card -->
-    <div
-      class="rounded-xl p-6 mb-6"
-      :style="{
-        backgroundColor: 'var(--bgSecondary)',
-        border: '1px solid var(--borderPrimary)'
-      }"
-    >
-      <h2
-        class="text-xl font-semibold mb-4 flex items-center"
-        :style="{ color: 'var(--textPrimary)' }"
-      >
-        <div
-          class="w-2 h-2 rounded-full mr-3"
-          :style="{ backgroundColor: 'var(--textSecondary)' }"
-        ></div>
-        Shell History Diagnosis
-      </h2>
-
-      <div class="mb-4">
-        <p class="text-sm mb-4" :style="{ color: 'var(--textSecondary)' }">
-          If the application shows "No Data", click the button below to run diagnosis and check the
-          status and configuration of shell history files.
-        </p>
-
-        <button
-          @click="runDiagnosis"
-          :disabled="isDiagnosing"
-          class="flex items-center justify-center px-4 py-2 rounded-lg transition-colors border"
-          :style="{
-            backgroundColor: isDiagnosing ? 'var(--bgTertiary)' : 'var(--bgSecondary)',
-            color: 'var(--textPrimary)',
-            borderColor: 'var(--borderPrimary)',
-            opacity: isDiagnosing ? '0.5' : '1'
-          }"
-        >
-          <i class="fas fa-search mr-2" :class="{ 'fa-spin fa-spinner': isDiagnosing }"></i>
-          {{ isDiagnosing ? 'Diagnosing...' : 'Run diagnosis' }}
+        <span>{{ message.text }}</span>
+        <button @click="message = null" class="toast-close">
+          <i class="fas fa-times"></i>
         </button>
       </div>
 
-      <!-- Diagnosis Results -->
-      <div v-if="diagnosisResult" class="mt-4">
-        <div
-          class="rounded-lg p-4"
-          :style="{
-            backgroundColor: 'var(--bgTertiary)',
-            border: '1px solid var(--borderSecondary)'
-          }"
-        >
-          <h3
-            class="text-lg font-medium mb-3 flex items-center"
-            :style="{ color: 'var(--textPrimary)' }"
-          >
-            <div
-              class="w-2 h-2 rounded-full mr-2"
-              :style="{ backgroundColor: 'var(--textSecondary)' }"
-            ></div>
-            Diagnosis Results
-          </h3>
+      <!-- Shell History Diagnosis Card -->
+      <div class="settings-card">
+        <div class="card-header">
+          <div class="header-dot"></div>
+          <h2>SHELL HISTORY DIAGNOSIS</h2>
+        </div>
+        <div class="card-body">
+          <p class="description">
+            If the application shows "No Data", run a diagnosis to check your shell configuration
+            and history file status.
+          </p>
 
-          <!-- Environment Information -->
-          <div class="mb-4">
-            <h4 class="text-md font-medium mb-2" :style="{ color: 'var(--textPrimary)' }">
-              Environment Information
-            </h4>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
-              <div>
-                <span :style="{ color: 'var(--textTertiary)' }">Current Shell:</span>
-                <span class="font-mono" :style="{ color: 'var(--textPrimary)' }">{{
-                  diagnosisResult.environment.detectedShell
-                }}</span>
-              </div>
-              <div>
-                <span :style="{ color: 'var(--textTertiary)' }">SHELL Environment Variable:</span>
-                <span class="font-mono" :style="{ color: 'var(--textPrimary)' }">{{
-                  diagnosisResult.environment.shell || 'Not set'
-                }}</span>
-              </div>
-              <div>
-                <span :style="{ color: 'var(--textTertiary)' }">HISTFILE:</span>
-                <span class="font-mono" :style="{ color: 'var(--textPrimary)' }">{{
-                  diagnosisResult.environment.histfile || 'Not set'
-                }}</span>
-              </div>
-              <div>
-                <span :style="{ color: 'var(--textTertiary)' }">User:</span>
-                <span class="font-mono" :style="{ color: 'var(--textPrimary)' }">{{
-                  diagnosisResult.environment.user
-                }}</span>
+          <button @click="runDiagnosis" :disabled="isDiagnosing" class="btn btn-primary">
+            <i class="fas" :class="isDiagnosing ? 'fa-spinner fa-spin' : 'fa-search'"></i>
+            <span>{{ isDiagnosing ? 'Diagnosing...' : 'Run Diagnosis' }}</span>
+          </button>
+
+
+          <div v-if="diagnosisResult" class="diagnosis-results">
+            <div class="result-section">
+              <h4 class="result-title">Environment Information</h4>
+              <div class="info-grid-small">
+                <div class="info-row">
+                  <span class="info-label">Current Shell</span>
+                  <span class="info-value">{{ diagnosisResult.environment.detectedShell }}</span>
+                </div>
+                <div class="info-row">
+                  <span class="info-label">SHELL Variable</span>
+                  <span class="info-value">{{ diagnosisResult.environment.shell || 'Not set' }}</span>
+                </div>
+                <div class="info-row">
+                  <span class="info-label">HISTFILE</span>
+                  <span class="info-value">{{ diagnosisResult.environment.histfile || 'Not set' }}</span>
+                </div>
+                <div class="info-row">
+                  <span class="info-label">User</span>
+                  <span class="info-value">{{ diagnosisResult.environment.user }}</span>
+                </div>
               </div>
             </div>
-          </div>
 
-          <!-- File Status -->
-          <div class="mb-4">
-            <h4 class="text-md font-medium mb-2" :style="{ color: 'var(--textPrimary)' }">
-              History File Status
-            </h4>
-            <div class="space-y-2">
-              <div v-for="(fileInfo, filePath) in diagnosisResult.files" :key="filePath">
-                <div
-                  class="flex items-center justify-between rounded p-2"
-                  :style="{ backgroundColor: 'var(--bgSecondary)' }"
-                >
-                  <div class="flex-1">
-                    <div class="text-sm font-mono" :style="{ color: 'var(--textPrimary)' }">
-                      {{ filePath }}
-                    </div>
-                    <div class="text-xs" :style="{ color: 'var(--textTertiary)' }">
-                      {{ fileInfo.source }}
-                    </div>
+            <div class="result-section">
+              <h4 class="result-title">History File Status</h4>
+              <div class="file-list">
+                <div v-for="(fileInfo, filePath) in diagnosisResult.files" :key="filePath" class="file-item">
+                  <div class="file-path">
+                    <span class="path-text">{{ filePath }}</span>
+                    <span class="path-source">{{ fileInfo.source }}</span>
                   </div>
-                  <div class="flex items-center space-x-2">
-                    <span
-                      v-if="fileInfo.exists"
-                      class="text-xs"
-                      :style="{ color: 'var(--textSecondary)' }"
-                    >
-                      <i class="fas fa-check-circle mr-1"></i>
-                      Exists ({{ fileInfo.lineCount }} lines)
-                    </span>
-                    <span v-else class="text-xs" :style="{ color: 'var(--textSecondary)' }">
-                      <i class="fas fa-times-circle mr-1"></i>
-                      Not Found
-                    </span>
+                  <div class="file-status" :class="{ 'status-exists': fileInfo.exists }">
+                    <i :class="fileInfo.exists ? 'fas fa-check-circle' : 'fas fa-times-circle'"></i>
+                    <span v-if="fileInfo.exists">Exists ({{ fileInfo.lineCount }} lines)</span>
+                    <span v-else>Not Found</span>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
 
-          <!-- Recommendations -->
-          <div v-if="diagnosisResult.recommendations?.length">
-            <h4 class="text-md font-medium mb-2" :style="{ color: 'var(--textPrimary)' }">
-              Recommendations
-            </h4>
-            <ul class="space-y-1 text-sm">
-              <li
-                v-for="(recommendation, index) in diagnosisResult.recommendations"
-                :key="index"
-                class="flex items-start"
-              >
-                <i
-                  class="fas fa-lightbulb mr-2 mt-1"
-                  :style="{ color: 'var(--textSecondary)' }"
-                ></i>
-                <span :style="{ color: 'var(--textSecondary)' }">{{ recommendation }}</span>
-              </li>
-            </ul>
+            <div v-if="diagnosisResult.recommendations?.length" class="result-section">
+              <h4 class="result-title">Recommendations</h4>
+              <ul class="recommendation-list">
+                <li v-for="(recommendation, index) in diagnosisResult.recommendations" :key="index">
+                  <span>{{ recommendation }}</span>
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- Other Settings Card -->
-    <div
-      class="rounded-xl p-6"
-      :style="{
-        backgroundColor: 'var(--bgSecondary)',
-        border: '1px solid var(--borderPrimary)'
-      }"
-    >
-      <h2
-        class="text-xl font-semibold mb-4 flex items-center"
-        :style="{ color: 'var(--textPrimary)' }"
-      >
-        <div
-          class="w-2 h-2 rounded-full mr-3"
-          :style="{ backgroundColor: 'var(--textSecondary)' }"
-        ></div>
-        Other Settings
-      </h2>
-      <div class="text-center py-8" :style="{ color: 'var(--textTertiary)' }">
-        <i class="fas fa-tools text-3xl mb-3"></i>
-        <p>More settings options coming soon...</p>
+
+      <!-- Performance Settings Card -->
+      <div class="settings-card">
+        <div class="card-header">
+          <div class="header-dot"></div>
+          <h2>PERFORMANCE</h2>
+        </div>
+        <div class="card-body">
+          <div class="setting-item">
+            <div class="setting-info">
+              <label class="setting-label">Enable Animations</label>
+              <p class="setting-desc">Toggle UI animations and transitions</p>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" checked />
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+
+          <div class="setting-item">
+            <div class="setting-info">
+              <label class="setting-label">Hardware Acceleration</label>
+              <p class="setting-desc">Use GPU for rendering (requires restart)</p>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" checked />
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+
+          <div class="setting-item">
+            <div class="setting-info">
+              <label class="setting-label">Chart Animation Duration</label>
+              <p class="setting-desc">Time for chart animations (0-2000ms)</p>
+            </div>
+            <div class="setting-control">
+              <input type="range" min="0" max="2000" value="1000" class="slider" />
+              <span class="slider-value">1000ms</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Data Analysis Settings Card -->
+      <div class="settings-card">
+        <div class="card-header">
+          <div class="header-dot"></div>
+          <h2>DATA ANALYSIS</h2>
+        </div>
+        <div class="card-body">
+          <div class="setting-item">
+            <div class="setting-info">
+              <label class="setting-label">Auto Refresh Data</label>
+              <p class="setting-desc">Automatically reload data when history changes</p>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" />
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+
+          <div class="setting-item">
+            <div class="setting-info">
+              <label class="setting-label">Include Hidden Commands</label>
+              <p class="setting-desc">Analyze commands starting with space</p>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" />
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+
+          <div class="setting-item">
+            <div class="setting-info">
+              <label class="setting-label">Data Retention Period</label>
+              <p class="setting-desc">How long to keep historical data</p>
+            </div>
+            <select class="select-control">
+              <option value="30">30 Days</option>
+              <option value="90">90 Days</option>
+              <option value="180">180 Days</option>
+              <option value="365">1 Year</option>
+              <option value="0" selected>Forever</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- About & Links Card -->
+      <div class="settings-card">
+        <div class="card-header">
+          <div class="header-dot"></div>
+          <h2>ABOUT & LINKS</h2>
+        </div>
+        <div class="card-body">
+          <div class="link-grid">
+            <a href="https://github.com/yourusername/termlytic" class="link-item" target="_blank">
+              <div class="link-content">
+                <h4>GitHub Repository</h4>
+                <p>View source code and contribute</p>
+              </div>
+              <i class="fas fa-external-link-alt"></i>
+            </a>
+
+            <a href="https://docs.termlytic.com" class="link-item" target="_blank">
+              <div class="link-content">
+                <h4>Documentation</h4>
+                <p>Learn how to use Termlytic</p>
+              </div>
+              <i class="fas fa-external-link-alt"></i>
+            </a>
+
+            <a href="https://github.com/yourusername/termlytic/issues" class="link-item" target="_blank">
+              <div class="link-content">
+                <h4>Report Issue</h4>
+                <p>Found a bug? Let us know</p>
+              </div>
+              <i class="fas fa-external-link-alt"></i>
+            </a>
+
+            <a href="https://github.com/yourusername/termlytic/blob/main/LICENSE" class="link-item" target="_blank">
+              <div class="link-content">
+                <h4>License</h4>
+                <p>MIT License - Free to use</p>
+              </div>
+              <i class="fas fa-external-link-alt"></i>
+            </a>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -496,9 +425,646 @@ const showMessage = (type, text) => {
 }
 </script>
 
+
 <style scoped>
-/* Settings page styles */
-.transition-colors {
-  transition: background-color 0.2s ease-in-out;
+/* Settings Wrapper */
+.settings-wrapper {
+  height: 100vh;
+  overflow-y: auto;
+  padding: 1rem;
+  background-color: var(--bgPrimary);
+}
+
+/* Settings Content */
+.settings-content {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 0.75rem;
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+/* Settings Card */
+.settings-card {
+  background-color: var(--bgSecondary);
+  border: 1px solid var(--borderPrimary);
+  border-radius: 0.5rem;
+  padding: 1rem;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.settings-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Card Header */
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--borderSecondary);
+}
+
+.header-dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background-color: var(--textSecondary);
+  flex-shrink: 0;
+}
+
+.card-header h2 {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--textTertiary);
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Card Body */
+.card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.description {
+  color: var(--textSecondary);
+  font-size: 0.875rem;
+  line-height: 1.5;
+  margin: 0 0 1rem;
+}
+
+/* Info Grid */
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 0.75rem;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.75rem;
+  background-color: var(--bgTertiary);
+  border-radius: 0.5rem;
+}
+
+.info-label {
+  font-size: 0.75rem;
+  color: var(--textTertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.info-value {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--textPrimary);
+  font-family: monospace;
+}
+
+/* Stats Row */
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 0.75rem;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.75rem;
+  background-color: var(--bgTertiary);
+  border-radius: 0.5rem;
+}
+
+.stat-label {
+  font-size: 0.75rem;
+  color: var(--textTertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.stat-value {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--textPrimary);
+}
+
+/* Action Row */
+.action-row {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+/* Button Styles */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.btn i {
+  font-size: 0.875rem;
+}
+
+.btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background-color: var(--bgTertiary);
+  color: var(--textPrimary);
+  border: 1px solid var(--borderPrimary);
+}
+
+.btn-secondary {
+  background-color: var(--bgTertiary);
+  color: var(--textPrimary);
+  border: 1px solid var(--borderPrimary);
+}
+
+.btn-danger {
+  background-color: var(--bgTertiary);
+  color: var(--textPrimary);
+  border: 1px solid var(--borderPrimary);
+}
+
+.btn-danger:hover:not(:disabled) {
+  border-color: var(--textSecondary);
+}
+
+/* Warning Notice */
+.warning-notice {
+  display: flex;
+  align-items: start;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  background-color: var(--bgTertiary);
+  border: 1px solid var(--borderSecondary);
+  border-radius: 0.375rem;
+}
+
+.warning-notice i {
+  color: var(--textSecondary);
+  margin-top: 0.1rem;
+  flex-shrink: 0;
+}
+
+.warning-notice p {
+  color: var(--textSecondary);
+  font-size: 0.8125rem;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* Message Toast */
+.message-toast {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background-color: var(--bgSecondary);
+  border: 1px solid var(--borderPrimary);
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  animation: slideIn 0.3s ease;
+  min-width: 280px;
+  max-width: 400px;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(400px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.toast-success,
+.toast-error {
+  color: var(--textPrimary);
+}
+
+.toast-close {
+  background: none;
+  border: none;
+  color: var(--textSecondary);
+  cursor: pointer;
+  padding: 0.25rem;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.toast-close:hover {
+  opacity: 1;
+}
+
+/* Diagnosis Results */
+.diagnosis-results {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.result-section {
+  background-color: var(--bgTertiary);
+  border: 1px solid var(--borderSecondary);
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+}
+
+.result-title {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--textTertiary);
+  margin: 0 0 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Info Grid Small */
+.info-grid-small {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem;
+  background-color: var(--bgSecondary);
+  border-radius: 0.375rem;
+  gap: 1rem;
+}
+
+.info-label {
+  color: var(--textTertiary);
+  font-size: 0.8125rem;
+}
+
+.info-value {
+  color: var(--textPrimary);
+  font-family: monospace;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  text-align: right;
+}
+
+/* File List */
+.file-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.file-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem;
+  background-color: var(--bgSecondary);
+  border-radius: 0.375rem;
+  gap: 1rem;
+}
+
+.file-path {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 0;
+}
+
+.path-text {
+  color: var(--textPrimary);
+  font-family: monospace;
+  font-size: 0.8125rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.path-source {
+  color: var(--textTertiary);
+  font-size: 0.75rem;
+}
+
+.file-status {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-size: 0.8125rem;
+  color: var(--textSecondary);
+  white-space: nowrap;
+}
+
+.file-status i {
+  font-size: 0.875rem;
+}
+
+/* Recommendation List */
+.recommendation-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.recommendation-list li {
+  padding: 0.5rem 0.75rem;
+  background-color: var(--bgSecondary);
+  border-radius: 0.375rem;
+  color: var(--textSecondary);
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  border-left: 2px solid var(--borderPrimary);
+}
+
+/* Setting Item */
+.setting-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem;
+  background-color: var(--bgTertiary);
+  border-radius: 0.5rem;
+  gap: 1rem;
+}
+
+.setting-info {
+  flex: 1;
+}
+
+.setting-label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--textPrimary);
+  margin-bottom: 0.25rem;
+}
+
+.setting-desc {
+  font-size: 0.75rem;
+  color: var(--textSecondary);
+  margin: 0;
+}
+
+/* Toggle Switch */
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.toggle-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--bgPrimary);
+  border: 2px solid var(--borderPrimary);
+  transition: 0.3s;
+  border-radius: 24px;
+}
+
+.toggle-slider:before {
+  position: absolute;
+  content: "";
+  height: 16px;
+  width: 16px;
+  left: 2px;
+  bottom: 2px;
+  background-color: var(--textTertiary);
+  transition: 0.3s;
+  border-radius: 50%;
+}
+
+.toggle-switch input:checked + .toggle-slider {
+  background-color: var(--textSecondary);
+  border-color: var(--textSecondary);
+}
+
+.toggle-switch input:checked + .toggle-slider:before {
+  transform: translateX(20px);
+  background-color: var(--bgPrimary);
+}
+
+/* Setting Control */
+.setting-control {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.slider {
+  width: 160px;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--bgPrimary);
+  outline: none;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.slider::-webkit-slider-thumb {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--textSecondary);
+  cursor: pointer;
+}
+
+.slider::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--textSecondary);
+  cursor: pointer;
+  border: none;
+}
+
+.slider-value {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--textPrimary);
+  min-width: 60px;
+  text-align: right;
+}
+
+.select-control {
+  padding: 0.5rem 0.75rem;
+  background-color: var(--bgPrimary);
+  border: 1px solid var(--borderPrimary);
+  border-radius: 0.375rem;
+  color: var(--textPrimary);
+  font-size: 0.875rem;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.select-control:hover {
+  border-color: var(--textSecondary);
+}
+
+.select-control:focus {
+  border-color: var(--textSecondary);
+}
+
+/* Link Grid */
+.link-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 0.75rem;
+}
+
+.link-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  background-color: var(--bgTertiary);
+  border: 1px solid var(--borderSecondary);
+  border-radius: 0.5rem;
+  text-decoration: none;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.link-item:hover {
+  transform: translateY(-1px);
+  border-color: var(--borderPrimary);
+}
+
+.link-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.link-content h4 {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--textPrimary);
+  margin: 0 0 0.25rem;
+}
+
+.link-content p {
+  font-size: 0.75rem;
+  color: var(--textSecondary);
+  margin: 0;
+}
+
+.link-item > .fa-external-link-alt {
+  color: var(--textTertiary);
+  font-size: 0.75rem;
+  opacity: 0.5;
+  transition: opacity 0.2s;
+  flex-shrink: 0;
+}
+
+.link-item:hover > .fa-external-link-alt {
+  opacity: 1;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .settings-wrapper {
+    padding: 0.75rem;
+  }
+
+  .settings-content {
+    grid-template-columns: 1fr;
+  }
+
+  .info-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .stats-row {
+    grid-template-columns: 1fr;
+  }
+
+  .action-row {
+    flex-direction: column;
+  }
+
+  .action-row .btn {
+    width: 100%;
+  }
+
+  .message-toast {
+    left: 0.75rem;
+    right: 0.75rem;
+    min-width: auto;
+  }
+
+  .link-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .setting-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .setting-control {
+    width: 100%;
+  }
+
+  .slider {
+    width: 100%;
+  }
 }
 </style>

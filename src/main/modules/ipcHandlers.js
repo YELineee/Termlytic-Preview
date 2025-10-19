@@ -1,15 +1,15 @@
 /**
- * IPC 处理器模块
- * 负责处理渲染进程与主进程之间的通信
- * 提供 Shell 历史记录分析相关的 API
+ * IPC Handlers Module
+ * Handles communication between renderer process and main process
+ * Provides shell history analysis related APIs
  */
 
 import { ipcMain } from 'electron'
 import { ShellHistoryAnalyzer } from '../services/shellHistoryAnalyzer.js'
 
 /**
- * IPC 处理器类
- * 管理所有与 Shell 历史记录相关的 IPC 通信
+ * IPC Handlers Class
+ * Manages all IPC communications related to shell history
  */
 
 
@@ -21,35 +21,35 @@ export class IPCHandlers {
   }
 
   /**
-   * 设置所有 IPC 处理器
+   * Setup all IPC handlers
    */
   setupHandlers() {
-    // 获取轻量级统计数据 (仅统计，不含原始数据)
+    // Get lightweight statistics (stats only, no raw data)
     ipcMain.handle('get-shell-stats-only', async () => {
       return await this.handleGetShellStatsOnly()
     })
 
-    // 获取Paginated history records
+    // Get paginated history records
     ipcMain.handle('get-shell-history-page', async (event, page = 0, limit = 100) => {
       return await this.handleGetShellHistoryPage(page, limit)
     })
 
-    // 获取轻量级统计数据
+    // Get lightweight statistics
     ipcMain.handle('get-shell-stats', async () => {
       return await this.handleGetShellStats()
     })
 
-    // 获取 Shell History analysis results (Complete data)
+    // Get shell history analysis results (complete data)
     ipcMain.handle('get-shell-history', async () => {
       return await this.handleGetShellHistory()
     })
 
-    // 强制刷新数据
+    // Force refresh data
     ipcMain.handle('refresh-shell-history', async () => {
       return await this.handleRefreshShellHistory()
     })
 
-    // 获取缓存信息
+    // Get cache information
     ipcMain.handle('get-cache-info', async () => {
       return await this.handleGetCacheInfo()
     })
@@ -59,37 +59,37 @@ export class IPCHandlers {
       return await this.handleClearCache()
     })
 
-    // 获取Time range statistics data
+    // Get time range statistics data
     ipcMain.handle('get-time-range-stats', async (event, timeRange, forceRefresh = false) => {
       return await this.handleGetTimeRangeStats(timeRange, forceRefresh)
     })
 
-    // 获取YearHeatmap data
+    // Get yearly heatmap data
     ipcMain.handle('get-yearly-heatmap-data', async (event, year, shellTypes = 'all', forceRefresh = false) => {
       return await this.handleGetYearlyHeatmapData(year, shellTypes, forceRefresh)
     })
 
-    // 获取可用Year列表
+    // Get available years list
     ipcMain.handle('get-available-years', async () => {
       return await this.handleGetAvailableYears()
     })
 
-    // 获取可用的 Shell 列表
+    // Get available shells list
     ipcMain.handle('get-available-shells', async () => {
       return await this.handleGetAvailableShells()
     })
 
-    // 获取File status information
+    // Get file status information
     ipcMain.handle('get-file-status', async () => {
       return await this.handleGetFileStatus()
     })
 
-    // 获取特定日期的命令记录
+    // Get command records for specific date
     ipcMain.handle('get-date-commands', async (event, date, shellTypes = 'all') => {
       return await this.handleGetDateCommands(date, shellTypes)
     })
 
-    // 生成命令票据
+    // Generate command ticket
     ipcMain.handle('generate-command-ticket', async (event, year, options = {}) => {
       return await this.handleGenerateCommandTicket(year, options)
     })
@@ -103,23 +103,23 @@ export class IPCHandlers {
   }
 
   /**
-   * 处理获取轻量级统计数据的请求 (仅统计，不含原始数据)
-   * @returns {Object} 轻量级统计结果
+   * Handle lightweight statistics retrieval request (stats only, no raw data)
+   * @returns {Object} Lightweight statistics result
    */
   async handleGetShellStatsOnly() {
     try {
       console.log('IPC: get-shell-stats-only requested')
       const startTime = Date.now()
 
-      // 只获取分析结果，不返回原始entries
+      // Get analysis results only, not returning raw entries
       const result = await this.analyzer.analyzeShellHistory()
-      
-      // 构建轻量级响应 (不包含entries)
+
+      // Build lightweight response (excluding entries)
       const lightResponse = {
         success: true,
         analysis: result.analysis,
         metadata: result.metadata,
-        // 不包含 entries 数组，大幅减少数据传输
+        // Exclude entries array to significantly reduce data transfer
         processingTimeMs: Date.now() - startTime
       }
 
@@ -425,7 +425,7 @@ export class IPCHandlers {
         ? await this.analyzer.performFullAnalysis()
         : await this.analyzer.analyzeShellHistory()
 
-      // 生成指定Year的Heatmap data
+      // Generate yearly heatmap data
       const heatmapData = this.generateYearlyHeatmapData(fullData, year, shellTypes)
 
       const endTime = Date.now()
@@ -456,8 +456,8 @@ export class IPCHandlers {
   }
 
   /**
-   * 处理获取可用Year列表的请求
-   * @returns {Object} 可用Year列表
+   * Handle get available years list request
+   * @returns {Object} Available years list
    */
   async handleGetAvailableYears() {
     try {
@@ -468,7 +468,7 @@ export class IPCHandlers {
       // Get complete history data
       const fullData = await this.analyzer.analyzeShellHistory()
 
-      // 提取所有可用Year
+      // Extract all available years
       const years = this.extractAvailableYears(fullData)
 
       const endTime = Date.now()
@@ -497,7 +497,7 @@ export class IPCHandlers {
   }
 
   /**
-   * 生成指定Year的Heatmap data
+   * Generate yearly heatmap data
    * @param {Object} fullData - Complete history data
    * @param {number} year - Year
    * @param {string|string[]} shellTypes - Shell type filter ('all', 'bash', 'zsh', ['bash', 'zsh'])
@@ -521,7 +521,7 @@ export class IPCHandlers {
       })
     }
 
-    // 过滤指定Year的数据
+    // Filter data for specified year
     let yearEntries = entries.filter((entry) => {
       if (!entry.timestamp) return false
 
@@ -622,7 +622,7 @@ export class IPCHandlers {
   /**
    * Handle specific date command records retrieval request
    * @param {string} date - Date string (YYYY-MM-DD)
-   * @param {string|string[]} shellTypes - 终端类型过滤
+   * @param {string|string[]} shellTypes - Shell type filter
    * @returns {Object} Command records for specified date
    */
   async handleGetDateCommands(date, shellTypes = 'all') {
@@ -672,7 +672,7 @@ export class IPCHandlers {
         }
       })
 
-      // 根据终端类型过滤
+      // Filter by shell type
       if (shellTypes !== 'all') {
         const targetShells = Array.isArray(shellTypes) ? shellTypes : [shellTypes]
         dateEntries = dateEntries.filter((entry) => {
@@ -728,24 +728,24 @@ export class IPCHandlers {
 
       // 1. Get complete history data
       const fullData = await this.analyzer.analyzeShellHistory()
-      
-      // 2. 生成Heatmap data
+
+      // 2. Generate heatmap data
       const heatmapData = this.generateYearlyHeatmapData(fullData, year, 'all')
-      
-      // 3. 转换为HeatmapWrapper所需的格式
+
+      // 3. Convert to HeatmapWrapper required format
       const heatmapWrapperData = this.convertToHeatmapWrapperFormat(heatmapData)
-      
-      // 4. 计算基础Statistics
+
+      // 4. Calculate basic statistics
       const totalCommands = heatmapData.reduce((sum, [, count]) => sum + count, 0)
       const activeDays = heatmapData.filter(([, count]) => count > 0).length
-      
-      // 5. 生成图表数据（月度统计）
+
+      // 5. Generate chart data (monthly statistics)
       const chartData = this.generateMonthlyChartData(heatmapData)
-      
-      // 6. 获取Top command和其他统计
+
+      // 6. Get top command and other statistics
       const topCommand = this.getTopCommand(fullData, year)
       const shellCount = Object.keys(fullData.analysis?.shells || {}).length
-      
+
       // 7. Generate ticket number
       const ticketNumber = this.generateTicketNumber(year, totalCommands)
 
@@ -783,7 +783,7 @@ export class IPCHandlers {
   }
 
   /**
-   * 转换Heatmap data为HeatmapWrapper所需格式
+   * Convert heatmap data to HeatmapWrapper required format
    * @param {Array} heatmapData - Raw heatmap data [['2024-01-01', 5], ...]
    * @returns {Array} HeatmapWrapper format data [{ date: '2024-01-01', count: 5 }, ...]
    */
@@ -814,7 +814,7 @@ export class IPCHandlers {
   }
 
   /**
-   * 获取指定Year的Top command
+   * Get top command for specified year
    * @param {Object} fullData - Complete data
    * @param {number} year - Year
    * @returns {string} Top command
@@ -825,7 +825,7 @@ export class IPCHandlers {
         return 'N/A'
       }
 
-      // 简单返回全局最热门命令（可以后续优化为Year特定）
+      // Simply return global top command (can be optimized for year-specific later)
       const topCommands = Object.keys(fullData.analysis.commandAnalysis.topMainCommands)
       return topCommands[0] || 'N/A'
     } catch (err) {
@@ -837,8 +837,8 @@ export class IPCHandlers {
   /**
    * Generate ticket number
    * @param {number} year - Year
-   * @param {number} totalCommands - 总命令数
-   * @returns {string} 票据编号
+   * @param {number} totalCommands - Total commands count
+   * @returns {string} Ticket number
    */
   generateTicketNumber(year, totalCommands) {
     const yearSuffix = year.toString().slice(-2)
@@ -847,7 +847,7 @@ export class IPCHandlers {
   }
 
   /**
-   * 处理 shell 历史诊断请求
+   * Handle shell history diagnosis request
    * @returns {Object} Diagnosis results
    */
   async handleDiagnoseShellHistory() {
@@ -855,7 +855,7 @@ export class IPCHandlers {
       console.log('IPC: diagnose-shell-history requested')
       const startTime = Date.now()
 
-      // 执行诊断
+      // Execute diagnosis
       const diagnosis = await this.analyzer.fileReader.diagnoseShellHistory()
       
       const endTime = Date.now()
@@ -882,9 +882,9 @@ export class IPCHandlers {
   }
 
   /**
-   * 提取所有可用Year
+   * Extract all available years
    * @param {Object} fullData - Complete history data
-   * @returns {Array} Year数组，从最新到最旧排序
+   * @returns {Array} Years array, sorted from newest to oldest
    */
   extractAvailableYears(fullData) {
     console.log('Extracting available years from data')
@@ -892,7 +892,7 @@ export class IPCHandlers {
     const entries = fullData.entries || []
     console.log(`Processing ${entries.length} entries for year extraction`)
 
-    // 提取所有Year
+    // Extract all years
     const years = new Set()
     entries.forEach((entry, index) => {
       if (entry.timestamp) {
@@ -911,7 +911,7 @@ export class IPCHandlers {
 
           if (!isNaN(date.getTime())) {
             const year = date.getFullYear()
-            // 只包含合理的Year范围
+            // Only include reasonable year range
             if (year >= 2020 && year <= 2030) {
               years.add(year)
             }
@@ -922,7 +922,7 @@ export class IPCHandlers {
       }
     })
 
-    // 转换为数组并排序（最新Year在前）
+    // Convert to array and sort (newest year first)
     const yearsArray = Array.from(years).sort((a, b) => b - a)
     console.log(`Found available years: ${yearsArray.join(', ')}`)
 
@@ -930,8 +930,8 @@ export class IPCHandlers {
   }
 
   /**
-   * 清理 IPC 处理器
-   * 移除所有注册的处理器
+   * Cleanup IPC handlers
+   * Remove all registered handlers
    */
   cleanup() {
     const handlers = [
@@ -961,12 +961,12 @@ export class IPCHandlers {
   }
 }
 
-// 导出单例实例
+// Export singleton instance
 let ipcHandlersInstance = null
 
 /**
- * 初始化 IPC 处理器
- * @returns {IPCHandlers} IPC 处理器实例
+ * Initialize IPC handlers
+ * @returns {IPCHandlers} IPC handlers instance
  */
 export function initializeIPCHandlers() {
   if (!ipcHandlersInstance) {
@@ -976,15 +976,15 @@ export function initializeIPCHandlers() {
 }
 
 /**
- * 获取 IPC 处理器实例
- * @returns {IPCHandlers|null} IPC 处理器实例或 null
+ * Get IPC handlers instance
+ * @returns {IPCHandlers|null} IPC handlers instance or null
  */
 export function getIPCHandlers() {
   return ipcHandlersInstance
 }
 
 /**
- * 清理 IPC 处理器
+ * Cleanup IPC handlers
  */
 export function cleanupIPCHandlers() {
   if (ipcHandlersInstance) {

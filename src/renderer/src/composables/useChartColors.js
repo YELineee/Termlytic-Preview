@@ -2,27 +2,27 @@ import { computed } from 'vue'
 import { useTheme } from './useTheme.js'
 
 /**
- * 彩色主题图表配色方案
- * 在彩色模式下返回彩色配色，在黑白模式下返回灰度配色
+ * Colorful theme chart color scheme
+ * Returns colorful scheme in colorful mode, grayscale scheme in dark/light mode
  */
 export function useChartColors() {
   const { currentThemeMode } = useTheme()
 
-  // 彩色主题的图表配色
+  // Colorful theme chart palette
   const colorfulPalette = [
-    '#00D9FF',  // 青色
-    '#7B68EE',  // 紫色
-    '#FF6B9D',  // 粉色
-    '#4ECDC4',  // 绿松石色
-    '#FFD93D',  // 金黄色
-    '#6BCF7F',  // 薄荷绿
-    '#FF8C42',  // 橙色
-    '#A8E6CF',  // 薄荷蓝
-    '#FFB6C1',  // 淡粉色
-    '#87CEEB',  // 天蓝色
+    '#00D9FF',  // cyan
+    '#7B68EE',  // purple
+    '#FF6B9D',  // pink
+    '#4ECDC4',  // turquoise
+    '#FFD93D',  // golden
+    '#6BCF7F',  // mint green
+    '#FF8C42',  // orange
+    '#A8E6CF',  // mint blue
+    '#FFB6C1',  // light pink
+    '#87CEEB',  // sky blue
   ]
 
-  // 暗色主题的灰度配色
+  // Dark theme grayscale palette
   const darkPalette = [
     '#888888',
     '#666666',
@@ -34,7 +34,7 @@ export function useChartColors() {
     '#444444',
   ]
 
-  // 亮色主题的灰度配色
+  // Light theme grayscale palette
   const lightPalette = [
     '#666666',
     '#888888',
@@ -46,7 +46,7 @@ export function useChartColors() {
     '#333333',
   ]
 
-  // 根据当前主题返回对应的配色方案
+  // Return color scheme based on current theme
   const chartColors = computed(() => {
     if (currentThemeMode.value === 'colorful') {
       return colorfulPalette
@@ -57,13 +57,13 @@ export function useChartColors() {
     }
   })
 
-  // 获取单个颜色（循环使用）
+  // Get single color (with cycling)
   const getColor = (index) => {
     const colors = chartColors.value
     return colors[index % colors.length]
   }
 
-  // 获取渐变色（用于特殊图表）
+  // Get gradient colors (for special charts)
   const gradientColors = computed(() => {
     if (currentThemeMode.value === 'colorful') {
       return {
@@ -86,7 +86,7 @@ export function useChartColors() {
     }
   })
 
-  // 获取热力图颜色
+  // Get heatmap colors
   const heatmapColors = computed(() => {
     if (currentThemeMode.value === 'colorful') {
       return ['#0F3460', '#1A4D6D', '#00A8CC', '#00D9FF', '#4DFFFF']

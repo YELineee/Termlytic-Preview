@@ -122,13 +122,13 @@ const getShellColor = (shellName) => {
   // Colorful theme - different colors for each shell
   if (theme === 'colorful') {
     const colorfulColors = {
-      bash: '#00D9FF', // 青色
-      zsh: '#7B68EE', // 紫色
-      fish: '#FF6B9D', // 粉色
-      powershell: '#4ECDC4', // 绿松石色
-      pwsh: '#FFD93D', // 金黄色
-      cmd: '#6BCF7F', // 薄荷绿
-      default: '#00A8CC' // 默认青色
+      bash: '#00D9FF', // cyan
+      zsh: '#7B68EE', // purple
+      fish: '#FF6B9D', // pink
+      powershell: '#4ECDC4', // turquoise
+      pwsh: '#FFD93D', // golden
+      cmd: '#6BCF7F', // mint green
+      default: '#00A8CC' // default cyan
     }
     return colorfulColors[shellName?.toLowerCase()] || colorfulColors.default
   }
