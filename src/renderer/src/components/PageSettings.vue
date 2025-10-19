@@ -77,6 +77,57 @@
         </div>
       </div>
 
+      <!-- Remote Servers Card -->
+      <div class="settings-card remote-servers-card">
+        <div class="card-header">
+          <div class="header-dot"></div>
+          <h2>REMOTE SERVERS</h2>
+        </div>
+        <div class="card-body">
+          <p class="description">
+            Manage remote server connections to sync shell history data from your servers.
+            Use Mock mode to test without real servers.
+          </p>
+
+          <div v-if="remoteServers.length === 0" class="empty-state">
+            <div class="empty-icon">🖥️</div>
+            <h3>No Remote Servers</h3>
+            <p>Add your first remote server to start syncing command history.</p>
+            <button @click="showAddServerDialog" class="btn btn-primary">
+              <i class="fas fa-plus"></i>
+              <span>Add Server</span>
+            </button>
+          </div>
+
+          <div v-else class="servers-list">
+            <div class="servers-header">
+              <button @click="showAddServerDialog" class="btn btn-primary btn-sm">
+                <i class="fas fa-plus"></i>
+                <span>Add Server</span>
+              </button>
+              <div class="servers-stats">
+                <span>{{ remoteServersStats.total }} Total</span>
+                <span>{{ remoteServersStats.enabled }} Enabled</span>
+                <span>{{ remoteServersStats.synced }} Synced</span>
+              </div>
+            </div>
+
+            <div class="servers-grid">
+              <RemoteServerCard
+                v-for="server in remoteServers"
+                :key="server.id"
+                :server="server"
+                @edit="editServer"
+                @delete="deleteServer"
+                @toggle="toggleServer"
+                @test="testConnection"
+                @sync="syncServer"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- Success/Error Messages -->
       <div v-if="message" class="message-toast" :class="`toast-${message.type}`">
         <i
@@ -292,11 +343,21 @@
         </div>
       </div>
     </div>
+
+    <!-- Server Dialog -->
+    <ServerDialog
+      :visible="serverDialogVisible"
+      :server="editingServer"
+      @close="serverDialogVisible = false"
+      @save="saveServer"
+    />
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
+import RemoteServerCard from './settings/RemoteServerCard.vue'
+import ServerDialog from './settings/ServerDialog.vue'
 
 // Reactive data
 const isClearing = ref(false)
@@ -309,6 +370,20 @@ const cacheInfo = ref({
   entries: 0,
   size: '0 KB',
   lastUpdate: 'Unknown'
+})
+
+// Remote Servers data
+const remoteServers = ref([])
+const serverDialogVisible = ref(false)
+const editingServer = ref(null)
+
+// Remote servers statistics
+const remoteServersStats = computed(() => {
+  return {
+    total: remoteServers.value.length,
+    enabled: remoteServers.value.filter((s) => s.enabled).length,
+    synced: remoteServers.value.filter((s) => s.status === 'synced').length
+  }
 })
 
 // Get cache information
@@ -411,9 +486,132 @@ const runDiagnosis = async () => {
   }
 }
 
+// ========== Remote Servers Functions ==========
+
+// Load remote servers
+const loadRemoteServers = async () => {
+  try {
+    const result = await window.electron.ipcRenderer.invoke('get-remote-servers')
+    if (result.success) {
+      remoteServers.value = result.servers
+    }
+  } catch (error) {
+    console.error('Failed to load remote servers:', error)
+    showMessage('error', 'Failed to load remote servers')
+  }
+}
+
+// Show add server dialog
+const showAddServerDialog = () => {
+  editingServer.value = null
+  serverDialogVisible.value = true
+}
+
+// Edit server
+const editServer = (server) => {
+  editingServer.value = server
+  serverDialogVisible.value = true
+}
+
+// Save server (add or update)
+const saveServer = async (serverData) => {
+  try {
+    let result
+    if (serverData.id) {
+      // Update existing server
+      result = await window.electron.ipcRenderer.invoke(
+        'update-remote-server',
+        serverData.id,
+        serverData
+      )
+    } else {
+      // Add new server
+      result = await window.electron.ipcRenderer.invoke('add-remote-server', serverData)
+    }
+
+    if (result.success) {
+      await loadRemoteServers()
+      showMessage('success', serverData.id ? 'Server updated' : 'Server added successfully')
+    } else {
+      showMessage('error', result.error || 'Failed to save server')
+    }
+  } catch (error) {
+    console.error('Failed to save server:', error)
+    showMessage('error', 'Failed to save server')
+  }
+}
+
+// Delete server
+const deleteServer = async (serverId) => {
+  try {
+    const result = await window.electron.ipcRenderer.invoke('delete-remote-server', serverId)
+    if (result.success) {
+      await loadRemoteServers()
+      showMessage('success', 'Server deleted successfully')
+    } else {
+      showMessage('error', result.error || 'Failed to delete server')
+    }
+  } catch (error) {
+    console.error('Failed to delete server:', error)
+    showMessage('error', 'Failed to delete server')
+  }
+}
+
+// Toggle server enabled status
+const toggleServer = async (serverId, enabled) => {
+  try {
+    const result = await window.electron.ipcRenderer.invoke(
+      'toggle-remote-server',
+      serverId,
+      enabled
+    )
+    if (result.success) {
+      await loadRemoteServers()
+      showMessage('success', enabled ? 'Server enabled' : 'Server disabled')
+    } else {
+      showMessage('error', result.error || 'Failed to toggle server')
+    }
+  } catch (error) {
+    console.error('Failed to toggle server:', error)
+    showMessage('error', 'Failed to toggle server')
+  }
+}
+
+// Test connection
+const testConnection = async (serverId) => {
+  try {
+    const result = await window.electron.ipcRenderer.invoke('test-remote-connection', serverId)
+    if (result.success && result.connected) {
+      showMessage('success', `Connection successful! Latency: ${result.latency}ms`)
+    } else {
+      showMessage('error', result.error || 'Connection failed')
+    }
+  } catch (error) {
+    console.error('Failed to test connection:', error)
+    showMessage('error', 'Failed to test connection')
+  }
+}
+
+// Sync server
+const syncServer = async (serverId, progressCallback) => {
+  try {
+    const result = await window.electron.ipcRenderer.invoke('sync-remote-server', serverId)
+    if (result.success) {
+      await loadRemoteServers()
+      showMessage('success', `Synced ${result.commandCount} commands in ${result.duration}ms`)
+    } else {
+      showMessage('error', result.error || 'Sync failed')
+    }
+  } catch (error) {
+    console.error('Failed to sync server:', error)
+    showMessage('error', 'Failed to sync server')
+  }
+}
+
 // Get cache information when page loads
 onMounted(() => {
   getCacheInfo()
+  loadRemoteServers()
 })
 
 // Automatically clear message after timeout
@@ -1065,6 +1263,80 @@ const showMessage = (type, text) => {
 
   .slider {
     width: 100%;
+  }
+}
+
+/* Remote Servers Styles */
+.remote-servers-card .card-body {
+  padding: 1.5rem;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 3rem 1rem;
+}
+
+.empty-icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+}
+
+.empty-state h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 0.5rem;
+}
+
+.empty-state p {
+  color: var(--text-secondary);
+  margin: 0 0 1.5rem;
+}
+
+.servers-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.servers-stats {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.servers-stats span {
+  padding: 0.25rem 0.75rem;
+  background: var(--bg-primary);
+  border-radius: 4px;
+}
+
+.servers-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+  gap: 1rem;
+}
+
+.btn-sm {
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+}
+
+@media (max-width: 768px) {
+  .servers-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .servers-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+  }
+
+  .servers-stats {
+    justify-content: space-between;
   }
 }
 </style>

@@ -68,7 +68,8 @@ export class ShellHistoryAnalyzer {
 
       return {
         ...cachedData,
-        entries: cachedData.entries.slice(0, 10000), // Limit returned entries
+        entries: cachedData.entries.slice(0, 10000), // Limit returned entries for display
+        allEntries: cachedData.entries, // Keep all entries for statistical analysis
         fromCache: true,
         lastUpdate: cachedData.lastUpdate ? new Date(cachedData.lastUpdate).toISOString() : null,
         cacheInfo: await this.storageManager.getCacheInfo()
@@ -177,7 +178,8 @@ export class ShellHistoryAnalyzer {
 
     // Build final results
     const result = {
-      entries: entries.slice(0, 10000), // Limit returned entries，Avoid memory issues
+      entries: entries.slice(0, 10000), // Limit returned entries for display, avoid memory issues
+      allEntries: entries, // Keep all entries for statistical analysis
       analysis,
       metadata: {
         totalEntries: entries.length,
@@ -232,6 +234,7 @@ export class ShellHistoryAnalyzer {
         return {
           ...cachedData,
           entries: cachedData.entries.slice(0, 10000),
+          allEntries: cachedData.entries, // Keep all entries for statistical analysis
           fromCache: true,
           error: err.message,
           lastUpdate: cachedData.lastUpdate ? new Date(cachedData.lastUpdate).toISOString() : null

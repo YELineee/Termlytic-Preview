@@ -1,33 +1,33 @@
 /**
  * Termlytic Theme System
- * 支持三种主题：Dark（暗色）、Light（亮色）、Colorful（彩色）
- * 每个板块都有独立的颜色变量，方便未来个性化定制
+ * Supports three themes: Dark, Light, and Colorful
+ * Each section has independent color variables for future customization
  */
 
-/* ==================== Dark Theme (默认) ==================== */
+/* ==================== Dark Theme (Default) ==================== */
 :root,
 [data-theme="dark"] {
-  /* === 基础背景色 === */
+  /* === Base Background Colors === */
   --bgPrimary: #0A0A0A;
   --bgSecondary: #161616;
   --bgTertiary: #1F1F1F;
   --bgHover: #2A2A2A;
   
-  /* === 边框色 === */
+  /* === Border Colors === */
   --borderPrimary: #2A2A2A;
   --borderSecondary: #3A3A3A;
   
-  /* === 文字色 === */
+  /* === Text Colors === */
   --textPrimary: #FFFFFF;
   --textSecondary: #A0A0A0;
   --textTertiary: #6B6B6B;
   --textMuted: #4A4A4A;
   
-  /* === 主色调 === */
+  /* === Primary Theme Color === */
   --accentPrimary: #FFFFFF;
   --accentSecondary: #E5E5E5;
   
-  /* === Dashboard 板块颜色 === */
+  /* === Dashboard Section Colors === */
   --dashboard-card-bg: #161616;
   --dashboard-card-border: #2A2A2A;
   --dashboard-primary-color: #FFFFFF;
@@ -38,7 +38,7 @@
   --dashboard-chart-color-3: #444444;
   --dashboard-chart-color-4: #AAAAAA;
   
-  /* === Heatmap 板块颜色 === */
+  /* === Heatmap Section Colors === */
   --heatmap-card-bg: #161616;
   --heatmap-card-border: #2A2A2A;
   --heatmap-primary-color: #FFFFFF;
@@ -47,19 +47,19 @@
   --heatmap-mid-intensity: #4A4A4A;
   --heatmap-high-intensity: #6B6B6B;
   
-  /* === Ticket 板块颜色 === */
+  /* === Ticket Section Colors === */
   --ticket-card-bg: #161616;
   --ticket-card-border: #2A2A2A;
   --ticket-primary-color: #FFFFFF;
   --ticket-secondary-color: #A0A0A0;
   
-  /* === Settings 板块颜色 === */
+  /* === Settings Section Colors === */
   --settings-card-bg: #161616;
   --settings-card-border: #2A2A2A;
   --settings-primary-color: #FFFFFF;
   --settings-secondary-color: #A0A0A0;
   
-  /* === 功能色 === */
+  /* === Functional Colors === */
   --success: #10B981;
   --warning: #F59E0B;
   --error: #EF4444;
@@ -68,27 +68,27 @@
 
 /* ==================== Light Theme ==================== */
 [data-theme="light"] {
-  /* === 基础背景色 === */
+  /* === Base Background Colors === */
   --bgPrimary: #FFFFFF;
   --bgSecondary: #F5F5F5;
   --bgTertiary: #E5E5E5;
   --bgHover: #D5D5D5;
   
-  /* === 边框色 === */
+  /* === Border Colors === */
   --borderPrimary: #E5E5E5;
   --borderSecondary: #D5D5D5;
   
-  /* === 文字色 === */
+  /* === Text Colors === */
   --textPrimary: #0A0A0A;
   --textSecondary: #4A4A4A;
   --textTertiary: #6B6B6B;
   --textMuted: #A0A0A0;
   
-  /* === 主色调 === */
+  /* === Primary Theme Color === */
   --accentPrimary: #0A0A0A;
   --accentSecondary: #2A2A2A;
   
-  /* === Dashboard 板块颜色 === */
+  /* === Dashboard Section Colors === */
   --dashboard-card-bg: #F5F5F5;
   --dashboard-card-border: #E5E5E5;
   --dashboard-primary-color: #0A0A0A;
@@ -99,7 +99,7 @@
   --dashboard-chart-color-3: #AAAAAA;
   --dashboard-chart-color-4: #444444;
   
-  /* === Heatmap 板块颜色 === */
+  /* === Heatmap Section Colors === */
   --heatmap-card-bg: #F5F5F5;
   --heatmap-card-border: #E5E5E5;
   --heatmap-primary-color: #0A0A0A;
@@ -108,62 +108,62 @@
   --heatmap-mid-intensity: #A0A0A0;
   --heatmap-high-intensity: #6B6B6B;
   
-  /* === Ticket 板块颜色 === */
+  /* === Ticket Section Colors === */
   --ticket-card-bg: #F5F5F5;
   --ticket-card-border: #E5E5E5;
   --ticket-primary-color: #0A0A0A;
   --ticket-secondary-color: #4A4A4A;
   
-  /* === Settings 板块颜色 === */
+  /* === Settings Section Colors === */
   --settings-card-bg: #F5F5F5;
   --settings-card-border: #E5E5E5;
   --settings-primary-color: #0A0A0A;
   --settings-secondary-color: #4A4A4A;
   
-  /* === 功能色 === */
+  /* === Functional Colors === */
   --success: #10B981;
   --warning: #F59E0B;
   --error: #EF4444;
   --info: #3B82F6;
 }
 
-/* ==================== Colorful Theme (彩色主题) ==================== */
+/* ==================== Colorful Theme ==================== */
 [data-theme="colorful"] {
-  /* === 基础背景色 === */
+  /* === Base Background Colors === */
   --bgPrimary: #1A1A2E;
   --bgSecondary: #16213E;
   --bgTertiary: #0F3460;
   --bgHover: #1A4D6D;
   
-  /* === 边框色 === */
+  /* === Border Colors === */
   --borderPrimary: #0F3460;
   --borderSecondary: #1A4D6D;
   
-  /* === 文字色 === */
+  /* === Text Colors === */
   --textPrimary: #E8F1F5;
   --textSecondary: #B8C5D6;
   --textTertiary: #8899AA;
   --textMuted: #556677;
   
-  /* === 主色调 === */
+  /* === Primary Theme Color === */
   --accentPrimary: #00D9FF;
   --accentSecondary: #00A8CC;
   
-  /* === Dashboard 板块颜色（彩色渐变） === */
+  /* === Dashboard Section Colors (Colorful Gradient) === */
   --dashboard-card-bg: #16213E;
   --dashboard-card-border: #0F3460;
   --dashboard-primary-color: #00D9FF;
   --dashboard-secondary-color: #B8C5D6;
   --dashboard-accent-color: #00A8CC;
-  /* 彩色图表配色 */
-  --dashboard-chart-color-1: #00D9FF;  /* 青色 */
-  --dashboard-chart-color-2: #7B68EE;  /* 紫色 */
-  --dashboard-chart-color-3: #FF6B9D;  /* 粉色 */
-  --dashboard-chart-color-4: #4ECDC4;  /* 绿松石色 */
-  --dashboard-chart-color-5: #FFD93D;  /* 金黄色 */
-  --dashboard-chart-color-6: #6BCF7F;  /* 薄荷绿 */
+  /* Colorful Chart Colors */
+  --dashboard-chart-color-1: #00D9FF;  /* Cyan */
+  --dashboard-chart-color-2: #7B68EE;  /* Purple */
+  --dashboard-chart-color-3: #FF6B9D;  /* Pink */
+  --dashboard-chart-color-4: #4ECDC4;  /* Turquoise */
+  --dashboard-chart-color-5: #FFD93D;  /* Golden */
+  --dashboard-chart-color-6: #6BCF7F;  /* Mint Green */
   
-  /* === Heatmap 板块颜色（渐变热力） === */
+  /* === Heatmap Section Colors (Gradient Heat) === */
   --heatmap-card-bg: #16213E;
   --heatmap-card-border: #0F3460;
   --heatmap-primary-color: #00D9FF;
@@ -173,27 +173,27 @@
   --heatmap-high-intensity: #00A8CC;
   --heatmap-max-intensity: #00D9FF;
   
-  /* === Ticket 板块颜色 === */
+  /* === Ticket Section Colors === */
   --ticket-card-bg: #16213E;
   --ticket-card-border: #0F3460;
   --ticket-primary-color: #00D9FF;
   --ticket-secondary-color: #B8C5D6;
   --ticket-accent-color: #FF6B9D;
   
-  /* === Settings 板块颜色 === */
+  /* === Settings Section Colors === */
   --settings-card-bg: #16213E;
   --settings-card-border: #0F3460;
   --settings-primary-color: #00D9FF;
   --settings-secondary-color: #B8C5D6;
   
-  /* === 功能色（彩色增强） === */
+  /* === Functional Colors (Colorful Enhanced) === */
   --success: #6BCF7F;
   --warning: #FFD93D;
   --error: #FF6B9D;
   --info: #00D9FF;
 }
 
-/* ==================== 渐变背景（仅彩色模式） ==================== */
+/* ==================== Gradient Background (Colorful Mode Only) ==================== */
 [data-theme="colorful"] .gradient-bg {
   background: linear-gradient(135deg, #16213E 0%, #0F3460 50%, #1A1A2E 100%);
 }
@@ -203,21 +203,21 @@
   border-color: var(--accentPrimary);
 }
 
-/* ==================== 过渡动画 ==================== */
+/* ==================== Transition Animations ==================== */
 :root {
   --transition-fast: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
   --transition-normal: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   --transition-slow: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* 主题切换时的平滑过渡 */
+/* Smooth transitions for theme switching */
 * {
   transition: background-color 0.3s ease, 
               border-color 0.3s ease, 
               color 0.3s ease;
 }
 
-/* 图表和动画元素不需要过渡 */
+/* No transitions for charts and animation elements */
 canvas,
 .no-transition {
   transition: none !important;

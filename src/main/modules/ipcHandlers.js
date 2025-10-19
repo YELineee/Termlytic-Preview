@@ -6,6 +6,8 @@
 
 import { ipcMain } from 'electron'
 import { ShellHistoryAnalyzer } from '../services/shellHistoryAnalyzer.js'
+import { getRemoteServerManager } from '../services/remoteServerManager.js'
+import { getRemoteSyncService } from '../services/remoteSyncService.js'
 
 /**
  * IPC Handlers Class
@@ -16,6 +18,8 @@ import { ShellHistoryAnalyzer } from '../services/shellHistoryAnalyzer.js'
 export class IPCHandlers {
   constructor() {
     this.analyzer = new ShellHistoryAnalyzer()
+    this.remoteServerManager = getRemoteServerManager()
+    this.remoteSyncService = getRemoteSyncService()
     this.setupHandlers()
     console.log('IPC handlers initialized')
   }
@@ -94,9 +98,61 @@ export class IPCHandlers {
       return await this.handleGenerateCommandTicket(year, options)
     })
 
-    // Diagnose shell history configuration
+        // Diagnose shell history configuration
     ipcMain.handle('diagnose-shell-history', async () => {
       return await this.handleDiagnoseShellHistory()
+    })
+
+    // ========== Remote Server Management ==========
+
+    // Get all remote servers
+    ipcMain.handle('get-remote-servers', async () => {
+      return await this.handleGetRemoteServers()
+    })
+
+    // Add new remote server
+    ipcMain.handle('add-remote-server', async (event, serverConfig) => {
+      return await this.handleAddRemoteServer(serverConfig)
+    })
+
+    // Update remote server
+    ipcMain.handle('update-remote-server', async (event, serverId, updates) => {
+      return await this.handleUpdateRemoteServer(serverId, updates)
+    })
+
+    // Delete remote server
+    ipcMain.handle('delete-remote-server', async (event, serverId) => {
+      return await this.handleDeleteRemoteServer(serverId)
+    })
+
+    // Toggle server enabled/disabled
+    ipcMain.handle('toggle-remote-server', async (event, serverId, enabled) => {
+      return await this.handleToggleRemoteServer(serverId, enabled)
+    })
+
+    // Test server connection
+    ipcMain.handle('test-remote-connection', async (event, serverId) => {
+      return await this.handleTestRemoteConnection(serverId)
+    })
+
+    // Sync server data
+    ipcMain.handle('sync-remote-server', async (event, serverId) => {
+      return await this.handleSyncRemoteServer(serverId)
+    })
+
+    // Get remote server stats
+    ipcMain.handle('get-remote-servers-stats', async () => {
+      return await this.handleGetRemoteServersStats()
+    })
+
+    // Get remote cache data
+    ipcMain.handle('get-remote-cache', async (event, serverId) => {
+      return await this.handleGetRemoteCache(serverId)
+    })
+
+    // Delete remote cache
+    ipcMain.handle('delete-remote-cache', async (event, serverId) => {
+      return await this.handleDeleteRemoteCache(serverId)
     })
 
     console.log('All IPC handlers registered')
@@ -380,7 +436,8 @@ export class IPCHandlers {
         : await this.analyzer.analyzeShellHistory()
 
       // Filter and aggregate data based on time range
-      const rangeStats = this.analyzer.dataAnalyzer.getTimeRangeStatistics(fullData.entries || [], timeRange)
+      // Use allEntries for complete statistical analysis, not limited entries
+      const rangeStats = this.analyzer.dataAnalyzer.getTimeRangeStatistics(fullData.allEntries || fullData.entries || [], timeRange)
 
       const endTime = Date.now()
       const processingTime = endTime - startTime
@@ -959,9 +1016,235 @@ export class IPCHandlers {
 
     console.log('IPC handlers cleanup completed')
   }
+
+  // ========== Remote Server Handler Methods ==========
+
+  /**
+   * Get all remote servers
+   */
+  async handleGetRemoteServers() {
+    try {
+      await this.remoteServerManager.initialize()
+      const servers = this.remoteServerManager.getAllServers()
+      return {
+        success: true,
+        servers
+      }
+    } catch (error) {
+      console.error('Error getting remote servers:', error)
+      return {
+        success: false,
+        error: error.message
+      }
+    }
+  }
+
+  /**
+   * Add remote server
+   */
+  async handleAddRemoteServer(serverConfig) {
+    try {
+      const server = await this.remoteServerManager.addServer(serverConfig)
+      return {
+        success: true,
+        server
+      }
+    } catch (error) {
+      console.error('Error adding remote server:', error)
+      return {
+        success: false,
+        error: error.message
+      }
+    }
+  }
+
+  /**
+   * Update remote server
+   */
+  async handleUpdateRemoteServer(serverId, updates) {
+    try {
+      const server = await this.remoteServerManager.updateServer(serverId, updates)
+      return {
+        success: true,
+        server
+      }
+    } catch (error) {
+      console.error('Error updating remote server:', error)
+      return {
+        success: false,
+        error: error.message
+      }
+    }
+  }
+
+  /**
+   * Delete remote server
+   */
+  async handleDeleteRemoteServer(serverId) {
+    try {
+      // Delete cache first
+      await this.remoteSyncService.deleteRemoteCache(serverId)
+      
+      // Then delete server configuration
+      const result = await this.remoteServerManager.deleteServer(serverId)
+      return {
+        success: true,
+        ...result
+      }
+    } catch (error) {
+      console.error('Error deleting remote server:', error)
+      return {
+        success: false,
+        error: error.message
+      }
+    }
+  }
+
+  /**
+   * Toggle remote server
+   */
+  async handleToggleRemoteServer(serverId, enabled) {
+    try {
+      const server = await this.remoteServerManager.toggleServer(serverId, enabled)
+      return {
+        success: true,
+        server
+      }
+    } catch (error) {
+      console.error('Error toggling remote server:', error)
+      return {
+        success: false,
+        error: error.message
+      }
+    }
+  }
+
+  /**
+   * Test remote connection
+   */
+  async handleTestRemoteConnection(serverId) {
+    try {
+      const server = this.remoteServerManager.getServerById(serverId)
+      
+      // Get full server information (including password)
+      const fullServer = this.remoteServerManager.servers.find(s => s.id === serverId)
+      
+      const result = await this.remoteSyncService.testConnection(fullServer)
+      return {
+        success: true,
+        ...result
+      }
+    } catch (error) {
+      console.error('Error testing remote connection:', error)
+      return {
+        success: false,
+        error: error.message
+      }
+    }
+  }
+
+  /**
+   * Sync remote server
+   */
+  async handleSyncRemoteServer(serverId) {
+    try {
+      const server = this.remoteServerManager.getServerById(serverId)
+      
+      // Get full server information
+      const fullServer = this.remoteServerManager.servers.find(s => s.id === serverId)
+      
+      const result = await this.remoteSyncService.syncServer(fullServer)
+      
+      // Update server sync status
+      await this.remoteServerManager.updateSyncStatus(
+        serverId,
+        'synced',
+        result.commandCount
+      )
+      
+      return {
+        success: true,
+        ...result
+      }
+    } catch (error) {
+      console.error('Error syncing remote server:', error)
+      
+      // Update failure status
+      await this.remoteServerManager.updateSyncStatus(serverId, 'sync_failed')
+      
+      return {
+        success: false,
+        error: error.message
+      }
+    }
+  }
+
+  /**
+   * Get remote servers stats
+   */
+  async handleGetRemoteServersStats() {
+    try {
+      await this.remoteServerManager.initialize()
+      const stats = this.remoteServerManager.getStats()
+      const cacheStats = await this.remoteSyncService.getAllRemoteCacheStats()
+      
+      return {
+        success: true,
+        stats,
+        cacheStats
+      }
+    } catch (error) {
+      console.error('Error getting remote servers stats:', error)
+      return {
+        success: false,
+        error: error.message
+      }
+    }
+  }
+
+  /**
+   * Get remote cache
+   */
+  async handleGetRemoteCache(serverId) {
+    try {
+      const cache = await this.remoteSyncService.loadRemoteCache(serverId)
+      return {
+        success: true,
+        cache
+      }
+    } catch (error) {
+      console.error('Error getting remote cache:', error)
+      return {
+        success: false,
+        error: error.message
+      }
+    }
+  }
+
+  /**
+   * Delete remote cache
+   */
+  async handleDeleteRemoteCache(serverId) {
+    try {
+      await this.remoteSyncService.deleteRemoteCache(serverId)
+      
+      // Reset server sync status
+      await this.remoteServerManager.updateSyncStatus(serverId, 'never_synced', 0)
+      
+      return {
+        success: true
+      }
+    } catch (error) {
+      console.error('Error deleting remote cache:', error)
+      return {
+        success: false,
+        error: error.message
+      }
+    }
+  }
 }
 
-// Export singleton instance
+// Singleton instance
 let ipcHandlersInstance = null
 
 /**

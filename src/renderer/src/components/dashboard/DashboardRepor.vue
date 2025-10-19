@@ -116,7 +116,8 @@ const timeRangeOptions = [
   { value: 'day', label: 'Today' },
   { value: 'week', label: 'Week' },
   { value: 'month', label: 'Month' },
-  { value: 'year', label: 'Year' }
+  { value: 'year', label: 'Year' },
+  { value: 'all', label: 'All' }
 ]
 
 // Computed properties
@@ -134,7 +135,8 @@ const currentStats = computed(() => {
     day: 'Today Statistics',
     week: 'This Week Statistics',
     month: 'This Month Statistics',
-    year: 'This Year Statistics'
+    year: 'This Year Statistics',
+    all: 'All Time Statistics'
   }
 
   return {
@@ -317,7 +319,8 @@ const getTimeRangeLabel = () => {
     day: 'Today',
     week: 'This Week',
     month: 'This Month',
-    year: 'This Year'
+    year: 'This Year',
+    all: 'All Time'
   }
   return labels[selectedTimeRange.value] || 'Unknown'
 }

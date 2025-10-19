@@ -515,27 +515,34 @@ export class DataAnalyzer {
         startDate = new Date(now.getFullYear(), 0, 1)
         endDate = new Date(now.getFullYear(), 11, 31, 23, 59, 59, 999)
         break
+      case 'all':
+        // For 'all', use all available data - no date filtering
+        startDate = null
+        endDate = null
+        break
       default:
         return this.getEmptyTimeRangeStats(timeRange)
     }
 
     // Filter entries within specified time range
-    const rangeEntries = entries.filter(entry => {
-      if (!entry.timestamp) return false
-      
-      let entryDate
-      if (typeof entry.timestamp === 'number') {
-        entryDate = new Date(entry.timestamp > 1e10 ? entry.timestamp : entry.timestamp * 1000)
-      } else if (typeof entry.timestamp === 'string') {
-        entryDate = new Date(entry.timestamp)
-      } else if (entry.timestamp instanceof Date) {
-        entryDate = entry.timestamp
-      } else {
-        return false
-      }
+    const rangeEntries = timeRange === 'all' 
+      ? entries 
+      : entries.filter(entry => {
+          if (!entry.timestamp) return false
+          
+          let entryDate
+          if (typeof entry.timestamp === 'number') {
+            entryDate = new Date(entry.timestamp > 1e10 ? entry.timestamp : entry.timestamp * 1000)
+          } else if (typeof entry.timestamp === 'string') {
+            entryDate = new Date(entry.timestamp)
+          } else if (entry.timestamp instanceof Date) {
+            entryDate = entry.timestamp
+          } else {
+            return false
+          }
 
-      return entryDate >= startDate && entryDate <= endDate
-    })
+          return entryDate >= startDate && entryDate <= endDate
+        })
 
     // Analyze data within time range
     const analysis = this.analyzeData(rangeEntries)
@@ -545,8 +552,8 @@ export class DataAnalyzer {
 
     return {
       timeRange,
-      startDate: startDate.toISOString(),
-      endDate: endDate.toISOString(),
+      startDate: startDate ? startDate.toISOString() : null,
+      endDate: endDate ? endDate.toISOString() : null,
       totalCount: rangeEntries.length, // Changed to totalCount to match frontend
       periodStats: { // Wrapped as periodStats object
         uniqueCommands: analysis.commandAnalysis.uniqueCommandsCount || 0
@@ -607,6 +614,10 @@ export class DataAnalyzer {
           // Group by month
           dateKey = `${entryDate.getFullYear()}-${(entryDate.getMonth() + 1).toString().padStart(2, '0')}`
           break
+        case 'all':
+          // Group by month for all time data
+          dateKey = `${entryDate.getFullYear()}-${(entryDate.getMonth() + 1).toString().padStart(2, '0')}`
+          break
         default:
           dateKey = entryDate.toISOString().split('T')[0]
       }
@@ -657,6 +668,24 @@ export class DataAnalyzer {
           data.push(dailyCounts.get(monthKey) || 0)
         }
         break
+      case 'all':
+        // Generate labels for all months with data
+        if (dailyCounts.size === 0) {
+          // No data, return empty chart
+          break
+        }
+        
+        // Sort all month keys
+        const sortedMonthKeys = Array.from(dailyCounts.keys()).sort()
+        const monthsShort = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+        
+        sortedMonthKeys.forEach(monthKey => {
+          const [year, month] = monthKey.split('-')
+          const monthIndex = parseInt(month) - 1
+          labels.push(`${monthsShort[monthIndex]} ${year}`)
+          data.push(dailyCounts.get(monthKey) || 0)
+        })
+        break
     }
 
     return { labels, data }
@@ -699,6 +728,11 @@ export class DataAnalyzer {
         const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
         labels = [...months]
         data = new Array(12).fill(0)
+        break
+      case 'all':
+        // Empty data for all time - no default labels
+        labels = []
+        data = []
         break
     }
 

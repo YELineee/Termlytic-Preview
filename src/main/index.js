@@ -8,6 +8,7 @@ import { app, BrowserWindow } from 'electron'
 import { electronApp, optimizer } from '@electron-toolkit/utils'
 import { WindowManager } from './modules/windowManager.js'
 import { initializeIPCHandlers, cleanupIPCHandlers } from './modules/ipcHandlers.js'
+import { getRemoteServerManager } from './services/remoteServerManager.js'
 
 /**
  * Main application class managing the entire application lifecycle
@@ -64,6 +65,12 @@ class TermlyticApp {
 
       // Setup development tools and shortcuts
       this.setupDevelopmentFeatures()
+
+      // Initialize remote server manager
+      console.log('Initializing remote server manager...')
+      const remoteServerManager = getRemoteServerManager()
+      await remoteServerManager.initialize()
+      console.log('Remote server manager initialized')
 
       // Initialize IPC handlers
       this.ipcHandlers = initializeIPCHandlers()
